@@ -28,6 +28,10 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.android.car.scalableui.loader.xml.parser.PanelControllerParser;
+import com.android.car.scalableui.model.PanelControllerMetadata;
+import com.android.car.scalableui.panel.DecorPanelController;
+
 import java.io.PrintWriter;
 import java.util.List;
 
@@ -95,6 +99,34 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
         super(context, panelId, rroPackage);
         mPrimaryMediaComponent = primaryMediaComponent;
         mMediaPanelId = mediaPanelId;
+    }
+
+    /**
+     * Creates footer controllers from the parsed panel controller XML. The
+     * RroPackage, PrimaryMediaComponent and MediaPanelId tags override the
+     * built-in defaults, so the OEM overlay alone controls the wiring.
+     */
+    public static class Factory
+            implements DecorPanelController.Factory<CarSysuiScalableFooterController> {
+        private final Context mContext;
+
+        public Factory(Context context) {
+            mContext = context;
+        }
+
+        @Override
+        public CarSysuiScalableFooterController create(String panelId,
+                PanelControllerMetadata metadata) {
+            return new CarSysuiScalableFooterController(
+                    mContext,
+                    panelId,
+                    configOrDefault(metadata, PanelControllerParser.RRO_PACKAGE_TAG,
+                            DEFAULT_RRO_PACKAGE),
+                    configOrDefault(metadata, PanelControllerParser.PRIMARY_MEDIA_COMPONENT_TAG,
+                            DEFAULT_PRIMARY_MEDIA),
+                    configOrDefault(metadata, PanelControllerParser.MEDIA_PANEL_ID_TAG,
+                            DEFAULT_MEDIA_PANEL_ID));
+        }
     }
 
     @Override

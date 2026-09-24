@@ -29,6 +29,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.car.scalableui.loader.xml.parser.PanelControllerParser;
+import com.android.car.scalableui.model.PanelControllerMetadata;
+import com.android.car.scalableui.panel.DecorPanelController;
 import com.android.systemui.car.wm.scalableui.panel.controller.facelogin.CarUserSwitchHelper;
 import com.android.systemui.car.wm.scalableui.panel.controller.facelogin.DriverProfile;
 import com.android.systemui.car.wm.scalableui.panel.controller.facelogin.FaceIdentityStore;
@@ -85,6 +88,27 @@ public class FaceLoginViewController implements ScalableDecorPanelController, Sy
         mRroPackage = rroPackage;
     }
 
+    /**
+     * Creates face login controllers from the parsed panel controller XML;
+     * the RroPackage tag overrides the built-in default overlay package.
+     */
+    public static class Factory
+            implements DecorPanelController.Factory<FaceLoginViewController> {
+        private final Context mContext;
+
+        public Factory(Context context) {
+            mContext = context;
+        }
+
+        @Override
+        public FaceLoginViewController create(String panelId, PanelControllerMetadata metadata) {
+            String rroPackage = metadata == null
+                    ? null : metadata.getStringConfiguration(PanelControllerParser.RRO_PACKAGE_TAG);
+            return new FaceLoginViewController(mContext, panelId,
+                    (rroPackage == null || rroPackage.isEmpty()) ? DEFAULT_RRO : rroPackage);
+        }
+    }
+
     @Override
     public String getPanelId() {
         return mPanelId;
@@ -106,8 +130,34 @@ public class FaceLoginViewController implements ScalableDecorPanelController, Sy
                 applyOvalClip(mPlaceholder);
                 applyOvalClip(mGlowFrame);
             }
+            // DecorPanel only calls getView()/refreshTheme()/destroy(); drive the
+            // attach lifecycle from the actual window attachment of the view.
+            mView.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+                @Override
+                public void onViewAttachedToWindow(View v) {
+                    onPanelAttached();
+                }
+
+                @Override
+                public void onViewDetachedFromWindow(View v) {
+                    onPanelDetached();
+                }
+            });
         }
         return mView;
+    }
+
+    @Override
+    public void refreshTheme() {
+        onPanelDetached();
+        mView = null;
+        mRroContext = null;
+    }
+
+    @Override
+    public void destroy() {
+        onPanelDetached();
+        mView = null;
     }
 
     @Override

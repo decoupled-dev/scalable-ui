@@ -26,8 +26,11 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.android.car.scalableui.loader.xml.parser.PanelControllerParser;
 import com.android.car.scalableui.manager.StateManager;
 import com.android.car.scalableui.model.Event;
+import com.android.car.scalableui.model.PanelControllerMetadata;
+import com.android.car.scalableui.panel.DecorPanelController;
 
 import java.io.PrintWriter;
 import java.util.Locale;
@@ -106,6 +109,29 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
 
     public CarSysuiScalableHeaderController(Context context, String panelId, String rroPackage) {
         super(context, panelId, rroPackage);
+    }
+
+    /**
+     * Creates header controllers from the parsed panel controller XML; the
+     * RroPackage tag overrides the built-in default overlay package.
+     */
+    public static class Factory
+            implements DecorPanelController.Factory<CarSysuiScalableHeaderController> {
+        private final Context mContext;
+
+        public Factory(Context context) {
+            mContext = context;
+        }
+
+        @Override
+        public CarSysuiScalableHeaderController create(String panelId,
+                PanelControllerMetadata metadata) {
+            return new CarSysuiScalableHeaderController(
+                    mContext,
+                    panelId,
+                    configOrDefault(metadata, PanelControllerParser.RRO_PACKAGE_TAG,
+                            DEFAULT_RRO_PACKAGE));
+        }
     }
 
     @Override

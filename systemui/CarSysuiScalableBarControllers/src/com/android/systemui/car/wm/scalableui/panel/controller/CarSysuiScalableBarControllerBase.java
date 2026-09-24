@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.android.car.scalableui.model.PanelControllerMetadata;
 import com.android.systemui.car.wm.scalableui.panel.controller.vhal.CarVhalSubscriptionHelper;
 
 import java.io.PrintWriter;
@@ -58,7 +59,18 @@ public abstract class CarSysuiScalableBarControllerBase implements ScalableDecor
         mRroPackage = rroPackage;
     }
 
-  @Override
+    /**
+     * Reads a string configuration parsed from the panel controller XML
+     * (see PanelControllerParser tags), falling back to {@code defValue}
+     * when the tag is absent or empty.
+     */
+    protected static String configOrDefault(PanelControllerMetadata metadata, String key,
+            String defValue) {
+        String value = metadata == null ? null : metadata.getStringConfiguration(key);
+        return (value == null || value.isEmpty()) ? defValue : value;
+    }
+
+    @Override
     public String getPanelId() {
         return mPanelId;
     }
@@ -109,8 +121,35 @@ public abstract class CarSysuiScalableBarControllerBase implements ScalableDecor
                 mView = LayoutInflater.from(mRroContext).inflate(layoutId, null);
                 bindViews(mView);
             }
+            // DecorPanel only calls getView()/refreshTheme()/destroy(); drive the
+            // attach lifecycle from the actual window attachment of the view.
+            mView.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+                @Override
+                public void onViewAttachedToWindow(View v) {
+                    onPanelAttached();
+                }
+
+                @Override
+                public void onViewDetachedFromWindow(View v) {
+                    onPanelDetached();
+                }
+            });
         }
         return mView;
+    }
+
+    @Override
+    public void refreshTheme() {
+        // Drop the cached view; DecorPanel re-requests it via getView() on reset().
+        onPanelDetached();
+        mView = null;
+        mRroContext = null;
+    }
+
+    @Override
+    public void destroy() {
+        onPanelDetached();
+        mView = null;
     }
 
     /** Bind RRO view IDs to VHAL / media / nav logic. */
@@ -148,19 +187,39 @@ public abstract class CarSysuiScalableBarControllerBase implements ScalableDecor
     }
 
     private Context resolveRroContext() {
+        // The configured package (RroPackage tag in the controller XML) wins;
+        // the static list only covers overlays that predate the config tag.
+        Context configured = tryResolveRroContext(mRroPackage);
+        if (configured != null) {
+            return configured;
+        }
         for (String pkg : RRO_PACKAGE_FALLBACKS) {
-            try {
-                Context ctx = mContext.createPackageContext(pkg, 0);
-                if (ctx.getResources().getIdentifier(
-                        getLayoutResourceName(), "layout", pkg) != 0) {
-                    return ctx;
-                }
-            } catch (PackageManager.NameNotFoundException ignored) {
-                // try next overlay package
+            if (pkg.equals(mRroPackage)) {
+                continue;
+            }
+            Context ctx = tryResolveRroContext(pkg);
+            if (ctx != null) {
+                return ctx;
             }
         }
         Log.e(TAG, "No RRO package found for layout: " + getLayoutResourceName());
         return mContext;
+    }
+
+    private Context tryResolveRroContext(String pkg) {
+        if (pkg == null || pkg.isEmpty()) {
+            return null;
+        }
+        try {
+            Context ctx = mContext.createPackageContext(pkg, 0);
+            if (ctx.getResources().getIdentifier(
+                    getLayoutResourceName(), "layout", pkg) != 0) {
+                return ctx;
+            }
+        } catch (PackageManager.NameNotFoundException ignored) {
+            // try next overlay package
+        }
+        return null;
     }
 
     private static final String[] RRO_PACKAGE_FALLBACKS = {

@@ -16,21 +16,25 @@
 
 package com.android.systemui.car.wm.scalableui.panel.controller;
 
-import android.content.Context;
 import android.view.View;
 
-/**
- * Contract for scalable UI DecorPanel / TaskPanel controllers.
- * Mirrors the AOSP car-wm-shell-lib DecorPanelController interface.
- */
-public interface ScalableDecorPanelController {
-    /** Inflate or return the cached panel view (RRO-bound). */
-    View getView();
+import com.android.car.scalableui.panel.DecorPanelController;
 
-    /** Called when the panel is attached to the window hierarchy. */
+/**
+ * Contract for scalable UI DecorPanel controllers.
+ *
+ * <p>Extends the AOSP scalable UI {@link DecorPanelController} (consumed by
+ * {@code DecorPanel} via {@code PanelControllerInitializer}) with explicit
+ * attach/detach lifecycle hooks. Implementations bridge the hooks from
+ * {@link View.OnAttachStateChangeListener} on the panel view, since the AOSP
+ * interface only exposes {@code getView()}, {@code refreshTheme()} and
+ * {@code destroy()}.
+ */
+public interface ScalableDecorPanelController extends DecorPanelController {
+    /** Called when the panel view is attached to the window hierarchy. */
     void onPanelAttached();
 
-    /** Called when the panel is detached; release all subscriptions. */
+    /** Called when the panel view is detached; release all subscriptions. */
     void onPanelDetached();
 
     /** Panel identifier from the XML {@code id} attribute. */

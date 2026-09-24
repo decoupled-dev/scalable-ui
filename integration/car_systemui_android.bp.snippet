@@ -1,19 +1,28 @@
-// Integration checklist for packages/apps/Car/SystemUI/Android.bp
+// Integration checklist for packages/apps/Car/SystemUI (landed on branch
+// scalable-ui-dev in this tree; replicate in other trees as follows).
 //
-// android_app {
-//     name: "CarSystemUI",
+// 1. Android.bp — add the controllers library to the core (and test) static_libs:
+//
+// java_defaults {
+//     name: "CarSystemUI-core-defaults",
 //     static_libs: [
 //         ...
+//         "car-scalable-ui-lib",
 //         "CarSysuiScalableBarControllers",
+//         ...
 //     ],
 // }
 //
-// In PanelControllerModule (or sibling module):
-//   include CarSysuiScalableBarControllerModule
+// 2. Copy dagger/CarSysuiScalableBarControllerModule.java next to
+//    PanelControllerModule.java (same package) and add it to the includes:
 //
-// After rebuild, switch OemDemoRRO overlays.xml to:
-//   window_states_pleos / config_default_activities_pleos
-// or run: ./scripts/deploy_ui.sh --mode pleos
+// @Module(includes = { MinimizedControlsPanelModule.class,
+//         CarSysuiScalableBarControllerModule.class })
+// public abstract class PanelControllerModule { ... }
+//
+// 3. Rebuild CarSystemUI, then switch OemDemoRRO overlays to
+//    window_states_pleos / config_default_activities_pleos,
+//    or run: ./scripts/deploy_ui.sh --mode pleos
 //
 // Vendor path:
-//   vendor/aospstack/ScalableUI/systemui/CarSysuiScalableBarControllers
+//   vendor/tcs/ScalableUI/systemui/CarSysuiScalableBarControllers
