@@ -280,4 +280,8 @@
     <dimen name="map_bottom">@dimen/bottom_bar_top</dimen>
     <dimen name="app_height">604px</dimen>
     <dimen name="app_grid_drawer_height">604px</dimen>
+
+    <!-- Increase media title height to prevent truncation with large OEM fonts -->
+    <dimen name="control_bar_media_card_title_height">112dp</dimen>
+    <dimen name="control_bar_media_card_title_animation_height">112dp</dimen>
 </resources>

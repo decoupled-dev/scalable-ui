@@ -2,10 +2,10 @@
 <TaskPanel id="hvac_left_panel" defaultVariant="@id/hvac_hidden" role="hvac_left_panel" displayId="0">
     <Variant id="@+id/hvac_hidden">
         <Layer layer="14"/>
-        <Visibility isVisible="false"/>
+        <Visibility isVisible="true"/>
         <Alpha alpha="0.0"/>
         <Corner radius="48dp"/>
-        <Bounds left="24dp" top="776dp" right="600dp" bottom="776dp"/>
+        <Bounds left="24dp" top="776dp" right="600dp" bottom="900dp"/>
         <Focus onTransition="false"/>
     </Variant>
     <Variant id="@+id/hvac_expanded">
@@ -13,7 +13,7 @@
         <Visibility isVisible="true"/>
         <Alpha alpha="1.0"/>
         <Corner radius="48dp"/>
-        <Bounds left="24dp" top="300dp" right="600dp" bottom="776dp"/>
+        <Bounds left="24dp" top="300dp" right="600dp" bottom="900dp"/>
         <Focus onTransition="true"/>
     </Variant>
 

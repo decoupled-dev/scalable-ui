@@ -1,8 +1,8 @@
 <TaskPanel id="clock" defaultVariant="@id/base" role="@string/mockwidgets_time_widget_activity_componentName" displayId="0">
     <Variant id="@+id/base">
         <Layer layer="11"/>
-        <Visibility isVisible="true"/>
-        <Alpha alpha="1.0"/>
+        <Visibility isVisible="false"/>
+        <Alpha alpha="0.0"/>
         <Corner radius="32dp"/>
         <Bounds left="886dp" top="408dp" right="1256dp" bottom="716dp"/>
         <Focus onTransition="false"/>

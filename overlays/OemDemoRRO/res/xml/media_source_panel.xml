@@ -1,4 +1,4 @@
-<TaskPanel id="media_source_panel" defaultVariant="@id/closed" displayId="0">
+<TaskPanel id="media_source_panel" defaultVariant="@id/closed" role="" displayId="0">
     <Variant id="@+id/opened">
         <Layer layer="15"/>
         <Visibility isVisible="true"/>
@@ -9,7 +9,7 @@
     </Variant>
     <Variant id="@+id/closed">
         <Layer layer="15"/>
-        <Visibility isVisible="false"/>
+        <Visibility isVisible="true"/>
         <Alpha alpha="0.0"/>
         <Corner radius="32dp"/>
         <Bounds left="1440dp" top="32dp" right="2108dp" bottom="640dp"/>

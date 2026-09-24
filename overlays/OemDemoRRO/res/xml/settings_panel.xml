@@ -9,7 +9,7 @@
     </Variant>
     <Variant id="@+id/closed">
         <Layer layer="13"/>
-        <Visibility isVisible="false"/>
+        <Visibility isVisible="true"/>
         <Alpha alpha="0.0"/>
         <Corner radius="32dp"/>
         <Bounds left="1440dp" top="32dp" right="2108dp" bottom="640dp"/>

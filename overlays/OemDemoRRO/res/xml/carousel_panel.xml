@@ -1,4 +1,4 @@
-<TaskPanel id="carousel_panel" defaultVariant="@id/opened" displayId="0">
+<TaskPanel id="carousel_panel" defaultVariant="@id/opened" role="com.android.car.mockwidgets/.AppCarouselActivity" displayId="0">
     <Variant id="@+id/opened">
         <Layer layer="3"/>
         <Visibility isVisible="true"/>
@@ -19,5 +19,6 @@
         <Transition onEvent="_System_OnHomeEvent" toVariant="@id/opened" duration="800" interpolator="@anim/pleos_fluid_interpolator"/>
         <Transition onEvent="show_page2" fromVariant="@id/opened" toVariant="@id/closed" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
         <Transition onEvent="_System_TaskOpenEvent" fromVariant="@id/opened" toVariant="@id/closed" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=panel_app_grid" toVariant="@id/closed" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
     </Transitions>
 </TaskPanel>

@@ -1,4 +1,4 @@
-<TaskPanel id="climate_widget" defaultVariant="@id/base" role="fake_climate_widget" displayId="0">
+<TaskPanel id="climate_widget" defaultVariant="@id/base" role="@string/mockwidgets_climate_activity_componentName" displayId="0">
     <Variant id="@+id/base">
         <Layer layer="9"/>
         <Visibility isVisible="false"/>

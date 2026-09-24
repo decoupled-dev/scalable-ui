@@ -24,7 +24,7 @@
     </Variant>
     <Variant id="@+id/closed">
         <Layer layer="6"/>
-        <Visibility isVisible="false"/>
+        <Visibility isVisible="true"/>
         <Alpha alpha="0.0"/>
         <Bounds left="-816dp" top="84dp" right="-432dp" bottom="896dp"/>
         <Focus onTransition="false"/>

@@ -1,8 +1,8 @@
 <TaskPanel id="agenda_widget" defaultVariant="@id/base" role="@string/mockwidgets_agenda_activity_componentName" displayId="0">
     <Variant id="@+id/base">
         <Layer layer="7"/>
-        <Visibility isVisible="true"/>
-        <Alpha alpha="1.0"/>
+        <Visibility isVisible="false"/>
+        <Alpha alpha="0.0"/>
         <Corner radius="32dp"/>
         <Bounds left="886dp" top="84dp" right="1256dp" bottom="388dp"/>
         <Focus onTransition="false"/>

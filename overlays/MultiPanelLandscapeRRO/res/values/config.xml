@@ -11,7 +11,7 @@
     <bool name="config_enableBottomSystemBar">true</bool>
 
     <!-- App grid button -->
-    <string name="system_bar_app_drawer_intent" translatable="false">intent:#Intent;action=com.android.car.carlauncher.ACTION_APP_GRID;package=com.android.car.carlauncher;launchFlags=0x24000000;end</string>
+    <string name="system_bar_app_drawer_intent" translatable="false">intent:#Intent;action=com.android.car.carlauncher.ACTION_APP_GRID;package=com.android.car.carlauncher;launchFlags=0x14000000;end</string>
 
     <!-- Panel layout -->
     <array name="window_states" replace="true">
@@ -32,6 +32,7 @@
         <item>@xml/assistant_bubble</item>
         <item>@xml/camera_panel</item>
         <item>@xml/hvac_left_panel</item>
+        <item>@xml/face_login_panel</item>
     </array>
 
     <!-- Auto-launch activities into panels at startup -->

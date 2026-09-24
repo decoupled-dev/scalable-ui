@@ -5,9 +5,15 @@
 
     <!-- Panel role: Full media app (opens in expanded media_source_panel) -->
     <string-array name="media_app_components" translatable="false">
+    </string-array>
+
+    <string-array name="app_panel_components" translatable="false">
+        <item>com.poc.assistant/.LocalLLMActivity</item>
+        <item>com.tcs.vehicleassistant/.LocalLLMActivity</item>
         <item>com.android.car.media/.MediaDispatcherActivity</item>
         <item>com.android.car.media/.MediaActivity</item>
         <item>com.android.car.radio/.RadioActivity</item>
+        <item>com.android.car.mockwidgets/.MockMediaActivity</item>
     </string-array>
 
     <!-- Panel role: Phone widget (dashboard + in-call + fake call) -->
