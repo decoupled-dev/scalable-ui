@@ -264,7 +264,7 @@ public abstract class CarSysuiScalableBarControllerBase implements ScalableDecor
                         & CarUxRestrictions.UX_RESTRICTIONS_FULLY_RESTRICTED) != 0;
         if (fullyRestricted != mFullyRestricted) {
             mFullyRestricted = fullyRestricted;
-            mContext.getMainExecutor().execute(this::applyUxRestrictions);
+            runOnViewThread(this::applyUxRestrictions);
         }
     }
 
@@ -277,16 +277,29 @@ public abstract class CarSysuiScalableBarControllerBase implements ScalableDecor
     /** Apply enabled state when VHAL reconnects. */
     protected abstract void applyVhalConnectedState();
 
+    /**
+     * DecorPanel views are attached on the WM Shell thread, so UI updates must
+     * post to the view's handler rather than the SystemUI main executor.
+     */
+    protected void runOnViewThread(Runnable r) {
+        View view = mView;
+        if (view != null) {
+            view.post(r);
+        } else {
+            mContext.getMainExecutor().execute(r);
+        }
+    }
+
     @Override
     public void onVhalConnected() {
         mVhalConnected = true;
-        mContext.getMainExecutor().execute(this::applyVhalConnectedState);
+        runOnViewThread(this::applyVhalConnectedState);
     }
 
     @Override
     public void onVhalDisconnected() {
         mVhalConnected = false;
-        mContext.getMainExecutor().execute(this::applyVhalDisconnectedState);
+        runOnViewThread(this::applyVhalDisconnectedState);
     }
 
     protected void setViewEnabled(View view, boolean enabled) {

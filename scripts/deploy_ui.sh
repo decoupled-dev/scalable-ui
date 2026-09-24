@@ -108,6 +108,8 @@ need_root
 
 # Always push core runtime stack for tip/oem demos
 push_apk "${PREBUILT}/CarSystemUI.apk" /system/priv-app/CarSystemUI/CarSystemUI.apk
+# tangorpro car image installs CarSystemUI under system_ext
+push_apk "${PREBUILT}/CarSystemUI.apk" /system_ext/priv-app/CarSystemUI/CarSystemUI.apk
 push_apk "${PREBUILT}/CarLauncher.apk" /system_ext/priv-app/CarLauncher/CarLauncher.apk
 push_apk "${PREBUILT}/MockWidgets.apk" /system/app/MockWidgets/MockWidgets.apk
 push_apk "${PREBUILT}/MockMap.apk" /system/app/MockMap/MockMap.apk
@@ -121,6 +123,7 @@ if [[ -n "${OUT:-}" ]]; then
     push_apk "${OUT}/product/overlay/CarLauncherMultiPanelRRO.apk" /product/overlay/CarLauncherMultiPanelRRO.apk
     push_apk "${OUT}/product/overlay/MultiPanelLandscapeRRO.apk" /product/overlay/MultiPanelLandscapeRRO.apk
     push_apk "${OUT}/system_ext/priv-app/CarSystemUI/CarSystemUI.apk" /system/priv-app/CarSystemUI/CarSystemUI.apk
+    push_apk "${OUT}/system_ext/priv-app/CarSystemUI/CarSystemUI.apk" /system_ext/priv-app/CarSystemUI/CarSystemUI.apk
     push_apk "${OUT}/system_ext/priv-app/CarLauncher/CarLauncher.apk" /system_ext/priv-app/CarLauncher/CarLauncher.apk
 fi
 

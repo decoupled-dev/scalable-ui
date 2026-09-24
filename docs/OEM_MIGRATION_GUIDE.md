@@ -80,8 +80,18 @@ PRODUCT_PACKAGES += \
     CarSystemUI \
     CarLauncher \
     MockWidgets \
-    MultiPanelLandscapeRRO
+    MultiPanelLandscapeRRO \
+    CarSysuiScalableBarControllers
 ```
+
+### CarSystemUI Dagger graph (required for OEM controllers)
+
+Do not ship controllers only as a prebuilt APK. In this tree the integration is already landed:
+
+* Add `CarSysuiScalableBarControllers` to CarSystemUI `static_libs` (`packages/apps/Car/SystemUI/Android.bp`).
+* Include `CarSysuiScalableBarControllerModule` from `PanelControllerModule` so `PanelControllerInitializer` can resolve `ControllerName` via `@ClassKey` factories.
+* OEM panel-controller XML (`RroPackage`, `PrimaryMediaComponent`, `MediaPanelId`) is parsed by `car-scalable-ui-lib` and consumed by those factories. Put a literal component name in `PrimaryMediaComponent` — generic string configs are not `@string/`-resolved.
+* Face-login demo backend: `CarBiometricService` is an optional car feature (`car_biometric` in `config_allowed_optional_car_features`) created through `carServiceCreator`.
 
 ### Static vs. Dynamic Overlays
 *   **Static (Always On):** If the vehicle *only* features the Scalable UI, the OEM sets `android:isStatic="true"` in the RRO Manifest. It cannot be disabled.

@@ -74,18 +74,18 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
     private boolean mIsPlaying;
 
     private final MediaSessionManager.OnActiveSessionsChangedListener mSessionsListener =
-            controllers -> mContext.getMainExecutor().execute(
+            controllers -> runOnViewThread(
                     () -> bindActiveMediaController(controllers));
 
     private final MediaController.Callback mMediaCallback = new MediaController.Callback() {
         @Override
         public void onPlaybackStateChanged(PlaybackState state) {
-            mContext.getMainExecutor().execute(() -> updatePlaybackUi(state));
+            runOnViewThread(() -> updatePlaybackUi(state));
         }
 
         @Override
         public void onMetadataChanged(android.media.MediaMetadata metadata) {
-            mContext.getMainExecutor().execute(() -> updateTrackTitle(metadata));
+            runOnViewThread(() -> updateTrackTitle(metadata));
         }
     };
 

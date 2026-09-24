@@ -85,14 +85,35 @@ Do **not** enable MultiPanelLandscape and OemDemo together (both own `window_sta
 
 ---
 
-## Pleos controllers (optional)
+## Source-based CarSystemUI integration (landed)
+
+The OEM scalable bar controllers are now wired from source, not only from a prebuilt APK.
+
+1. `packages/apps/Car/SystemUI/Android.bp` includes `CarSysuiScalableBarControllers` in `static_libs`.
+2. `CarSysuiScalableBarControllerModule` is installed from `PanelControllerModule` and binds class-keyed `DecorPanelController.Factory` entries (header, footer/media, face login).
+3. Each factory reads `RroPackage`, `PrimaryMediaComponent`, and `MediaPanelId` from the parsed panel-controller XML (`PanelControllerMetadata`), with the previous hardcoded values as fallback.
+4. Rebuild after changing controllers or XML:
+
+```bash
+source build/envsetup.sh
+lunch aosp_tangorpro_car-trunk_staging-userdebug
+m CarSystemUI CarLauncher MockWidgets OemDemoRRO MultiPanelLandscapeRRO \
+  CarLauncherMultiPanelRRO CarSysuiScalableBarControllers
+# then copy the APKs into assets/prebuilts/ (or run with OUT= set)
+./scripts/deploy_ui.sh --mode pleos --serial <SERIAL>
+```
+
+On tangorpro, `CarSystemUI.apk` lives at `/system_ext/priv-app/CarSystemUI/` (the deploy script also writes `/system/priv-app/`; push both if `pm path com.android.systemui` still points at system_ext).
+
+## Pleos controllers
 
 Shipped `CarSystemUI.apk` includes `FloatingNavViewController` / `FloatingMediaViewController` / `QuickSettingsViewController` — enough for tip/oem modes.
 
-Pleos dual-zone header/footer needs:
-1. `static_libs: ["CarSysuiScalableBarControllers"]` in CarSystemUI `Android.bp`
-2. Install `integration/dagger/CarSysuiScalableBarControllerModule.java` into the panel controller Dagger graph
-3. Rebuild CarSystemUI + switch OemDemo to `window_states_pleos` (see `overlays/OemDemoRRO/res/values/config.xml`)
+Pleos dual-zone header/footer + face login needs the source integration above, then:
+- `./scripts/deploy_ui.sh --mode pleos` (enables OemDemoRRO + launcher RRO)
+- OemDemo `overlays.xml` now points `window_states` / `config_default_activities` at the pleos arrays so the header/footer/media controllers load
+- Enable the aconfig flag after install: `aflags enable com.android.systemui.car.scalable_ui` then reboot
+- Do not enable `CarSystemUIScalableUIOverlay` together with OemDemo — its legacy `<Panel>` XML is not registered in the current parser
 
 ---
 

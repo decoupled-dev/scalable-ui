@@ -90,10 +90,10 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
                     int area = value.getAreaId();
                     if (value.getPropertyId() == VehiclePropertyIds.HVAC_TEMPERATURE_SET) {
                         float temp = (Float) value.getValue();
-                        mContext.getMainExecutor().execute(() -> updateHvacDisplay(area, temp));
+                        runOnViewThread(() -> updateHvacDisplay(area, temp));
                     } else if (value.getPropertyId() == VehiclePropertyIds.HVAC_SEAT_TEMPERATURE) {
                         int seatTemp = (Integer) value.getValue();
-                        mContext.getMainExecutor().execute(() -> updateSeatDisplay(area, seatTemp));
+                        runOnViewThread(() -> updateSeatDisplay(area, seatTemp));
                     }
                 }
 
