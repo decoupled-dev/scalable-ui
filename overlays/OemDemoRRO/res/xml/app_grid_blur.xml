@@ -1,27 +1,31 @@
-<DecorPanel id="app_grid_blur" defaultVariant="@id/hidden" displayId="0" controller="@xml/app_grid_blur_controller">
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Opaque scrim under All Apps. Uses a plain layout (not PanelOverlay blur)
+     because BackgroundBlurDrawable can stay composited after Home. -->
+<DecorPanel id="app_grid_blur" defaultVariant="@id/hidden" role="@layout/oem_app_grid_scrim" displayId="0">
     <Variant id="@+id/visible">
-        <Layer layer="16"/>
+        <Layer layer="17"/>
         <Visibility isVisible="true"/>
         <Alpha alpha="1.0"/>
-        <Bounds left="24dp" top="84dp" right="692dp" bottom="820dp"/>
+        <Corner radius="28dp"/>
+        <Bounds left="16dp" top="72dp" right="1264dp" bottom="700dp"/>
         <Focus onTransition="false"/>
     </Variant>
     <Variant id="@+id/hidden">
-        <Layer layer="16"/>
+        <Layer layer="17"/>
         <Visibility isVisible="false"/>
         <Alpha alpha="0.0"/>
-        <Bounds left="24dp" top="84dp" right="692dp" bottom="820dp"/>
+        <Corner radius="28dp"/>
+        <!-- Park off-screen when hidden so a stuck surface cannot cover the dashboard. -->
+        <Bounds left="-1264dp" top="72dp" right="-16dp" bottom="700dp"/>
         <Focus onTransition="false"/>
     </Variant>
     <Transitions>
-        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=panel_app_grid" toVariant="@id/visible" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=panel_app_grid" toVariant="@id/visible" duration="250" interpolator="@anim/pleos_fluid_interpolator"/>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=app_panel" toVariant="@id/hidden" duration="200" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=media_source_panel" toVariant="@id/hidden" duration="200" interpolator="@anim/pleos_fluid_interpolator"/>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=map_panel" toVariant="@id/hidden" duration="200" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=phone_panel" toVariant="@id/hidden" duration="200" interpolator="@anim/pleos_fluid_interpolator"/>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=settings_panel" toVariant="@id/hidden" duration="200" interpolator="@anim/pleos_fluid_interpolator"/>
         <Transition onEvent="_System_OnHomeEvent" toVariant="@id/hidden" duration="200" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="show_page2" fromVariant="@id/visible" toVariant="@id/hidden" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/visible" toVariant="@id/hidden" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/visible" toVariant="@id/hidden" duration="200" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="_System_TaskCloseEvent" onEventTokens="panelId=panel_app_grid" toVariant="@id/hidden" duration="200" interpolator="@anim/pleos_fluid_interpolator"/>
     </Transitions>
 </DecorPanel>

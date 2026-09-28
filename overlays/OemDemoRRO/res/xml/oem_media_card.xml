@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Panel id must be sysui_footer_media_panel so stock FooterController loads media layout. -->
+<DecorPanel id="sysui_footer_media_panel" defaultVariant="@id/visible"
+    controller="@xml/sysui_scalable_footer_controller" displayId="0">
+    <Variant id="@+id/visible">
+        <Layer layer="10"/>
+        <Visibility isVisible="true"/>
+        <Alpha alpha="1.0"/>
+        <Corner radius="28dp"/>
+        <!-- Seam to map_panel (right=704dp): cards start at 704dp with no white gutter. -->
+        <Bounds left="704dp" top="72dp" right="984dp" bottom="384dp"/>
+        <Focus onTransition="true"/>
+    </Variant>
+    <Variant id="@+id/hidden">
+        <Layer layer="10"/>
+        <Visibility isVisible="false"/>
+        <Alpha alpha="0.0"/>
+        <Corner radius="28dp"/>
+        <Bounds left="704dp" top="72dp" right="984dp" bottom="384dp"/>
+        <Focus onTransition="false"/>
+    </Variant>
+    <Transitions>
+        <Transition onEvent="toggle_map_fullscreen" fromVariant="@id/visible" toVariant="@id/hidden" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="toggle_map_fullscreen" fromVariant="@id/hidden" toVariant="@id/visible" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
+        <!-- Explicit hidden→visible so HOME restores cards after map fullscreen. -->
+        <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/hidden" toVariant="@id/visible" duration="0"/>
+        <Transition onEvent="_System_OnHomeEvent" toVariant="@id/visible" duration="0"/>
+    </Transitions>
+</DecorPanel>

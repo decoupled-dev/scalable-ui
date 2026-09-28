@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- OEM-overridable Pleos palette -->
-    <color name="sysui_bar_background">#E6121416</color>
+    <color name="sysui_bar_background">#FF121416</color>
     <color name="sysui_bar_divider">#33FFFFFF</color>
     <color name="sysui_bar_text_primary">#FFFFFFFF</color>
     <color name="sysui_bar_text_secondary">#B3FFFFFF</color>

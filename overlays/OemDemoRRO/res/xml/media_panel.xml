@@ -4,7 +4,7 @@
         <Visibility isVisible="true"/>
         <Alpha alpha="1.0"/>
         <Corner radius="32dp"/>
-        <Bounds left="24dp" top="84dp" right="600dp" bottom="480dp"/>
+        <Bounds left="736dp" top="72dp" right="1032dp" bottom="372dp"/>
         <Focus onTransition="true"/>
     </Variant>
     <Variant id="@+id/offscreen_left">
@@ -20,7 +20,7 @@
         <Visibility isVisible="true"/>
         <Alpha alpha="1.0"/>
         <Corner radius="48dp"/>
-        <Bounds left="24dp" top="84dp" right="600dp" bottom="480dp"/>
+        <Bounds left="736dp" top="72dp" right="1032dp" bottom="372dp"/>
         <Focus onTransition="false"/>
     </Variant>
     <Variant id="@+id/closed">
@@ -28,7 +28,7 @@
         <Visibility isVisible="false"/>
         <Alpha alpha="0.0"/>
         <Corner radius="48dp"/>
-        <Bounds left="24dp" top="84dp" right="600dp" bottom="480dp"/>
+        <Bounds left="736dp" top="72dp" right="1032dp" bottom="372dp"/>
         <Focus onTransition="false"/>
     </Variant>
     <Variant id="@+id/media_stacked">
@@ -89,10 +89,11 @@
     </Variant>
     <Transitions>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=media_source_panel" toVariant="@id/media_stacked" duration="400" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=map_panel" toVariant="@id/offscreen_left" duration="900" interpolator="@anim/pleos_fluid_interpolator"/>
+        <!-- duration=0: avoid media card fade-in flashing under App Grid as it closes (All Apps→Home). -->
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=map_panel" toVariant="@id/opened" duration="0"/>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=app_panel" toVariant="@id/stacked" duration="700" interpolator="@anim/pleos_fluid_interpolator"/>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=panel_app_grid" toVariant="@id/closed" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="_System_OnHomeEvent" toVariant="@id/opened" duration="800" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="_System_OnHomeEvent" toVariant="@id/opened" duration="0"/>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=media_panel" toVariant="@id/opened" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=home_panel" toVariant="@id/opened" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
         <Transition onEvent="show_page2" fromVariant="@id/opened" toVariant="@id/page2_is_visible" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>

@@ -9,7 +9,8 @@
     <string name="sysui_seat_temp_format" translatable="false">Seat %.0f</string>
     <string name="sysui_media_not_playing">Not Playing</string>
     <string name="sysui_nav_all_apps">All Apps</string>
-    <string name="sysui_nav_recent">Recent</string>
+    <string name="sysui_nav_home">Home</string>
+    <string name="sysui_nav_recent">Recent Apps</string>
     <string name="sysui_nav_pinned">Pinned</string>
     <string name="sysui_vhal_disconnected">Climate unavailable</string>
     <string name="sysui_content_desc_hvac_up">Increase temperature</string>

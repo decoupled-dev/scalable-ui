@@ -18,6 +18,7 @@ package com.android.systemui.car.wm.scalableui.panel.controller.vhal;
 
 import android.car.Car;
 import android.car.CarNotConnectedException;
+import android.car.hardware.CarPropertyConfig;
 import android.car.hardware.property.CarPropertyManager;
 import android.content.Context;
 import android.os.Handler;
@@ -119,6 +120,13 @@ public final class CarVhalSubscriptionHelper {
             Log.w(TAG, "subscribe: CarPropertyManager unavailable for property " + propertyId);
             return false;
         }
+        // Idempotent — avoid double-register when attach + onVhalConnected both fire.
+        if (mCallbacks.get(propertyId) == callback) {
+            return true;
+        }
+        if (mCallbacks.get(propertyId) != null) {
+            unsubscribe(propertyId);
+        }
         try {
             mCallbacks.put(propertyId, callback);
             mCarPropertyManager.registerCallback(callback, propertyId,
@@ -167,11 +175,20 @@ public final class CarVhalSubscriptionHelper {
             return false;
         }
         try {
-            mCarPropertyManager.setFloatProperty(propertyId, areaId, value);
+            float clamped = clampFloat(propertyId, areaId, value);
+            mCarPropertyManager.setFloatProperty(propertyId, areaId, clamped);
             return true;
         } catch (CarNotConnectedException e) {
             Log.e(TAG, "CarNotConnectedException writing " + propertyId, e);
             notifyDisconnected();
+            return false;
+        } catch (IllegalArgumentException e) {
+            // Out-of-range HVAC temps (etc.) must not crash SystemUI.
+            Log.w(TAG, "Rejected float write prop=" + propertyId + " area=" + areaId
+                    + " value=" + value + ": " + e.getMessage());
+            return false;
+        } catch (Exception e) {
+            Log.e(TAG, "Failed float write prop=" + propertyId + " area=" + areaId, e);
             return false;
         }
     }
@@ -194,13 +211,62 @@ public final class CarVhalSubscriptionHelper {
             return false;
         }
         try {
-            mCarPropertyManager.setIntProperty(propertyId, areaId, value);
+            int clamped = clampInt(propertyId, areaId, value);
+            mCarPropertyManager.setIntProperty(propertyId, areaId, clamped);
             return true;
         } catch (CarNotConnectedException e) {
             Log.e(TAG, "CarNotConnectedException writing " + propertyId, e);
             notifyDisconnected();
             return false;
+        } catch (IllegalArgumentException e) {
+            Log.w(TAG, "Rejected int write prop=" + propertyId + " area=" + areaId
+                    + " value=" + value + ": " + e.getMessage());
+            return false;
+        } catch (Exception e) {
+            Log.e(TAG, "Failed int write prop=" + propertyId + " area=" + areaId, e);
+            return false;
         }
+    }
+
+    /** Clamp to CarPropertyConfig area min/max when available. */
+    private float clampFloat(int propertyId, int areaId, float value) {
+        try {
+            CarPropertyConfig<?> config = mCarPropertyManager.getCarPropertyConfig(propertyId);
+            if (config == null) {
+                return value;
+            }
+            Object minObj = config.getMinValue(areaId);
+            Object maxObj = config.getMaxValue(areaId);
+            if (minObj instanceof Number) {
+                value = Math.max(((Number) minObj).floatValue(), value);
+            }
+            if (maxObj instanceof Number) {
+                value = Math.min(((Number) maxObj).floatValue(), value);
+            }
+        } catch (Exception e) {
+            Log.w(TAG, "clampFloat failed prop=" + propertyId, e);
+        }
+        return value;
+    }
+
+    private int clampInt(int propertyId, int areaId, int value) {
+        try {
+            CarPropertyConfig<?> config = mCarPropertyManager.getCarPropertyConfig(propertyId);
+            if (config == null) {
+                return value;
+            }
+            Object minObj = config.getMinValue(areaId);
+            Object maxObj = config.getMaxValue(areaId);
+            if (minObj instanceof Number) {
+                value = Math.max(((Number) minObj).intValue(), value);
+            }
+            if (maxObj instanceof Number) {
+                value = Math.min(((Number) maxObj).intValue(), value);
+            }
+        } catch (Exception e) {
+            Log.w(TAG, "clampInt failed prop=" + propertyId, e);
+        }
+        return value;
     }
 
     private void onCarReady(Car car) {
@@ -221,6 +287,7 @@ public final class CarVhalSubscriptionHelper {
     private void onCarDisconnected() {
         mConnected = false;
         mCarPropertyManager = null;
+        mCallbacks.clear();
         notifyDisconnected();
     }
 

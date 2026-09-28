@@ -1,10 +1,11 @@
 <TaskPanel id="app_panel" defaultVariant="@id/closed" role="@array/app_panel_components" displayId="0">
+    <!-- Cover map + cards only; bottom 700dp leaves oem_dock (708–800dp) touchable. -->
     <Variant id="@+id/opened">
         <Layer layer="15"/>
         <Visibility isVisible="true"/>
         <Alpha alpha="1.0"/>
         <Corner radius="32dp"/>
-        <Bounds left="24dp" top="84dp" right="704dp" bottom="716dp"/>
+        <Bounds left="16dp" top="72dp" right="1264dp" bottom="700dp"/>
         <Focus onTransition="true"/>
     </Variant>
     <Variant id="@+id/fullscreen">
@@ -17,10 +18,10 @@
     </Variant>
     <Variant id="@+id/closed">
         <Layer layer="15"/>
-        <Visibility isVisible="true"/>
+        <Visibility isVisible="false"/>
         <Alpha alpha="0.0"/>
         <Corner radius="32dp"/>
-        <Bounds left="-600dp" top="84dp" right="0dp" bottom="716dp"/>
+        <Bounds left="-600dp" top="84dp" right="0dp" bottom="700dp"/>
         <Focus onTransition="false"/>
     </Variant>
     <Variant id="@+id/page2_opened">
@@ -32,8 +33,11 @@
         <Focus onTransition="true"/>
     </Variant>
     <Transitions>
-        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=app_panel" fromVariant="@id/closed" toVariant="@id/opened" duration="1420" delay="150" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=app_panel" toVariant="@id/opened" duration="400" interpolator="@anim/pleos_fluid_interpolator"/>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=panel_app_grid" toVariant="@id/closed" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=settings_panel" toVariant="@id/closed" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=map_panel" toVariant="@id/closed" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=hvac_left_panel" toVariant="@id/closed" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
         <Transition onEvent="_System_OnHomeEvent" toVariant="@id/closed" duration="400" interpolator="@anim/pleos_fluid_interpolator"/>
         <Transition onEvent="show_page2" fromVariant="@id/opened" toVariant="@id/page2_opened" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
         <Transition onEvent="toggle_fullscreen" fromVariant="@id/opened" toVariant="@id/fullscreen" duration="400" interpolator="@anim/pleos_fluid_interpolator"/>

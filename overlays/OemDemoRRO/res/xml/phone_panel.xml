@@ -3,8 +3,8 @@
         <Layer layer="6"/>
         <Visibility isVisible="true"/>
         <Alpha alpha="1.0"/>
-        <Corner radius="48dp"/>
-        <Bounds left="432dp" top="84dp" right="816dp" bottom="896dp"/>
+        <Corner radius="28dp"/>
+        <Bounds left="736dp" top="388dp" right="1000dp" bottom="700dp"/>
         <Focus onTransition="true"/>
     </Variant>
     <Variant id="@+id/offscreen_left">
@@ -87,10 +87,11 @@
     </Variant>
     <Transitions>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=media_source_panel" toVariant="@id/media_stacked" duration="600" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=map_panel" toVariant="@id/offscreen_left" duration="900" interpolator="@anim/pleos_fluid_interpolator"/>
+        <!-- OEM home keeps phone as a right-side card; map TaskOpen must not slide it offscreen. -->
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=map_panel" toVariant="@id/opened" duration="0"/>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=app_panel" toVariant="@id/stacked" duration="400" interpolator="@anim/pleos_fluid_interpolator"/>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=settings_panel" toVariant="@id/settings_stacked" duration="500" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="_System_OnHomeEvent" toVariant="@id/opened" duration="800" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="_System_OnHomeEvent" toVariant="@id/opened" duration="0"/>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=phone_panel" toVariant="@id/opened" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
         <Transition onEvent="show_page2" fromVariant="@id/opened" toVariant="@id/page2_opened" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
         <Transition onEvent="show_page2" fromVariant="@id/media_stacked" toVariant="@id/page2_opened" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>

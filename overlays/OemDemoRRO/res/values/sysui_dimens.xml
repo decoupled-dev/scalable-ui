@@ -4,23 +4,24 @@
     <dimen name="sysui_canvas_width">1280dp</dimen>
     <dimen name="sysui_canvas_height">800dp</dimen>
 
-    <!-- Header bar geometry -->
-    <dimen name="sysui_scalable_header_height">84dp</dimen>
-    <dimen name="sysui_scalable_header_top">0dp</dimen>
-    <dimen name="sysui_scalable_header_bottom">84dp</dimen>
+    <!-- Floating climate pills -->
+    <dimen name="sysui_scalable_header_height">72dp</dimen>
+    <dimen name="sysui_scalable_header_top">16dp</dimen>
+    <dimen name="sysui_scalable_header_bottom">88dp</dimen>
 
-    <!-- Dual-zone column widths (Col 1 + Col 2 = driver, Col 3 + Col 4 = passenger) -->
     <dimen name="sysui_driver_zone_left">16dp</dimen>
-    <dimen name="sysui_driver_zone_right">616dp</dimen>
-    <dimen name="sysui_passenger_zone_left">664dp</dimen>
+    <dimen name="sysui_driver_zone_right">360dp</dimen>
+    <dimen name="sysui_passenger_zone_left">920dp</dimen>
     <dimen name="sysui_passenger_zone_right">1264dp</dimen>
     <dimen name="sysui_zone_divider_width">2dp</dimen>
 
-    <!-- Footer bar geometry -->
-    <dimen name="sysui_scalable_footer_height">84dp</dimen>
-    <dimen name="sysui_scalable_footer_top">716dp</dimen>
-    <dimen name="sysui_scalable_footer_bottom">800dp</dimen>
-    <dimen name="sysui_scalable_footer_media_left">240dp</dimen>
+    <!-- Floating navigation pill, centered on the canvas -->
+    <dimen name="sysui_scalable_footer_height">76dp</dimen>
+    <dimen name="sysui_scalable_footer_left">24dp</dimen>
+    <dimen name="sysui_scalable_footer_right">424dp</dimen>
+    <dimen name="sysui_scalable_footer_top">712dp</dimen>
+    <dimen name="sysui_scalable_footer_bottom">788dp</dimen>
+    <dimen name="sysui_scalable_footer_media_left">320dp</dimen>
     <dimen name="sysui_scalable_footer_media_right">1040dp</dimen>
     <dimen name="sysui_scalable_footer_media_width">800dp</dimen>
 

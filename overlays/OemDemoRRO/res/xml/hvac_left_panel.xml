@@ -1,27 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TaskPanel id="hvac_left_panel" defaultVariant="@id/hvac_hidden" role="hvac_left_panel" displayId="0">
+<!-- OEM HVAC panel: fan/dock show_hvac slides this up; ClimateActivity fills it. -->
+<TaskPanel id="hvac_left_panel" defaultVariant="@id/hvac_hidden"
+    role="@string/mockwidgets_climate_activity_componentName" displayId="0">
     <Variant id="@+id/hvac_hidden">
-        <Layer layer="14"/>
-        <Visibility isVisible="true"/>
+        <Layer layer="16"/>
+        <Visibility isVisible="false"/>
         <Alpha alpha="0.0"/>
-        <Corner radius="48dp"/>
-        <Bounds left="24dp" top="776dp" right="600dp" bottom="900dp"/>
+        <Corner radius="28dp"/>
+        <Bounds left="16dp" top="700dp" right="700dp" bottom="700dp"/>
         <Focus onTransition="false"/>
     </Variant>
     <Variant id="@+id/hvac_expanded">
-        <Layer layer="14"/>
+        <Layer layer="16"/>
         <Visibility isVisible="true"/>
         <Alpha alpha="1.0"/>
-        <Corner radius="48dp"/>
-        <Bounds left="24dp" top="300dp" right="600dp" bottom="900dp"/>
+        <Corner radius="28dp"/>
+        <Bounds left="16dp" top="120dp" right="700dp" bottom="700dp"/>
         <Focus onTransition="true"/>
     </Variant>
-
     <Transitions>
-        <Transition onEvent="show_hvac" fromVariant="@id/hvac_hidden" toVariant="@id/hvac_expanded" duration="500" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="hide_hvac" fromVariant="@id/hvac_expanded" toVariant="@id/hvac_hidden" duration="400" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/hvac_expanded" toVariant="@id/hvac_hidden" duration="400" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="show_two_panel" fromVariant="@id/hvac_expanded" toVariant="@id/hvac_hidden" duration="400" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="show_page2" fromVariant="@id/hvac_expanded" toVariant="@id/hvac_hidden" duration="400" interpolator="@anim/pleos_fluid_interpolator"/>
+        <!-- duration=0: apply expanded immediately so TaskOpen reconcile sees visible state -->
+        <Transition onEvent="show_hvac" toVariant="@id/hvac_expanded" duration="0"/>
+        <Transition onEvent="hide_hvac" toVariant="@id/hvac_hidden" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=hvac_left_panel" toVariant="@id/hvac_expanded" duration="0"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=panel_app_grid" toVariant="@id/hvac_hidden" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=app_panel" toVariant="@id/hvac_hidden" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=settings_panel" toVariant="@id/hvac_hidden" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="_System_OnHomeEvent" toVariant="@id/hvac_hidden" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
     </Transitions>
 </TaskPanel>

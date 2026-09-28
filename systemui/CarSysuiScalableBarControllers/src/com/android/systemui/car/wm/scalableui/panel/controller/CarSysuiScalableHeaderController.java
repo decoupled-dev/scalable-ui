@@ -17,6 +17,7 @@
 package com.android.systemui.car.wm.scalableui.panel.controller;
 
 import android.car.VehicleAreaSeat;
+import android.car.hardware.CarHvacFanDirection;
 import android.car.VehiclePropertyIds;
 import android.car.hardware.CarPropertyValue;
 import android.car.hardware.property.CarPropertyManager;
@@ -75,6 +76,16 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
     private ImageButton mPassengerSeatUp;
     private ImageButton mPassengerSeatDown;
 
+    // Fan direction / speed (climate card)
+    private View mVentDefrost;
+    private View mVentFace;
+    private View mVentFeet;
+    private View mFanSpeedBtn;
+    private int mFanDirection = CarHvacFanDirection.FACE;
+    private int mFanSpeed = 3;
+    private static final int FAN_SPEED_MIN = 1;
+    private static final int FAN_SPEED_MAX = 7;
+
     // Chrome scrims
     private View mHeaderUxScrim;
     private View mHeaderVhalScrim;
@@ -88,12 +99,26 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
                         return;
                     }
                     int area = value.getAreaId();
-                    if (value.getPropertyId() == VehiclePropertyIds.HVAC_TEMPERATURE_SET) {
-                        float temp = (Float) value.getValue();
+                    int prop = value.getPropertyId();
+                    Object raw = value.getValue();
+                    if (prop == VehiclePropertyIds.HVAC_TEMPERATURE_SET && raw instanceof Float) {
+                        float temp = (Float) raw;
                         runOnViewThread(() -> updateHvacDisplay(area, temp));
-                    } else if (value.getPropertyId() == VehiclePropertyIds.HVAC_SEAT_TEMPERATURE) {
-                        int seatTemp = (Integer) value.getValue();
+                    } else if (prop == VehiclePropertyIds.HVAC_SEAT_TEMPERATURE
+                            && raw instanceof Integer) {
+                        int seatTemp = (Integer) raw;
                         runOnViewThread(() -> updateSeatDisplay(area, seatTemp));
+                    } else if (prop == VehiclePropertyIds.HVAC_FAN_DIRECTION
+                            && raw instanceof Integer && area == AREA_DRIVER) {
+                        int dir = (Integer) raw;
+                        runOnViewThread(() -> updateFanDirectionUi(dir));
+                    } else if (prop == VehiclePropertyIds.HVAC_FAN_SPEED
+                            && raw instanceof Integer && area == AREA_DRIVER) {
+                        int speed = (Integer) raw;
+                        runOnViewThread(() -> {
+                            mFanSpeed = speed;
+                            refreshFanSpeedUi();
+                        });
                     }
                 }
 
@@ -136,8 +161,10 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
 
     @Override
     protected String getLayoutResourceName() {
-        if ("sysui_driver_zone_panel".equals(mPanelId)) {
-            return "car_sysui_scalable_header_driver_zone";
+        if ("oem_climate_card".equals(mPanelId)
+                || "sysui_driver_zone_panel".equals(mPanelId)) {
+            // oem_climate_card.xml panel id is sysui_driver_zone_panel — use OEM layout.
+            return "oem_climate_card";
         }
         if ("sysui_passenger_zone_panel".equals(mPanelId)) {
             return "car_sysui_scalable_header_passenger_zone";
@@ -149,8 +176,20 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
     protected void bindViews(View root) {
         bindDriverZone(root);
         bindPassengerZone(root);
+        bindClimateExtras(root);
         bindChromeScrim(root);
         wireClickListeners();
+    }
+
+    private void bindClimateExtras(View root) {
+        mVentDefrost = findButton(root, "oem_vent_defrost");
+        mVentFace = findButton(root, "oem_vent_face");
+        mVentFeet = findButton(root, "oem_vent_feet");
+        mFanSpeedBtn = findButton(root, "oem_fan_speed");
+        if (mFanSpeedBtn == null) {
+            int id = resolveRroId("oem_fan_speed");
+            mFanSpeedBtn = id != 0 ? root.findViewById(id) : null;
+        }
     }
 
     private void bindDriverZone(View root) {
@@ -222,12 +261,29 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
             mPassengerSeatDown.setOnClickListener(
                     v -> adjustSeat(AREA_PASSENGER, -SEAT_TEMP_STEP));
         }
+        if (mVentDefrost != null) {
+            mVentDefrost.setOnClickListener(
+                    v -> setFanDirection(CarHvacFanDirection.DEFROST));
+        }
+        if (mVentFace != null) {
+            mVentFace.setOnClickListener(
+                    v -> setFanDirection(CarHvacFanDirection.FACE));
+        }
+        if (mVentFeet != null) {
+            mVentFeet.setOnClickListener(
+                    v -> setFanDirection(CarHvacFanDirection.FLOOR));
+        }
+        if (mFanSpeedBtn != null) {
+            mFanSpeedBtn.setOnClickListener(v -> cycleFanSpeed());
+        }
     }
 
     @Override
     protected void onControllerAttached() {
         mVhalHelper.subscribe(VehiclePropertyIds.HVAC_TEMPERATURE_SET, 0, mHvacCallback);
         mVhalHelper.subscribe(VehiclePropertyIds.HVAC_SEAT_TEMPERATURE, 0, mHvacCallback);
+        mVhalHelper.subscribe(VehiclePropertyIds.HVAC_FAN_DIRECTION, 0, mHvacCallback);
+        mVhalHelper.subscribe(VehiclePropertyIds.HVAC_FAN_SPEED, 0, mHvacCallback);
         readInitialValues();
         refreshAllDisplays();
     }
@@ -236,6 +292,8 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
     protected void onControllerDetached() {
         mVhalHelper.unsubscribe(VehiclePropertyIds.HVAC_TEMPERATURE_SET);
         mVhalHelper.unsubscribe(VehiclePropertyIds.HVAC_SEAT_TEMPERATURE);
+        mVhalHelper.unsubscribe(VehiclePropertyIds.HVAC_FAN_DIRECTION);
+        mVhalHelper.unsubscribe(VehiclePropertyIds.HVAC_FAN_SPEED);
     }
 
     private void readInitialValues() {
@@ -259,6 +317,16 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
         if (passengerSeat != null) {
             mPassengerSeatTemp = passengerSeat;
         }
+        Integer fanDir = mVhalHelper.getIntProperty(
+                VehiclePropertyIds.HVAC_FAN_DIRECTION, AREA_DRIVER);
+        if (fanDir != null) {
+            mFanDirection = fanDir;
+        }
+        Integer fanSpeed = mVhalHelper.getIntProperty(
+                VehiclePropertyIds.HVAC_FAN_SPEED, AREA_DRIVER);
+        if (fanSpeed != null) {
+            mFanSpeed = fanSpeed;
+        }
     }
 
     private void adjustHvac(int area, float delta) {
@@ -266,9 +334,17 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
             return;
         }
         float current = area == AREA_DRIVER ? mDriverHvacTemp : mPassengerHvacTemp;
+        Float live = mVhalHelper.getFloatProperty(
+                VehiclePropertyIds.HVAC_TEMPERATURE_SET, area);
+        if (live != null) {
+            current = live;
+        }
         float next = current + delta;
+        // Helper clamps to VHAL min/max and swallows IllegalArgumentException.
         if (mVhalHelper.setFloatProperty(VehiclePropertyIds.HVAC_TEMPERATURE_SET, area, next)) {
-            updateHvacDisplay(area, next);
+            Float applied = mVhalHelper.getFloatProperty(
+                    VehiclePropertyIds.HVAC_TEMPERATURE_SET, area);
+            updateHvacDisplay(area, applied != null ? applied : next);
         }
     }
 
@@ -322,6 +398,54 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
         updateHvacDisplay(AREA_PASSENGER, mPassengerHvacTemp);
         updateSeatDisplay(AREA_DRIVER, mDriverSeatTemp);
         updateSeatDisplay(AREA_PASSENGER, mPassengerSeatTemp);
+        updateFanDirectionUi(mFanDirection);
+        refreshFanSpeedUi();
+    }
+
+    private void setFanDirection(int direction) {
+        if (mFullyRestricted || !mVhalConnected) {
+            return;
+        }
+        if (mVhalHelper.setIntProperty(
+                VehiclePropertyIds.HVAC_FAN_DIRECTION, AREA_DRIVER, direction)) {
+            updateFanDirectionUi(direction);
+        }
+    }
+
+    private void cycleFanSpeed() {
+        if (mFullyRestricted || !mVhalConnected) {
+            return;
+        }
+        int next = mFanSpeed >= FAN_SPEED_MAX ? FAN_SPEED_MIN : mFanSpeed + 1;
+        if (mVhalHelper.setIntProperty(
+                VehiclePropertyIds.HVAC_FAN_SPEED, AREA_DRIVER, next)) {
+            mFanSpeed = next;
+            refreshFanSpeedUi();
+        }
+    }
+
+    private void updateFanDirectionUi(int direction) {
+        mFanDirection = direction;
+        setClimateBtnActive(mVentFace, (direction & CarHvacFanDirection.FACE) != 0);
+        setClimateBtnActive(mVentFeet, (direction & CarHvacFanDirection.FLOOR) != 0);
+        setClimateBtnActive(mVentDefrost, (direction & CarHvacFanDirection.DEFROST) != 0);
+    }
+
+    private void refreshFanSpeedUi() {
+        if (mFanSpeedBtn != null) {
+            mFanSpeedBtn.setAlpha(0.45f + (0.55f * (mFanSpeed / (float) FAN_SPEED_MAX)));
+            mFanSpeedBtn.setContentDescription("Fan speed " + mFanSpeed);
+        }
+    }
+
+    private void setClimateBtnActive(View btn, boolean active) {
+        if (btn == null || mRroContext == null) {
+            return;
+        }
+        int res = resolveRroDrawable(active ? "oem_climate_btn_active" : "oem_climate_btn");
+        if (res != 0) {
+            btn.setBackground(mRroContext.getDrawable(res));
+        }
     }
 
     @Override
@@ -336,6 +460,10 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
         setViewEnabled(mPassengerHvacDown, enabled);
         setViewEnabled(mPassengerSeatUp, enabled);
         setViewEnabled(mPassengerSeatDown, enabled);
+        setViewEnabled(mVentDefrost, enabled);
+        setViewEnabled(mVentFace, enabled);
+        setViewEnabled(mVentFeet, enabled);
+        setViewEnabled(mFanSpeedBtn, enabled);
     }
 
     @Override
@@ -358,6 +486,7 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
         pw.println("  passengerHvacTemp=" + mPassengerHvacTemp + "C");
         pw.println("  driverSeatTemp=" + mDriverSeatTemp);
         pw.println("  passengerSeatTemp=" + mPassengerSeatTemp);
+        pw.println("  fanDirection=" + mFanDirection + " fanSpeed=" + mFanSpeed);
         pw.println("  panelLayout=" + getLayoutResourceName());
     }
 }

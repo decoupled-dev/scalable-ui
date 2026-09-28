@@ -8,15 +8,15 @@
     displayId="0">
 
     <Variant id="@+id/header_visible">
-        <Layer layer="20"/>
+        <Layer layer="0"/>
         <Visibility isVisible="true"/>
         <Alpha alpha="1.0"/>
-        <Corner radius="@dimen/sysui_bar_corner_radius"/>
+        <Corner radius="0dp"/>
         <Bounds
             left="0dp"
-            top="@dimen/sysui_scalable_header_top"
+            top="0dp"
             right="@dimen/sysui_canvas_width"
-            bottom="@dimen/sysui_scalable_header_bottom"/>
+            bottom="@dimen/sysui_canvas_height"/>
         <Focus onTransition="false"/>
     </Variant>
 

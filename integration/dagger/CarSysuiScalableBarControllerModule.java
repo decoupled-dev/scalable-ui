@@ -25,6 +25,7 @@ package com.android.systemui.car.wm.scalableui.panel.controller;
 import android.content.Context;
 
 import com.android.car.scalableui.panel.DecorPanelController;
+import com.android.systemui.car.hvac.HvacPanelOverlayViewController;
 
 import dagger.Module;
 import dagger.Provides;
@@ -47,13 +48,18 @@ public abstract class CarSysuiScalableBarControllerModule {
         return new CarSysuiScalableHeaderController.Factory(context);
     }
 
-    /** Provides the footer nav / media playback controller factory. */
+    /**
+     * Provides the footer nav / media playback controller factory.
+     * Injects AOSP HVAC panel toggle so the OEM dock FAN opens HvacPanelOverlay.
+     */
     @Provides
     @IntoMap
     @ClassKey(CarSysuiScalableFooterController.class)
     static DecorPanelController.Factory<?> provideScalableFooterControllerFactory(
-            Context context) {
-        return new CarSysuiScalableFooterController.Factory(context);
+            Context context,
+            HvacPanelOverlayViewController hvacPanelOverlayViewController) {
+        return new CarSysuiScalableFooterController.Factory(
+                context, hvacPanelOverlayViewController::toggle);
     }
 
     /** Provides the face login decor panel controller factory. */

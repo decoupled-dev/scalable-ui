@@ -16,6 +16,7 @@
 
 package com.android.systemui.car.wm.scalableui.panel.controller;
 
+import android.app.ActivityManager;
 import android.car.drivingstate.CarUxRestrictions;
 import android.car.drivingstate.CarUxRestrictionsManager;
 import android.content.Context;
@@ -49,6 +50,7 @@ public abstract class CarSysuiScalableBarControllerBase implements ScalableDecor
 
     protected final CarVhalSubscriptionHelper mVhalHelper = new CarVhalSubscriptionHelper();
     protected CarUxRestrictionsManager mUxRestrictionsManager;
+    private android.car.Car mUxCar;
     protected boolean mFullyRestricted;
     protected boolean mVhalConnected;
 
@@ -81,6 +83,7 @@ public abstract class CarSysuiScalableBarControllerBase implements ScalableDecor
             return;
         }
         mAttached = true;
+        Log.i(TAG, "onPanelAttached panel=" + mPanelId);
         mVhalHelper.addConnectionListener(this);
         mVhalHelper.start(mContext);
         registerUxRestrictions();
@@ -134,6 +137,13 @@ public abstract class CarSysuiScalableBarControllerBase implements ScalableDecor
                     onPanelDetached();
                 }
             });
+            // SurfaceControl / WM Shell may attach before the listener is registered, or
+            // never deliver the callback for some DecorPanel hosts — bind immediately too.
+            if (mView.isAttachedToWindow()) {
+                onPanelAttached();
+            } else {
+                mView.post(this::onPanelAttached);
+            }
         }
         return mView;
     }
@@ -230,11 +240,11 @@ public abstract class CarSysuiScalableBarControllerBase implements ScalableDecor
 
     private void registerUxRestrictions() {
         try {
-            android.car.Car car = android.car.Car.createCar(mContext);
-            if (car == null) {
+            mUxCar = android.car.Car.createCar(mContext);
+            if (mUxCar == null) {
                 return;
             }
-            mUxRestrictionsManager = (CarUxRestrictionsManager) car.getCarManager(
+            mUxRestrictionsManager = (CarUxRestrictionsManager) mUxCar.getCarManager(
                     android.car.Car.CAR_UX_RESTRICTION_SERVICE);
             if (mUxRestrictionsManager != null) {
                 mUxRestrictionsManager.registerListener(this);
@@ -253,6 +263,14 @@ public abstract class CarSysuiScalableBarControllerBase implements ScalableDecor
                 Log.w(TAG, "Failed to unregister UX listener", e);
             }
             mUxRestrictionsManager = null;
+        }
+        if (mUxCar != null) {
+            try {
+                mUxCar.disconnect();
+            } catch (Exception e) {
+                Log.w(TAG, "Failed to disconnect UX Car", e);
+            }
+            mUxCar = null;
         }
     }
 

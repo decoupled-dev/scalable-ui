@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TaskPanel id="home_panel" defaultVariant="@id/opened" displayId="0">
+<!-- Full-screen CarLauncher home stays closed so it does not duplicate the media card. -->
+<TaskPanel id="home_panel" defaultVariant="@id/closed" displayId="0">
     <Variant id="@+id/opened">
         <Layer layer="0"/>
         <Visibility isVisible="true"/>
@@ -7,4 +8,14 @@
         <Bounds left="0dp" top="0dp" right="1280dp" bottom="800dp"/>
         <Focus onTransition="false"/>
     </Variant>
+    <Variant id="@+id/closed">
+        <Layer layer="0"/>
+        <Visibility isVisible="false"/>
+        <Alpha alpha="0.0"/>
+        <Bounds left="-1280dp" top="0dp" right="0dp" bottom="800dp"/>
+        <Focus onTransition="false"/>
+    </Variant>
+    <Transitions>
+        <Transition onEvent="_System_OnHomeEvent" toVariant="@id/closed" duration="0"/>
+    </Transitions>
 </TaskPanel>

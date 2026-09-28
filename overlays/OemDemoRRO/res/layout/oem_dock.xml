@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Interactive OEM dock — wired by CarSysuiScalableFooterController -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/sysui_footer_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/sysui_footer_root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/oem_dock_bg"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/oem_hvac_pill"
+            android:paddingStart="12dp"
+            android:paddingEnd="8dp">
+
+            <TextView
+                android:id="@+id/sysui_driver_hvac_temp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="22°"
+                android:textColor="#FFEAF6FF"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:layout_marginEnd="8dp" />
+
+            <ImageButton
+                android:id="@+id/sysui_driver_hvac_down"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_sysui_hvac_down"
+                android:background="@drawable/oem_climate_btn_flat"
+                android:padding="9dp"
+                android:scaleType="centerInside"
+                android:contentDescription="@string/sysui_content_desc_hvac_down" />
+
+            <ImageButton
+                android:id="@+id/sysui_driver_hvac_up"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="4dp"
+                android:src="@drawable/ic_sysui_hvac_up"
+                android:background="@drawable/oem_climate_btn_flat"
+                android:padding="9dp"
+                android:scaleType="centerInside"
+                android:contentDescription="@string/sysui_content_desc_hvac_up" />
+        </LinearLayout>
+
+        <!-- Seat heat / vent — wired to VHAL by FooterController. -->
+        <ImageButton
+            android:id="@+id/oem_seat_heat"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="12dp"
+            android:src="@drawable/ic_sysui_seat_heat"
+            android:background="@drawable/oem_climate_btn"
+            android:padding="10dp"
+            android:scaleType="centerInside"
+            android:contentDescription="Seat heat" />
+
+        <ImageButton
+            android:id="@+id/oem_seat_vent"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_nav_seat"
+            android:background="@drawable/oem_climate_btn"
+            android:padding="10dp"
+            android:scaleType="centerInside"
+            android:contentDescription="Seat" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="0.45" />
+
+        <LinearLayout
+            android:id="@+id/sysui_nav_all_apps_column"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless">
+
+            <ImageButton
+                android:id="@+id/sysui_nav_all_apps"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:src="@drawable/ic_sysui_all_apps"
+                android:background="@drawable/oem_circle_blue"
+                android:scaleType="centerInside"
+                android:padding="14dp"
+                android:clickable="false"
+                android:focusable="false"
+                android:contentDescription="@string/sysui_nav_all_apps" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="ALL APPS"
+                android:textColor="#EEFFFFFF"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.04" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/sysui_nav_home_column"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="24dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless">
+
+            <ImageButton
+                android:id="@+id/sysui_nav_home"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/ic_nav_home"
+                android:background="@drawable/oem_circle_home"
+                android:scaleType="centerInside"
+                android:padding="15dp"
+                android:clickable="false"
+                android:focusable="false"
+                android:contentDescription="@string/sysui_nav_home" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="HOME"
+                android:textColor="#FFFFFFFF"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.04" />
+        </LinearLayout>
+
+        <!-- Prominent AOSP HVAC launcher (center dock, between HOME and RECENT). -->
+        <LinearLayout
+            android:id="@+id/oem_hvac_nav_column"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="24dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless">
+
+            <ImageButton
+                android:id="@+id/oem_launch_hvac_panel"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:src="@drawable/ic_nav_fan"
+                android:background="@drawable/oem_circle_blue"
+                android:scaleType="centerInside"
+                android:padding="12dp"
+                android:clickable="false"
+                android:focusable="false"
+                android:contentDescription="Climate" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="CLIMATE"
+                android:textColor="#EEFFFFFF"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.04" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/sysui_nav_recent_column"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="24dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless">
+
+            <ImageButton
+                android:id="@+id/sysui_nav_recent"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:src="@drawable/ic_sysui_recent"
+                android:background="@drawable/oem_circle_green"
+                android:scaleType="centerInside"
+                android:padding="14dp"
+                android:clickable="false"
+                android:focusable="false"
+                android:contentDescription="@string/sysui_nav_recent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="RECENT"
+                android:textColor="#EEFFFFFF"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.04" />
+        </LinearLayout>
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="0.45" />
+
+        <ImageButton
+            android:id="@+id/oem_launch_climate"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:src="@drawable/oem_ic_vent_windshield"
+            android:background="@drawable/oem_climate_btn"
+            android:padding="10dp"
+            android:scaleType="centerInside"
+            android:contentDescription="HVAC" />
+
+        <!-- Fan = primary HVAC slide-up affordance (was sysui_nav_pinned / Favorites). -->
+        <ImageButton
+            android:id="@+id/oem_launch_hvac"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_nav_fan"
+            android:background="@drawable/oem_climate_btn_active"
+            android:padding="10dp"
+            android:scaleType="centerInside"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="HVAC" />
+
+        <!-- Passenger zone HVAC (ROW_1_RIGHT) — mirrors driver pill on the left. -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="56dp"
+            android:layout_marginStart="12dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/oem_hvac_pill"
+            android:paddingStart="8dp"
+            android:paddingEnd="12dp">
+
+            <ImageButton
+                android:id="@+id/sysui_passenger_hvac_down"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_sysui_hvac_down"
+                android:background="@drawable/oem_climate_btn_flat"
+                android:padding="9dp"
+                android:scaleType="centerInside"
+                android:contentDescription="@string/sysui_content_desc_hvac_down" />
+
+            <ImageButton
+                android:id="@+id/sysui_passenger_hvac_up"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="4dp"
+                android:src="@drawable/ic_sysui_hvac_up"
+                android:background="@drawable/oem_climate_btn_flat"
+                android:padding="9dp"
+                android:scaleType="centerInside"
+                android:contentDescription="@string/sysui_content_desc_hvac_up" />
+
+            <TextView
+                android:id="@+id/sysui_passenger_hvac_temp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="22°"
+                android:textColor="#FFEAF6FF"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/sysui_footer_fullscreen_toggle"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_sysui_pinned"
+            android:background="@drawable/oem_btn_circle"
+            android:padding="10dp"
+            android:scaleType="centerInside"
+            android:contentDescription="Map fullscreen" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/sysui_footer_ux_scrim"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/sysui_ux_scrim"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true" />
+</FrameLayout>

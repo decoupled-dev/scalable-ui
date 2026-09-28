@@ -1,22 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- All Apps covers map + cards (same content plane as Settings). -->
 <TaskPanel id="panel_app_grid" defaultVariant="@id/closed" role="@string/appgrid_componentName" displayId="0">
     <Variant id="@+id/opened">
-        <Layer layer="17"/>
+        <Layer layer="18"/>
         <Visibility isVisible="true"/>
         <Alpha alpha="1.0"/>
-        <Corner radius="32dp"/>
-        <Bounds left="24dp" top="84dp" right="692dp" bottom="820dp"/>
+        <Corner radius="28dp"/>
+        <Bounds left="16dp" top="72dp" right="1264dp" bottom="700dp"/>
         <Focus onTransition="true"/>
     </Variant>
     <Variant id="@+id/closed">
-        <Layer layer="17"/>
+        <Layer layer="18"/>
         <Visibility isVisible="false"/>
         <Alpha alpha="0.0"/>
-        <Corner radius="32dp"/>
-        <Bounds left="-668dp" top="84dp" right="0dp" bottom="820dp"/>
+        <Corner radius="28dp"/>
+        <Bounds left="-668dp" top="84dp" right="0dp" bottom="700dp"/>
         <Focus onTransition="false"/>
     </Variant>
     <Variant id="@+id/fullscreen">
-        <Layer layer="17"/>
+        <Layer layer="18"/>
         <Visibility isVisible="true"/>
         <Alpha alpha="1.0"/>
         <Corner radius="0dp"/>
@@ -26,14 +28,9 @@
     <Transitions>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=panel_app_grid" toVariant="@id/opened" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=app_panel" toVariant="@id/closed" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=media_source_panel" toVariant="@id/closed" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=map_panel" toVariant="@id/closed" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=phone_panel" toVariant="@id/closed" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=settings_panel" toVariant="@id/closed" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=map_panel" toVariant="@id/closed" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
         <Transition onEvent="_System_OnHomeEvent" toVariant="@id/closed" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="show_page2" fromVariant="@id/opened" toVariant="@id/closed" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/opened" toVariant="@id/closed" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/fullscreen" toVariant="@id/closed" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
         <Transition onEvent="toggle_fullscreen" fromVariant="@id/opened" toVariant="@id/fullscreen" duration="400" interpolator="@anim/pleos_fluid_interpolator"/>
         <Transition onEvent="toggle_fullscreen" fromVariant="@id/fullscreen" toVariant="@id/opened" duration="400" interpolator="@anim/pleos_fluid_interpolator"/>
     </Transitions>

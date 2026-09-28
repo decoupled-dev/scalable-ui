@@ -16,7 +16,8 @@
         android:layout_width="@dimen/sysui_zone_divider_width"
         android:layout_height="match_parent"
         android:layout_gravity="center_horizontal"
-        android:background="@color/sysui_bar_divider" />
+        android:background="@color/sysui_bar_divider"
+        android:visibility="gone" />
 
     <!-- Fullscreen toggle moved to driver zone to ensure it's clickable and visible above the passenger/driver zones -->
 

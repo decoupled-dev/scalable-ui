@@ -174,6 +174,16 @@ log "Restoring permissions..."
 "${ADB[@]}" shell pm grant --user "$USER_ID" com.android.systemui android.permission.BLUETOOTH_CONNECT 2>/dev/null || true
 "${ADB[@]}" shell pm grant --user "$USER_ID" com.android.car.mockwidgets android.car.permission.CONTROL_CAR_CLIMATE 2>/dev/null || true
 
+# 1280x800 dp canvas fills tangorpro only at 320 dpi (2560x1600).
+log "Setting display density to 320 dpi..."
+"${ADB[@]}" shell wm density 320 || true
+
+# Placeholder is installed but often left disabled, which makes map_panel
+# fail with START_CLASS_NOT_FOUND and leaves the canvas black.
+log "Enabling maps placeholder..."
+"${ADB[@]}" shell pm enable --user 0 com.android.car.mapsplaceholder >/dev/null 2>&1 || true
+"${ADB[@]}" shell pm enable --user "$USER_ID" com.android.car.mapsplaceholder >/dev/null 2>&1 || true
+
 log "Restarting system (stop/start)..."
 "${ADB[@]}" shell stop || true
 sleep 2

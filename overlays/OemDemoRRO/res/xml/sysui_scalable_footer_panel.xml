@@ -11,11 +11,11 @@
         <Layer layer="20"/>
         <Visibility isVisible="true"/>
         <Alpha alpha="1.0"/>
-        <Corner radius="@dimen/sysui_bar_corner_radius"/>
+        <Corner radius="36dp"/>
         <Bounds
-            left="0dp"
+            left="@dimen/sysui_scalable_footer_left"
             top="@dimen/sysui_scalable_footer_top"
-            right="@dimen/sysui_canvas_width"
+            right="@dimen/sysui_scalable_footer_right"
             bottom="@dimen/sysui_scalable_footer_bottom"/>
         <Focus onTransition="true"/>
     </Variant>

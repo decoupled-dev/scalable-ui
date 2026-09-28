@@ -9,7 +9,7 @@
         <Layer layer="21"/>
         <Visibility isVisible="true"/>
         <Alpha alpha="1.0"/>
-        <Corner radius="0dp"/>
+        <Corner radius="36dp"/>
         <Bounds left="@dimen/sysui_driver_zone_left" top="@dimen/sysui_scalable_header_top"
             right="@dimen/sysui_driver_zone_right" bottom="@dimen/sysui_scalable_header_bottom"/>
         <Focus onTransition="true"/>

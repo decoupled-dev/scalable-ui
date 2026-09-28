@@ -4,6 +4,6 @@
     <!-- Literal component: generic controller configs are not resource-resolved
          (BaseValueParser.parseString returns raw text), and the target package
          defines no such string for an RRO to overlay. -->
-    <PrimaryMediaComponent>com.android.car.mockwidgets/com.android.car.mockwidgets.MockMediaActivity</PrimaryMediaComponent>
+    <PrimaryMediaComponent>com.android.car.media/com.android.car.media.MediaDispatcherActivity</PrimaryMediaComponent>
     <MediaPanelId>sysui_footer_media_panel</MediaPanelId>
 </Controller>

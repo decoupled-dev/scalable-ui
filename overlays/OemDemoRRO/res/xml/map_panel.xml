@@ -1,71 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
 <TaskPanel id="map_panel" defaultVariant="@id/opened" role="@string/map_componentName" displayId="0">
+    <!-- Home: left column beside OEM cards. -->
     <Variant id="@+id/opened">
         <Layer layer="1"/>
         <Visibility isVisible="true"/>
         <Alpha alpha="1.0"/>
-        <Corner radius="0dp"/>
-        <Bounds left="0dp" top="0dp" right="1280dp" bottom="800dp"/>
+        <Corner radius="28dp"/>
+        <Bounds left="16dp" top="72dp" right="704dp" bottom="700dp"/>
         <Focus onTransition="false"/>
+    </Variant>
+    <!-- Full-bleed behind dock/header: layer 15 covers cards if hide lags; dock stays 20. -->
+    <Variant id="@+id/fullscreen">
+        <Layer layer="15"/>
+        <Visibility isVisible="true"/>
+        <Alpha alpha="1.0"/>
+        <Corner radius="0dp"/>
+        <Bounds left="0dp" top="64dp" right="1280dp" bottom="708dp"/>
+        <Focus onTransition="true"/>
     </Variant>
     <Variant id="@+id/expanded">
         <Layer layer="1"/>
         <Visibility isVisible="true"/>
         <Alpha alpha="1.0"/>
-        <Corner radius="0dp"/>
-        <Bounds left="0dp" top="0dp" right="1920dp" bottom="1080dp"/>
+        <Corner radius="28dp"/>
+        <Bounds left="16dp" top="72dp" right="704dp" bottom="700dp"/>
         <Focus onTransition="true"/>
     </Variant>
     <Variant id="@+id/settings_stacked">
         <Layer layer="1"/>
         <Visibility isVisible="true"/>
         <Alpha alpha="1.0"/>
-        <Corner radius="0dp"/>
-        <Bounds left="0dp" top="0dp" right="1920dp" bottom="1080dp"/>
+        <Corner radius="28dp"/>
+        <Bounds left="16dp" top="72dp" right="704dp" bottom="700dp"/>
         <Focus onTransition="false"/>
     </Variant>
     <Variant id="@+id/stacked">
         <Layer layer="1"/>
         <Visibility isVisible="true"/>
         <Alpha alpha="1.0"/>
-        <Corner radius="0dp"/>
-        <Bounds left="0dp" top="0dp" right="1920dp" bottom="1080dp"/>
+        <Corner radius="28dp"/>
+        <Bounds left="16dp" top="72dp" right="704dp" bottom="700dp"/>
         <Focus onTransition="false"/>
     </Variant>
     <Variant id="@+id/page_2_shown">
         <Layer layer="1"/>
         <Visibility isVisible="true"/>
         <Alpha alpha="1.0"/>
-        <Corner radius="0dp"/>
-        <Bounds left="0dp" top="0dp" right="1920dp" bottom="1080dp"/>
+        <Corner radius="28dp"/>
+        <Bounds left="16dp" top="72dp" right="704dp" bottom="700dp"/>
         <Focus onTransition="false"/>
     </Variant>
     <Variant id="@+id/two_panel">
         <Layer layer="1"/>
         <Visibility isVisible="true"/>
         <Alpha alpha="1.0"/>
-        <Corner radius="0dp"/>
-        <Bounds left="0dp" top="0dp" right="1920dp" bottom="1080dp"/>
-        <Focus onTransition="true"/>
+        <Corner radius="28dp"/>
+        <Bounds left="16dp" top="72dp" right="704dp" bottom="700dp"/>
+        <Focus onTransition="false"/>
     </Variant>
     <Transitions>
-        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=map_panel" fromVariant="@id/opened" toVariant="@id/expanded" duration="900" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=app_panel" toVariant="@id/stacked" duration="400" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=settings_panel" toVariant="@id/settings_stacked" duration="400" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=home_panel" toVariant="@id/opened" duration="350" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="_System_OnHomeEvent" toVariant="@id/opened" duration="350" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="show_page2" fromVariant="@id/opened" toVariant="@id/page_2_shown" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="show_page2" fromVariant="@id/expanded" toVariant="@id/page_2_shown" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="show_page2" fromVariant="@id/settings_stacked" toVariant="@id/page_2_shown" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="show_page2" fromVariant="@id/stacked" toVariant="@id/page_2_shown" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/page_2_shown" toVariant="@id/opened" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=panel_app_grid" fromVariant="@id/settings_stacked" toVariant="@id/opened" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="_System_TaskCloseEvent" onEventTokens="panelId=settings_panel" fromVariant="@id/settings_stacked" toVariant="@id/opened" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
-
-        <Transition onEvent="show_two_panel" fromVariant="@id/opened" toVariant="@id/two_panel" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/two_panel" toVariant="@id/opened" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
-
-        <!-- Contextual Swapping -->
-        <Transition onEvent="parking_scene" toVariant="@id/page_2_shown" duration="600" interpolator="@anim/pleos_fluid_interpolator"/>
-        <Transition onEvent="drive_scene" fromVariant="@id/page_2_shown" toVariant="@id/opened" duration="600" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="toggle_map_fullscreen" fromVariant="@id/opened" toVariant="@id/fullscreen" duration="400" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="toggle_map_fullscreen" fromVariant="@id/fullscreen" toVariant="@id/opened" duration="400" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/fullscreen" toVariant="@id/opened" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="_System_OnHomeEvent" toVariant="@id/opened" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=map_panel" toVariant="@id/opened" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=panel_app_grid" fromVariant="@id/fullscreen" toVariant="@id/opened" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
     </Transitions>
 </TaskPanel>

@@ -93,9 +93,38 @@ public class ClimateActivity extends Activity {
                     mCarPropertyManager.registerCallback(mPropertyCallback, VehiclePropertyIds.HVAC_TEMPERATURE_SET, CarPropertyManager.SENSOR_RATE_ONCHANGE);
                     mCarPropertyManager.registerCallback(mPropertyCallback, VehiclePropertyIds.HVAC_AC_ON, CarPropertyManager.SENSOR_RATE_ONCHANGE);
                     mCarPropertyManager.registerCallback(mPropertyCallback, VehiclePropertyIds.HVAC_AUTO_ON, CarPropertyManager.SENSOR_RATE_ONCHANGE);
+                    readInitialValues();
                 }
             }
         });
+    }
+
+    private void readInitialValues() {
+        if (mCarPropertyManager == null) {
+            return;
+        }
+        try {
+            float temp = mCarPropertyManager.getFloatProperty(
+                    VehiclePropertyIds.HVAC_TEMPERATURE_SET, SEAT_AREA);
+            mTemp = temp;
+            runOnUiThread(this::updateTempDisplay);
+        } catch (Exception e) {
+            Log.w(TAG, "Failed to read HVAC_TEMPERATURE_SET", e);
+        }
+        try {
+            mAcOn = mCarPropertyManager.getBooleanProperty(
+                    VehiclePropertyIds.HVAC_AC_ON, SEAT_AREA);
+            runOnUiThread(this::updateAcDisplay);
+        } catch (Exception e) {
+            Log.w(TAG, "Failed to read HVAC_AC_ON", e);
+        }
+        try {
+            mAutoOn = mCarPropertyManager.getBooleanProperty(
+                    VehiclePropertyIds.HVAC_AUTO_ON, SEAT_AREA);
+            runOnUiThread(this::updateAutoDisplay);
+        } catch (Exception e) {
+            Log.w(TAG, "Failed to read HVAC_AUTO_ON", e);
+        }
     }
 
     private void setFloatProperty(int propId, float val) {
