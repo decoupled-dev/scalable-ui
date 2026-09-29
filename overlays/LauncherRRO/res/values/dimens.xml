@@ -28,7 +28,7 @@
     <dimen name="launcher_pill_center_half">-96dp</dimen>
     <!-- Negative so the profile pill sits in from the right edge.
          Extra width holds the stock camera and mic chips beside the user name. -->
-    <dimen name="launcher_pill_right_inset">-320dp</dimen>
+    <dimen name="launcher_pill_right_inset">-380dp</dimen>
     <dimen name="launcher_climate_left_left">16dp</dimen>
     <dimen name="launcher_climate_left_right">216dp</dimen>
     <dimen name="launcher_climate_right_left">1064dp</dimen>
