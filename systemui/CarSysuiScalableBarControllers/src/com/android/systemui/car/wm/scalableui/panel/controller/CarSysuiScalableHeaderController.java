@@ -26,14 +26,19 @@ import android.car.hardware.property.CarPropertyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.UserInfo;
 import android.content.res.Configuration;
+import android.graphics.PixelFormat;
+import android.graphics.Rect;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -100,6 +105,7 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
     // Chrome scrims
     private View mHeaderUxScrim;
     private View mHeaderVhalScrim;
+    private final java.util.ArrayList<View> mMainThreadHosts = new java.util.ArrayList<View>();
     
 
     private final CarPropertyManager.CarPropertyEventCallback mHvacCallback =
@@ -267,18 +273,227 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
         }
         if ("launcher_pill_left".equals(mPanelId)) {
             View stockBar = inflateSystemUiLayout("qc_status_icons_horizontal");
-            bindStockPanelOrSettings(root, "launcher_status_wifi_slot",
+            // Quick-control popups update on the main thread. Decor panels attach
+            // on the shell thread, so a panel opened from a pill crashes SystemUI.
+            // The stock button lives in its own window, aligned to the decor slot,
+            // and is not drawn. The pill layout is the only chrome.
+            bindMainThreadPanel(root, "launcher_status_wifi_slot",
                     "launcher_status_wifi", stockBar, "qc_connectivity_panel",
-                    Settings.ACTION_WIFI_SETTINGS, false);
-            bindStockPanelOrSettings(root, "launcher_status_bluetooth_slot",
+                    Settings.ACTION_WIFI_SETTINGS);
+            bindMainThreadPanel(root, "launcher_status_bluetooth_slot",
                     "launcher_status_bluetooth", stockBar, "qc_bluetooth_panel",
-                    Settings.ACTION_BLUETOOTH_SETTINGS, false);
-            bindStockPanelOrSettings(root, "launcher_status_brightness_slot",
+                    Settings.ACTION_BLUETOOTH_SETTINGS);
+            bindMainThreadPanel(root, "launcher_status_brightness_slot",
                     "launcher_status_brightness", stockBar, "qc_display_panel",
-                    Settings.ACTION_DISPLAY_SETTINGS, false);
+                    Settings.ACTION_DISPLAY_SETTINGS);
         }
         wireUserProfile(root);
         wirePrivacyChips(root);
+    }
+
+    /**
+     * Puts the stock panel button in a window owned by the main thread, aligned
+     * to the pill slot. Quick-control updates run on that thread; hosting the
+     * button on the shell thread crashes once the panel content refreshes.
+     * The stock view is not drawn. The decor pill stays the only visible chrome.
+     */
+    private void bindMainThreadPanel(View root, String slotName, String fallbackName,
+            View stockTree, String panelLayout, String settingsAction) {
+        int slotId = resolveRroId(slotName);
+        View slot = slotId == 0 ? null : root.findViewById(slotId);
+        View panel = stockTree == null ? null : detachPanelButton(stockTree, panelLayout);
+        if (!(slot instanceof ViewGroup) || panel == null) {
+            wireSettingsButton(root, fallbackName, settingsAction);
+            return;
+        }
+        if ("main-hosted".equals(String.valueOf(slot.getTag()))) {
+            return;
+        }
+        slot.setTag("main-hosted");
+        if (panel.getParent() instanceof ViewGroup) {
+            ((ViewGroup) panel.getParent()).removeView(panel);
+        }
+        panel.setLayoutParams(new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        panel.setMinimumWidth(0);
+        panel.setMinimumHeight(0);
+        panel.setBackground(null);
+        panel.setClickable(true);
+        FrameLayout host = new FrameLayout(mContext);
+        host.addView(panel);
+        View.OnLayoutChangeListener layout = (v, left, top, right, bottom, ol, ot, or, ob) ->
+                placeMainThreadHost(slot, host, right - left, bottom - top,
+                        fallbackName, settingsAction, true);
+        slot.addOnLayoutChangeListener(layout);
+        if (slot.getWidth() > 0 && slot.getHeight() > 0) {
+            placeMainThreadHost(slot, host, slot.getWidth(), slot.getHeight(),
+                    fallbackName, settingsAction, true);
+        }
+        Log.i(TAG, "main-thread panel " + panelLayout + " -> " + slotName);
+    }
+
+    private void placeMainThreadHost(View anchor, View host, int width, int height,
+            String fallbackName, String settingsAction, boolean hideChrome) {
+        if (width <= 0 || height <= 0 || anchor == null) {
+            return;
+        }
+        // Decor surfaces report getLocationOnScreen as if the panel starts at
+        // the origin. The leash is actually at the panel's decor bounds.
+        int[] loc = new int[2];
+        anchor.getLocationOnScreen(loc);
+        int[] origin = new int[2];
+        View panelRoot = anchor.getRootView();
+        if (panelRoot != null) {
+            panelRoot.getLocationOnScreen(origin);
+        }
+        Rect bounds = decorPanelBounds();
+        final int x = bounds.left + loc[0] - origin[0];
+        final int y = bounds.top + loc[1] - origin[1];
+        Log.i(TAG, "place " + mPanelId + " local=" + loc[0] + "," + loc[1]
+                + " bounds=" + bounds + " -> " + x + "," + y
+                + " " + width + "x" + height);
+        mContext.getMainExecutor().execute(() -> {
+            if (!ensureMainThreadHost(host, x, y, width, height)) {
+                Log.e(TAG, "main-thread host failed");
+                if (fallbackName != null && settingsAction != null) {
+                    anchor.post(() -> wireSettingsButton(anchor.getRootView(),
+                            fallbackName, settingsAction));
+                }
+                return;
+            }
+            if (host.getTag() == null) {
+                if (!initializeElements((ViewGroup) host)) {
+                    removeMainThreadHost(host);
+                    return;
+                }
+                host.setTag(Boolean.TRUE);
+                Log.i(TAG, "main-thread panel ready");
+            }
+            if (hideChrome) {
+                fadeStockChrome(host);
+            }
+        });
+    }
+
+    /** Screen bounds of this decor panel. Empty if the state is not ready yet. */
+    private Rect decorPanelBounds() {
+        try {
+            Object state = com.android.car.scalableui.manager.StateManager.class
+                    .getMethod("getPanelState", String.class)
+                    .invoke(null, mPanelId);
+            if (state != null) {
+                Object variant = state.getClass().getMethod("getCurrentVariant").invoke(state);
+                if (variant != null) {
+                    Object bounds = variant.getClass().getMethod("getBounds").invoke(variant);
+                    if (bounds instanceof Rect && !((Rect) bounds).isEmpty()) {
+                        return new Rect((Rect) bounds);
+                    }
+                }
+            }
+        } catch (Throwable t) {
+            Log.w(TAG, "decorPanelBounds", t);
+        }
+        return new Rect();
+    }
+
+    private static void fadeStockChrome(View host) {
+        if (!(host instanceof ViewGroup)) {
+            return;
+        }
+        ViewGroup group = (ViewGroup) host;
+        for (int i = 0; i < group.getChildCount(); i++) {
+            View child = group.getChildAt(i);
+            child.setAlpha(0f);
+            child.setBackground(null);
+        }
+    }
+
+    private boolean ensureMainThreadHost(View host, int x, int y, int width, int height) {
+        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        if (wm == null) {
+            return false;
+        }
+        if (host.getParent() != null) {
+            WindowManager.LayoutParams lp = (WindowManager.LayoutParams) host.getLayoutParams();
+            lp.x = x;
+            lp.y = y;
+            lp.width = width;
+            lp.height = height;
+            try {
+                wm.updateViewLayout(host, lp);
+                return true;
+            } catch (Throwable t) {
+                Log.w(TAG, "update panel host", t);
+                return false;
+            }
+        }
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
+                width, height,
+                2017,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                        | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                        | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
+                PixelFormat.TRANSLUCENT);
+        lp.gravity = Gravity.TOP | Gravity.START;
+        lp.x = x;
+        lp.y = y;
+        lp.alpha = 1f;
+        lp.setTitle("LauncherQcPanel");
+        try {
+            lp.getClass().getMethod("setTrustedOverlay").invoke(lp);
+        } catch (Throwable t) {
+            Log.w(TAG, "setTrustedOverlay", t);
+        }
+        // Stock layouts share ids. The state controller refuses a second
+        // view with the same id, so each host window gets its own ids.
+        assignUniqueIds(host);
+        if (!addHostView(wm, host, lp)) {
+            lp.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+            if (!addHostView(wm, host, lp)) {
+                return false;
+            }
+        }
+        mMainThreadHosts.add(host);
+        return true;
+    }
+
+    private boolean addHostView(WindowManager wm, View host, WindowManager.LayoutParams lp) {
+        try {
+            wm.addView(host, lp);
+            return true;
+        } catch (Throwable t) {
+            Log.w(TAG, "window type " + lp.type + " failed", t);
+            return false;
+        }
+    }
+
+    private void removeMainThreadHost(View host) {
+        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        try {
+            if (wm != null && host.getParent() != null) {
+                wm.removeView(host);
+            }
+        } catch (Throwable t) {
+            Log.w(TAG, "remove panel host", t);
+        }
+        mMainThreadHosts.remove(host);
+    }
+
+    private static void assignUniqueIds(View view) {
+        view.setId(View.generateViewId());
+        if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) view;
+            for (int i = 0; i < group.getChildCount(); i++) {
+                assignUniqueIds(group.getChildAt(i));
+            }
+        }
+    }
+
+    private void removeMainThreadHosts() {
+        java.util.ArrayList<View> hosts = new java.util.ArrayList<View>(mMainThreadHosts);
+        for (View host : hosts) {
+            removeMainThreadHost(host);
+        }
     }
 
     /**
@@ -431,8 +646,8 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
             return;
         }
         View profileTree = inflateSystemUiLayout("user_name_container");
-        bindStockPanelOrSettings(root, "launcher_user_anchor", "launcher_user_profile",
-                profileTree, "qc_profile_switcher", Settings.ACTION_USER_SETTINGS, true);
+        bindMainThreadPanel(root, "launcher_user_anchor", "launcher_user_profile",
+                profileTree, "qc_profile_switcher", Settings.ACTION_USER_SETTINGS);
     }
 
     /**
@@ -454,25 +669,39 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
             return;
         }
         ViewGroup group = (ViewGroup) container;
-        if (group.getChildCount() > 0) {
+        if ("main-hosted".equals(String.valueOf(group.getTag()))) {
             return;
         }
-        // Camera then microphone, matching the stock status bar order.
         View camera = inflateSystemUiLayout("camera_privacy_chip");
         View mic = inflateSystemUiLayout("mic_privacy_chip");
         int chipWidth = privacyChipWidth();
+        android.widget.LinearLayout host = new android.widget.LinearLayout(mContext);
+        host.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+        host.setGravity(Gravity.CENTER_VERTICAL);
+        int span = 0;
         if (camera != null) {
-            group.addView(camera, chipLayoutParams(chipWidth));
+            host.addView(camera, chipLayoutParams(chipWidth));
+            span += chipWidth;
         }
         if (mic != null) {
-            group.addView(mic, chipLayoutParams(chipWidth));
+            host.addView(mic, chipLayoutParams(chipWidth));
+            span += chipWidth;
         }
-        if (group.getChildCount() == 0) {
+        if (span == 0) {
             return;
         }
-        if (initializeElements(group)) {
-            Log.i(TAG, "privacy chips initialized");
+        group.setTag("main-hosted");
+        group.addView(new View(mContext), chipLayoutParams(span));
+        final int hostWidth = span;
+        View.OnLayoutChangeListener layout = (v, l, t, r, b, ol, ot, or, ob) ->
+                placeMainThreadHost(group, host, hostWidth, group.getHeight(),
+                        null, null, false);
+        group.addOnLayoutChangeListener(layout);
+        if (group.getHeight() > 0) {
+            placeMainThreadHost(group, host, hostWidth, group.getHeight(),
+                    null, null, false);
         }
+        Log.i(TAG, "privacy chips hosted on main thread");
     }
 
     private View inflateSystemUiLayout(String layoutName) {
@@ -554,9 +783,11 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
         try {
             UserManager userManager = mContext.getSystemService(UserManager.class);
             if (userManager != null) {
-                String name = userManager.getUserName();
-                if (name != null && !name.isEmpty()) {
-                    return name;
+                // SystemUI runs as user 0 ("System User"). The pill should name
+                // the foreground user, which is the driver profile.
+                UserInfo info = userManager.getUserInfo(ActivityManager.getCurrentUser());
+                if (info != null && info.name != null && !info.name.isEmpty()) {
+                    return info.name;
                 }
             }
         } catch (Throwable t) {
@@ -836,6 +1067,7 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
 
     @Override
     protected void onControllerDetached() {
+        mContext.getMainExecutor().execute(this::removeMainThreadHosts);
         mVhalHelper.unsubscribe(VehiclePropertyIds.HVAC_TEMPERATURE_SET);
         mVhalHelper.unsubscribe(VehiclePropertyIds.HVAC_SEAT_TEMPERATURE);
         mVhalHelper.unsubscribe(VehiclePropertyIds.HVAC_FAN_DIRECTION);

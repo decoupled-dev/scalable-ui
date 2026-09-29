@@ -6,18 +6,21 @@
     android:layout_height="match_parent"
     android:background="@drawable/launcher_dock_bg"
     android:clickable="true"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     android:focusable="true"
-    android:gravity="center_vertical"
+    android:gravity="center_vertical|end"
     android:orientation="horizontal"
-    android:paddingStart="56dp"
-    android:paddingEnd="18dp">
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp">
 
     <!-- Stock MicPrivacyChip and CameraPrivacyChip are added here at runtime. -->
     <LinearLayout
         android:id="@+id/launcher_privacy_chips"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginEnd="4dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         android:gravity="center_vertical"
         android:orientation="horizontal" />
 
@@ -25,14 +28,13 @@
          over this frame at runtime so a tap opens qc_profile_switcher. -->
     <FrameLayout
         android:id="@+id/launcher_user_anchor"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_marginStart="8dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_gravity="end|center_vertical"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -47,9 +49,10 @@
                 android:id="@+id/launcher_user_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="8dp"
                 android:ellipsize="end"
                 android:maxLines="1"
+                android:maxWidth="140dp"
                 android:text="@string/launcher_user_profile"
                 android:textColor="@color/launcher_on_surface"
                 android:textSize="18sp"

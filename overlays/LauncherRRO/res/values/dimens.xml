@@ -27,8 +27,12 @@
     <!-- Negative so the clock sits across the center. -->
     <dimen name="launcher_pill_center_half">-96dp</dimen>
     <!-- Negative so the profile pill sits in from the right edge.
-         Extra width holds the stock camera and mic chips beside the user name. -->
-    <dimen name="launcher_pill_right_inset">-380dp</dimen>
+         Wide enough for the camera and mic glyphs beside the user name. -->
+    <dimen name="launcher_pill_right_inset">-272dp</dimen>
+    <!-- Stock values are 56dp wide with 24dp of side padding, which clips the icon. -->
+    <dimen name="privacy_chip_width">40dp</dimen>
+    <dimen name="privacy_chip_horizontal_padding">0dp</dimen>
+    <dimen name="privacy_chip_vertical_padding">0dp</dimen>
     <dimen name="launcher_climate_left_left">16dp</dimen>
     <dimen name="launcher_climate_left_right">216dp</dimen>
     <dimen name="launcher_climate_right_left">1064dp</dimen>
