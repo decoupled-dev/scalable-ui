@@ -16,20 +16,21 @@
 
 package com.android.systemui.car.wm.scalableui.panel.controller;
 
+import android.app.ActivityManager;
 import android.car.VehicleAreaSeat;
 import android.car.hardware.CarHvacFanDirection;
 import android.car.VehiclePropertyIds;
 import android.car.hardware.CarPropertyValue;
 import android.car.hardware.property.CarPropertyManager;
 import android.content.Context;
+import android.content.Intent;
+import android.os.UserHandle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.android.car.scalableui.loader.xml.parser.PanelControllerParser;
-import com.android.car.scalableui.manager.StateManager;
-import com.android.car.scalableui.model.Event;
 import com.android.car.scalableui.model.PanelControllerMetadata;
 import com.android.car.scalableui.panel.DecorPanelController;
 
@@ -275,6 +276,124 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
         }
         if (mFanSpeedBtn != null) {
             mFanSpeedBtn.setOnClickListener(v -> cycleFanSpeed());
+        }
+        // Climate card: tap header / big temp → Design ClimatePanel (AOSP HVAC fallback).
+        if ("oem_climate_card".equals(mPanelId)
+                || "sysui_driver_zone_panel".equals(mPanelId)) {
+            if (mDriverHvacTempText != null) {
+                mDriverHvacTempText.setClickable(true);
+                mDriverHvacTempText.setFocusable(true);
+                mDriverHvacTempText.setOnClickListener(v -> launchClimatePanel());
+            }
+            View header = findClickable(mView != null ? mView : mDriverZoneRoot, "oem_card_header");
+            if (header == null && mDriverZoneRoot != null) {
+                // Prefer first child row (title) when id not present yet.
+                if (mDriverZoneRoot instanceof android.view.ViewGroup) {
+                    android.view.ViewGroup vg = (android.view.ViewGroup) mDriverZoneRoot;
+                    if (vg.getChildCount() > 0) {
+                        header = vg.getChildAt(0);
+                    }
+                }
+            }
+            if (header != null) {
+                header.setClickable(true);
+                header.setFocusable(true);
+                header.setOnClickListener(v -> launchClimatePanel());
+                header.setOnLongClickListener(v -> {
+                    launchVehiclePanel();
+                    return true;
+                });
+            }
+            View expand = findClickable(mView != null ? mView : mDriverZoneRoot, "oem_card_expand");
+            if (expand != null) {
+                expand.setOnClickListener(v -> launchVehiclePanel());
+                expand.setContentDescription("Vehicle");
+            }
+        }
+    }
+
+    private View findClickable(View root, String name) {
+        if (root == null) {
+            return null;
+        }
+        int id = resolveRroId(name);
+        View view = id != 0 ? root.findViewById(id) : null;
+        if (view != null) {
+            view.setClickable(true);
+            view.setFocusable(true);
+        }
+        return view;
+    }
+
+    /**
+     * Opens Design ClimatePanel via OPEN_CLIMATE; falls back to AOSP HVAC overlay.
+     */
+    private void launchClimatePanel() {
+        if (mFullyRestricted) {
+            return;
+        }
+        if (startDesignPanel(DESIGN_ACTION_OPEN_CLIMATE, DESIGN_CLIMATE_COMPONENT)) {
+            Log.i(TAG, "launchClimatePanel → Design ClimatePanelActivity");
+            return;
+        }
+        int userId = ActivityManager.getCurrentUser();
+        Log.i(TAG, "launchClimatePanel → TOGGLE_HVAC_PANEL user=" + userId);
+        Intent toggle = new Intent("com.android.systemui.car.action.TOGGLE_HVAC_PANEL");
+        toggle.setPackage("com.android.systemui");
+        toggle.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
+        try {
+            mContext.sendBroadcastAsUser(toggle, UserHandle.of(userId));
+        } catch (Exception e) {
+            Log.w(TAG, "sendBroadcastAsUser failed, trying sendBroadcast", e);
+            try {
+                mContext.sendBroadcast(toggle);
+            } catch (Exception e2) {
+                Log.w(TAG, "TOGGLE_HVAC_PANEL failed", e2);
+            }
+        }
+    }
+
+    /** Opens Design VehiclePanel via OPEN_VEHICLE. */
+    private void launchVehiclePanel() {
+        if (mFullyRestricted) {
+            return;
+        }
+        if (startDesignPanel(DESIGN_ACTION_OPEN_VEHICLE, DESIGN_VEHICLE_COMPONENT)) {
+            Log.i(TAG, "launchVehiclePanel → Design VehiclePanelActivity");
+            return;
+        }
+        Log.w(TAG, "launchVehiclePanel: Design package missing");
+        dispatchScalableEvent("toggle_card_expand_climate");
+    }
+
+    private void dispatchScalableEvent(String eventId) {
+        try {
+            Object app = mContext.getApplicationContext();
+            Object wm = app.getClass().getMethod("getWMComponent").invoke(app);
+            Object dispatcher = wm.getClass()
+                    .getMethod("getScalableUIEventDispatcher").invoke(wm);
+            Object event = new com.android.car.scalableui.model.Event.Builder(eventId).build();
+            dispatcher.getClass()
+                    .getMethod("executeEvent", com.android.car.scalableui.model.Event.class)
+                    .invoke(dispatcher, event);
+        } catch (Throwable t) {
+            Log.w(TAG, "EventDispatcher.executeEvent(" + eventId + ") failed", t);
+            try {
+                com.android.car.scalableui.model.PanelTransaction tx =
+                        com.android.car.scalableui.manager.StateManager.handleEvent(
+                                new com.android.car.scalableui.model.Event.Builder(eventId)
+                                        .build());
+                if (tx != null) {
+                    for (java.util.Map.Entry<String, android.animation.Animator> e
+                            : tx.getAnimators()) {
+                        if (e.getValue() != null) {
+                            e.getValue().start();
+                        }
+                    }
+                }
+            } catch (Throwable t2) {
+                Log.w(TAG, eventId + " fallback failed", t2);
+            }
         }
     }
 

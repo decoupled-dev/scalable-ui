@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Interactive OEM media card — wired by CarSysuiScalableFooterController -->
+<!-- Compact media band (full-width short) — wired by CarSysuiScalableFooterController -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/sysui_footer_media_root"
     android:layout_width="match_parent"
@@ -9,152 +9,160 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingStart="18dp"
-        android:paddingEnd="18dp"
-        android:paddingTop="14dp"
-        android:paddingBottom="12dp">
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="14dp"
+        android:paddingEnd="10dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
+        <ImageView
+            android:id="@+id/sysui_media_art"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:src="@drawable/album_cover_rhythm"
+            android:scaleType="centerCrop"
+            android:background="@drawable/rounded_album_bg"
+            android:clipToOutline="true"
+            android:clickable="true"
+            android:focusable="true" />
 
         <LinearLayout
-            android:id="@+id/oem_media_open_app"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:clickable="false"
-            android:focusable="false">
-
-            <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:src="@drawable/oem_ic_music" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="8dp"
-                android:text="MEDIA"
-                android:textColor="#FFE8B86D"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.12" />
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/oem_ic_more" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:layout_marginTop="12dp"
-            android:orientation="horizontal"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="8dp"
+            android:orientation="vertical"
             android:gravity="center_vertical">
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:id="@+id/oem_card_header"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:layout_marginEnd="12dp">
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
-                <TextView
-                    android:id="@+id/sysui_media_track_name"
-                    android:layout_width="match_parent"
+                <LinearLayout
+                    android:id="@+id/oem_media_open_app"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/sysui_media_not_playing"
-                    android:textColor="#FFFFFFFF"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:maxLines="2"
-                    android:ellipsize="end"
-                    android:includeFontPadding="false" />
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true">
 
-                <TextView
-                    android:id="@+id/sysui_media_artist"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text=""
-                    android:textColor="#B3FFFFFF"
-                    android:textSize="14sp"
-                    android:maxLines="1"
-                    android:ellipsize="end" />
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/oem_ic_music" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:text="MEDIA"
+                        android:textColor="#FFE8B86D"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.1" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/oem_card_expand"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:padding="6dp"
+                    android:src="@drawable/oem_ic_more"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:contentDescription="Expand media" />
             </LinearLayout>
 
-            <ImageView
-                android:id="@+id/sysui_media_art"
-                android:layout_width="88dp"
-                android:layout_height="88dp"
-                android:src="@drawable/album_cover_rhythm"
-                android:scaleType="centerCrop"
-                android:background="@drawable/rounded_album_bg"
-                android:clipToOutline="true"
-                android:clickable="false"
-                android:focusable="false" />
-        </LinearLayout>
-
-        <ProgressBar
-            android:id="@+id/sysui_media_progress_bar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:layout_marginTop="10dp"
-            android:max="1000"
-            android:progress="0"
-            android:indeterminate="false"
-            android:progressDrawable="@drawable/oem_media_progress" />
-
-        <!-- Kept for controller resolve compatibility; hidden track/fill pair. -->
-        <FrameLayout
-            android:id="@+id/sysui_media_progress_track"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:visibility="gone">
-            <View
-                android:id="@+id/sysui_media_progress_fill"
-                android:layout_width="0dp"
-                android:layout_height="0dp" />
-        </FrameLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/sysui_media_track_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sysui_media_not_playing"
+                android:textColor="#FFFFFFFF"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:includeFontPadding="false"
+                android:clickable="true"
+                android:focusable="true" />
 
             <TextView
-                android:id="@+id/sysui_media_position"
-                android:layout_width="0dp"
+                android:id="@+id/sysui_media_artist"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="0:00"
-                android:textColor="#99FFFFFF"
-                android:textSize="11sp" />
+                android:text=""
+                android:textColor="#B3FFFFFF"
+                android:textSize="12sp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:clickable="true"
+                android:focusable="true" />
 
-            <TextView
-                android:id="@+id/sysui_media_duration"
-                android:layout_width="wrap_content"
+            <ProgressBar
+                android:id="@+id/sysui_media_progress_bar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="6dp"
+                android:layout_marginTop="4dp"
+                android:max="1000"
+                android:progress="0"
+                android:indeterminate="false"
+                android:progressDrawable="@drawable/oem_media_progress" />
+
+            <!-- Kept for controller resolve compatibility; hidden track/fill pair. -->
+            <FrameLayout
+                android:id="@+id/sysui_media_progress_track"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone">
+                <View
+                    android:id="@+id/sysui_media_progress_fill"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="0:00"
-                android:textColor="#99FFFFFF"
-                android:textSize="11sp" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/sysui_media_position"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="0:00"
+                    android:textColor="#99FFFFFF"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/sysui_media_duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0:00"
+                    android:textColor="#99FFFFFF"
+                    android:textSize="10sp" />
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
             android:gravity="center"
             android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/sysui_media_prev"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:src="@drawable/ic_sysui_media_prev"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="6dp"
@@ -163,20 +171,20 @@
 
             <ImageButton
                 android:id="@+id/sysui_media_play_pause"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
                 android:src="@drawable/ic_sysui_media_play"
                 android:background="@drawable/oem_play_circle"
-                android:padding="12dp"
+                android:padding="10dp"
                 android:scaleType="centerInside"
                 android:contentDescription="Play pause" />
 
             <ImageButton
                 android:id="@+id/sysui_media_next"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:src="@drawable/ic_sysui_media_next"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="6dp"

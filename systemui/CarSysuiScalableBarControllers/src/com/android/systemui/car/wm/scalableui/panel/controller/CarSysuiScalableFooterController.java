@@ -17,11 +17,15 @@
 package com.android.systemui.car.wm.scalableui.panel.controller;
 
 import android.app.ActivityManager;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.car.VehicleAreaSeat;
 import android.car.VehiclePropertyIds;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Rect;
 import android.media.AudioManager;
 import android.media.MediaMetadata;
@@ -59,16 +63,27 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
     private static final String DEFAULT_PRIMARY_MEDIA =
             "com.android.car.media/com.android.car.media.MediaDispatcherActivity";
     private static final String SPOTIFY_PACKAGE = "com.spotify.music";
+    private static final String DIALER_COMPONENT =
+            "com.android.car.dialer/.ui.TelecomActivity";
+    private static final String BT_SETTINGS_COMPONENT =
+            "com.android.car.settings/.common.CarSettingActivities$BluetoothSettingsActivity";
+    private static final String PAIR_PHONE_MESSAGE = "Pair a phone to make and receive calls.";
     private static final float HVAC_STEP_CELSIUS = 0.5f;
     private static final int AREA_DRIVER = VehicleAreaSeat.SEAT_ROW_1_LEFT;
     private static final int AREA_PASSENGER = VehicleAreaSeat.SEAT_ROW_1_RIGHT;
+    /** RANGE_REMAINING is reported in meters. */
+    private static final float METERS_PER_MILE = 1609.344f;
 
     private static final long PROGRESS_TICK_MS = 500L;
+    private static final long BT_POLL_MS = 4000L;
+    /** Ignore duplicate Climate taps that would immediately re-toggle the HVAC sheet shut. */
+    private static final long HVAC_TOGGLE_DEBOUNCE_MS = 400L;
 
     private final String mPrimaryMediaComponent;
     private final String mMediaPanelId;
     /** Toggles AOSP HvacPanelOverlay (injected from CarSystemUI); null = ClimateActivity fallback. */
     private final Runnable mToggleAospHvac;
+    private long mLastHvacToggleElapsedMs;
 
     private MediaSessionManager mMediaSessionManager;
     private AudioManager mAudioManager;
@@ -122,6 +137,44 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
     private boolean mIsPlaying;
     private android.graphics.drawable.Drawable mPlayDrawable;
     private android.graphics.drawable.Drawable mPauseDrawable;
+
+    // Phone card — Bluetooth paired-device subtitle
+    private TextView mPhoneSubtitle;
+    private String mBondedBtName;
+    private boolean mBtReceiverRegistered;
+    private final Runnable mBtPollRunnable = this::refreshBluetoothSubtitle;
+
+    private final BroadcastReceiver mBtReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            runOnViewThread(() -> refreshBluetoothSubtitle());
+        }
+    };
+
+    // Driving stats card — live range when VHAL exposes RANGE_REMAINING
+    private TextView mStatsRangeValue;
+    private TextView mStatsRangeLabel;
+    private boolean mLiveRangeBound;
+
+    private final android.car.hardware.property.CarPropertyManager.CarPropertyEventCallback
+            mRangeCallback =
+            new android.car.hardware.property.CarPropertyManager.CarPropertyEventCallback() {
+                @Override
+                public void onChangeEvent(android.car.hardware.CarPropertyValue value) {
+                    if (value == null || value.getPropertyId() != VehiclePropertyIds.RANGE_REMAINING) {
+                        return;
+                    }
+                    Object raw = value.getValue();
+                    if (raw instanceof Float) {
+                        runOnViewThread(() -> updateRangeUi((Float) raw));
+                    }
+                }
+
+                @Override
+                public void onErrorEvent(int propId, int zone) {
+                    Log.w(TAG, "RANGE_REMAINING error prop=" + propId);
+                }
+            };
 
     private final Runnable mProgressTickRunnable = new Runnable() {
         @Override
@@ -424,19 +477,31 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
             View hvacCol = findClickable(mView, "oem_hvac_nav_column");
             if (hvacCol != null) {
                 hvacCol.setOnClickListener(v -> launchClimate());
+                hvacCol.setOnLongClickListener(v -> {
+                    launchCarStatus();
+                    return true;
+                });
                 hvacCol.setContentDescription("Climate");
             }
             View hvacPanelBtn = findClickable(mView, "oem_launch_hvac_panel");
             if (hvacPanelBtn != null) {
-                // Parent column handles click; keep icon non-interactive.
-                hvacPanelBtn.setClickable(false);
-                hvacPanelBtn.setOnClickListener(null);
+                hvacPanelBtn.setClickable(true);
+                hvacPanelBtn.setOnClickListener(v -> launchClimate());
+                hvacPanelBtn.setOnLongClickListener(v -> {
+                    launchCarStatus();
+                    return true;
+                });
+                hvacPanelBtn.setContentDescription("Climate");
             }
         }
         if (mNavPinned != null) {
-            // Fan / HVAC icon opens AOSP HVAC panel.
+            // Fan / HVAC icon opens Design ClimatePanel.
             mNavPinned.setOnClickListener(v -> launchClimate());
-            mNavPinned.setContentDescription("HVAC");
+            mNavPinned.setOnLongClickListener(v -> {
+                launchCarStatus();
+                return true;
+            });
+            mNavPinned.setContentDescription("Climate");
         }
         if (mView != null) {
             View hvacFan = findClickable(mView, "oem_launch_hvac");
@@ -490,32 +555,187 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
     /** Optional OEM launch targets present only on some card/dock layouts. */
     private void wireOptionalLaunches(View root) {
         wireLaunch(root, "oem_launch_phone", this::launchPhone);
-        wireLaunch(root, "oem_launch_dialpad", this::launchPhone);
-        wireLaunch(root, "oem_launch_climate", this::launchClimate);
+        wireLaunch(root, "oem_launch_dialpad", this::launchDialpad);
+        // Center CLIMATE column + fan icon → Design ClimatePanel.
         wireLaunch(root, "oem_launch_hvac", this::launchClimate);
         wireLaunch(root, "oem_launch_hvac_panel", this::launchClimate);
         wireLaunch(root, "oem_hvac_nav_column", this::launchClimate);
         wireLaunch(root, "oem_launch_media", this::launchMedia);
+        // Right-dock / card vehicle affordances → Design VehiclePanel.
+        wireLaunch(root, "oem_launch_climate", this::launchCarStatus);
         wireLaunch(root, "oem_launch_car_status", this::launchCarStatus);
+        wireLaunch(root, "oem_launch_vehicle", this::launchCarStatus);
         // Whole-card tap targets (only when the card has no dedicated action chips).
         if ("oem_car_status_card".equals(mPanelId)) {
             root.setOnClickListener(v -> launchCarStatus());
             root.setClickable(true);
+            bindDrivingStatsViews(root);
+            wireCardExpand(root, "toggle_card_expand_stats");
         } else if ("oem_media_card".equals(mPanelId)
                 || "sysui_footer_media_panel".equals(mPanelId)) {
-            // Prefer transport controls; header chrome is not an app launcher.
-            View open = findClickable(root, "oem_media_open_app");
-            if (open != null) {
-                open.setClickable(false);
-                open.setOnClickListener(null);
-            }
+            // Header / art / track open the active media app; transport keeps local control.
+            wireLaunch(root, "oem_media_open_app", this::launchMedia);
             if (mMediaArt != null) {
-                mMediaArt.setClickable(false);
-                mMediaArt.setOnClickListener(null);
+                mMediaArt.setClickable(true);
+                mMediaArt.setFocusable(true);
+                mMediaArt.setOnClickListener(v -> launchMedia());
             }
+            if (mMediaTrackName != null) {
+                mMediaTrackName.setClickable(true);
+                mMediaTrackName.setFocusable(true);
+                mMediaTrackName.setOnClickListener(v -> launchMedia());
+            }
+            if (mMediaArtistName != null) {
+                mMediaArtistName.setClickable(true);
+                mMediaArtistName.setFocusable(true);
+                mMediaArtistName.setOnClickListener(v -> launchMedia());
+            }
+            wireCardExpand(root, "toggle_card_expand_media");
+        } else if ("oem_phone_card".equals(mPanelId)) {
+            bindPhoneBluetoothViews(root);
+            wireCardExpand(root, "toggle_card_expand_phone");
         }
         // oem_phone_card: Call / Dialpad chips own launches — do not make the root
         // clickable (would fight child hit-testing and re-launch Dialer on every tap).
+    }
+
+    /**
+     * Three-dot / header long-press fires a ScalableUI expand event via EventDispatcher.
+     */
+    private void wireCardExpand(View root, String expandEvent) {
+        View expand = findClickable(root, "oem_card_expand");
+        if (expand != null) {
+            expand.setOnClickListener(v -> dispatchScalableEvent(expandEvent));
+            expand.setContentDescription("Expand card");
+        }
+        View header = findClickable(root, "oem_card_header");
+        if (header != null) {
+            header.setOnLongClickListener(v -> {
+                dispatchScalableEvent(expandEvent);
+                return true;
+            });
+        } else if (expand == null) {
+            // Fallback: long-press anywhere on the card chrome that is not a transport control.
+            root.setOnLongClickListener(v -> {
+                dispatchScalableEvent(expandEvent);
+                return true;
+            });
+        }
+    }
+
+    private void bindPhoneBluetoothViews(View root) {
+        int id = resolveRroId("oem_phone_subtitle");
+        mPhoneSubtitle = id != 0 ? root.findViewById(id) : null;
+        refreshBluetoothSubtitle();
+        registerBluetoothListeners();
+        if (mView != null) {
+            mView.removeCallbacks(mBtPollRunnable);
+            mView.postDelayed(mBtPollRunnable, BT_POLL_MS);
+        }
+    }
+
+    private void bindDrivingStatsViews(View root) {
+        int rangeId = resolveRroId("oem_stats_range_value");
+        mStatsRangeValue = rangeId != 0 ? root.findViewById(rangeId) : null;
+        int labelId = resolveRroId("oem_stats_range_label");
+        mStatsRangeLabel = labelId != 0 ? root.findViewById(labelId) : null;
+        // Keep layout mock values until VHAL supplies live RANGE_REMAINING.
+    }
+
+    private void registerBluetoothListeners() {
+        if (mBtReceiverRegistered) {
+            return;
+        }
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        filter.addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
+        filter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+        filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        try {
+            mContext.registerReceiver(mBtReceiver, filter, Context.RECEIVER_EXPORTED);
+            mBtReceiverRegistered = true;
+        } catch (Throwable t) {
+            try {
+                mContext.registerReceiver(mBtReceiver, filter);
+                mBtReceiverRegistered = true;
+            } catch (Throwable t2) {
+                Log.w(TAG, "BT receiver register failed", t2);
+            }
+        }
+    }
+
+    private void unregisterBluetoothListeners() {
+        if (!mBtReceiverRegistered) {
+            return;
+        }
+        try {
+            mContext.unregisterReceiver(mBtReceiver);
+        } catch (Throwable ignored) {
+        }
+        mBtReceiverRegistered = false;
+        if (mView != null) {
+            mView.removeCallbacks(mBtPollRunnable);
+        }
+    }
+
+    private void refreshBluetoothSubtitle() {
+        String name = resolveBondedBluetoothName();
+        mBondedBtName = name;
+        if (mPhoneSubtitle == null) {
+            return;
+        }
+        if (name != null && !name.isEmpty()) {
+            mPhoneSubtitle.setText("Connected: " + name);
+        } else {
+            mPhoneSubtitle.setText(PAIR_PHONE_MESSAGE);
+        }
+        if (mView != null && "oem_phone_card".equals(mPanelId)) {
+            mView.removeCallbacks(mBtPollRunnable);
+            mView.postDelayed(mBtPollRunnable, BT_POLL_MS);
+        }
+    }
+
+    private String resolveBondedBluetoothName() {
+        try {
+            BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+            if (adapter == null || !adapter.isEnabled()) {
+                return null;
+            }
+            java.util.Set<BluetoothDevice> bonded = adapter.getBondedDevices();
+            if (bonded == null || bonded.isEmpty()) {
+                return null;
+            }
+            // Prefer a connected device; otherwise first bonded name.
+            BluetoothDevice first = null;
+            for (BluetoothDevice device : bonded) {
+                if (device == null) {
+                    continue;
+                }
+                if (first == null) {
+                    first = device;
+                }
+                try {
+                    java.lang.reflect.Method isConnected =
+                            BluetoothDevice.class.getMethod("isConnected");
+                    Object connected = isConnected.invoke(device);
+                    if (Boolean.TRUE.equals(connected)) {
+                        String n = device.getName();
+                        return n != null && !n.isEmpty() ? n : device.getAddress();
+                    }
+                } catch (Throwable ignored) {
+                }
+            }
+            if (first != null) {
+                String n = first.getName();
+                return n != null && !n.isEmpty() ? n : first.getAddress();
+            }
+        } catch (SecurityException e) {
+            Log.w(TAG, "BT bonded query denied", e);
+        } catch (Throwable t) {
+            Log.w(TAG, "BT bonded query failed", t);
+        }
+        return null;
     }
 
     private void wireLaunch(View root, String idName, Runnable action) {
@@ -685,7 +905,9 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
     protected void onControllerDetached() {
         if (mView != null) {
             mView.removeCallbacks(mRefreshSessionsRunnable);
+            mView.removeCallbacks(mBtPollRunnable);
         }
+        unregisterBluetoothListeners();
         unbindMediaController();
         if (mMediaSessionManager != null) {
             try {
@@ -698,6 +920,7 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
             mVhalHelper.unsubscribe(VehiclePropertyIds.HVAC_TEMPERATURE_SET);
             mVhalHelper.unsubscribe(VehiclePropertyIds.HVAC_SEAT_TEMPERATURE);
             mVhalHelper.unsubscribe(VehiclePropertyIds.HVAC_SEAT_VENTILATION);
+            mVhalHelper.unsubscribe(VehiclePropertyIds.RANGE_REMAINING);
         } catch (Exception e) {
             Log.w(TAG, "HVAC unsubscribe failed", e);
         }
@@ -1190,10 +1413,10 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
         int userId = ActivityManager.getCurrentUser();
         UserHandle user = UserHandle.of(userId);
         Log.i(TAG, "launchAllApps user=" + userId);
-        // Declarative open first so AppGrid binds into panel_app_grid (layer 18, above
-        // cards, below dock). Then start the activity with NEW_TASK|CLEAR_TOP.
+        // Must go through EventDispatcher (not bare StateManager.handleEvent) or the
+        // TaskOpen becomes empty_event and panel_app_grid stays off-screen closed.
         try {
-            com.android.car.scalableui.manager.StateManager.handleEvent(
+            dispatchScalableEvent(
                     new com.android.car.scalableui.model.Event.Builder("_System_TaskOpenEvent")
                             .setPanelId("panel_app_grid")
                             .build());
@@ -1244,13 +1467,7 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
         // while mMapFullscreen alone flips the pin icon off.
         mMapFullscreen = false;
         dispatchScalableEvent("_System_OnHomeEvent");
-        // Drop sticky AppGrid / Settings / Dialer / mock overlay tasks without killing Maps
-        // or Spotify. TaskOpen below rebinds map_panel if needed.
-        removeOverlayTasks();
-        // Maps leaf task can drift to tip-style right bounds (e.g. left=832) while
-        // map_panel stays at OEM left (32,144)-(1408,1400). OnHome is then a no-op
-        // (already opened) and the left half of the map panel stays black.
-        realignMapPanelIfNeeded();
+        // Explicitly close freestanding app hosts so TaskViews cannot stay over home.
         try {
             dispatchScalableEvent(
                     new com.android.car.scalableui.model.Event.Builder("_System_TaskOpenEvent")
@@ -1259,15 +1476,103 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
         } catch (Throwable t) {
             Log.w(TAG, "TaskOpen map_panel failed", t);
         }
-        // After panel transitions settle, force Maps leaf into opened (split) bounds.
+        // Drop sticky AppGrid / Settings / browsers / YouTube / WebView covering home —
+        // keep Maps, Spotify sessions, and Dialer (oem_phone_card).
+        removeOverlayTasks();
+        // Maps leaf task can drift to tip-style right bounds (e.g. left=832) while
+        // map_panel stays at OEM left (32,144)-(1408,1400). OnHome is then a no-op
+        // (already opened) and the left half of the map panel stays black.
+        realignMapPanelIfNeeded();
+        // After panel transitions settle, force Maps leaf into opened (split) bounds
+        // and re-fire OnHome so cards/canvas that missed the first event become visible.
         final Rect opened = expectedMapPanelBounds();
-        Runnable realign = () -> resizeMapsTask(opened);
+        Runnable restore = () -> {
+            resizeMapsTask(opened);
+            try {
+                dispatchScalableEvent("_System_OnHomeEvent");
+            } catch (Throwable t) {
+                Log.w(TAG, "delayed OnHome failed", t);
+            }
+            ensurePhoneCardDialer();
+            Log.i(TAG, "launchHome restored map+cards");
+        };
         if (mView != null) {
-            mView.postDelayed(realign, 350L);
-            mView.postDelayed(realign, 800L);
+            mView.postDelayed(restore, 350L);
+            mView.postDelayed(() -> resizeMapsTask(opened), 800L);
         } else {
-            realign.run();
+            restore.run();
         }
+        Log.i(TAG, "launchHome restored map+cards");
+    }
+
+    /**
+     * Re-assert Car Dialer into {@code oem_phone_card} after Home. Without this,
+     * a prior removeTask / force-stop leaves the phone rail blank even though the
+     * TaskPanel bounds are visible.
+     */
+    private void ensurePhoneCardDialer() {
+        try {
+            dispatchScalableEvent(
+                    new com.android.car.scalableui.model.Event.Builder("_System_TaskOpenEvent")
+                            .setPanelId("oem_phone_card")
+                            .build());
+        } catch (Throwable t) {
+            Log.w(TAG, "TaskOpen oem_phone_card failed", t);
+        }
+        if (isDialerInPhoneCard()) {
+            return;
+        }
+        Log.i(TAG, "ensurePhoneCardDialer → TelecomActivity widget mode");
+        try {
+            ComponentName cn = ComponentName.unflattenFromString(DIALER_COMPONENT);
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.setComponent(cn);
+            intent.putExtra("com.android.car.dialer.EXTRA_WIDGET_MODE", true);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    | Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            startAsForegroundUser(intent);
+        } catch (Throwable t) {
+            Log.w(TAG, "ensurePhoneCardDialer launch failed", t);
+        }
+    }
+
+    /** True when TelecomActivity is already hosted in the phone-card task bounds. */
+    private boolean isDialerInPhoneCard() {
+        try {
+            Object atm = Class.forName("android.app.ActivityTaskManager")
+                    .getMethod("getInstance").invoke(null);
+            java.lang.reflect.Method getTasks;
+            java.util.List<?> tasks;
+            try {
+                getTasks = atm.getClass().getMethod(
+                        "getTasks", int.class, boolean.class, boolean.class, int.class);
+                tasks = (java.util.List<?>) getTasks.invoke(atm, 50, false, false, -1);
+            } catch (NoSuchMethodException e) {
+                getTasks = atm.getClass().getMethod("getTasks", int.class);
+                tasks = (java.util.List<?>) getTasks.invoke(atm, 50);
+            }
+            if (tasks == null) {
+                return false;
+            }
+            for (Object raw : tasks) {
+                if (!(raw instanceof ActivityManager.RunningTaskInfo)) {
+                    continue;
+                }
+                ActivityManager.RunningTaskInfo task = (ActivityManager.RunningTaskInfo) raw;
+                ComponentName cn = task.topActivity != null ? task.topActivity : task.baseActivity;
+                if (cn == null || !"com.android.car.dialer".equals(cn.getPackageName())) {
+                    continue;
+                }
+                Rect b = getTaskBounds(task);
+                // Phone card is the right-rail middle band (~1424,464)-(2528,1096).
+                if (b != null && b.left >= 1200 && b.width() > 400 && b.height() > 200) {
+                    return true;
+                }
+            }
+        } catch (Throwable t) {
+            Log.w(TAG, "isDialerInPhoneCard failed", t);
+        }
+        return false;
     }
 
     /**
@@ -1366,7 +1671,7 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
         return new Rect(
                 Math.round(16 * d),
                 Math.round(72 * d),
-                Math.round(704 * d),
+                Math.round(700 * d),
                 Math.round(700 * d));
     }
 
@@ -1508,7 +1813,66 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
     }
 
     /**
-     * Removes AppGrid and Car Settings tasks via ActivityTaskManager.
+     * True for freestanding tasks that must not cover the OEM home (map + cards + dock).
+     * Keeps Maps, SystemUI, Spotify (media session), and CarLauncher home/recents.
+     */
+    private static boolean shouldRemoveHomeOverlayTask(String pkg, String cls) {
+        if (pkg == null || pkg.isEmpty()) {
+            return false;
+        }
+        if ("com.google.android.apps.maps".equals(pkg)) {
+            return false;
+        }
+        if ("com.android.systemui".equals(pkg)) {
+            return false;
+        }
+        // Preserve Spotify / AOSP media session hosts — do not tear media playback.
+        if (pkg.startsWith("com.spotify.") || "com.android.bluetooth".equals(pkg)) {
+            return false;
+        }
+        if ("com.android.car.media".equals(pkg) || "com.android.car.media.localmediaplayer".equals(pkg)) {
+            return false;
+        }
+        if ("com.android.car.carlauncher".equals(pkg)) {
+            // Only AppGrid overlays home; leave home / recents alone.
+            return cls != null && cls.contains("AppGrid");
+        }
+        if ("com.android.car.settings".equals(pkg)) {
+            return true;
+        }
+        // Keep Dialer in oem_phone_card — removing it blanks the phone rail.
+        if ("com.android.car.dialer".equals(pkg)) {
+            return false;
+        }
+        // Clear Design Climate / Vehicle / Media / Map overlays when returning Home.
+        if (DESIGN_PACKAGE.equals(pkg)) {
+            return true;
+        }
+        // Only tear freestanding ClimateActivity overlays; leave other mockwidgets.
+        if ("com.android.car.mockwidgets".equals(pkg)) {
+            return cls != null && cls.contains("Climate");
+        }
+        // Freestanding browsers / YouTube / WebView tester covering home.
+        String p = pkg.toLowerCase();
+        if ("org.chromium.webview_shell".equals(pkg)
+                || p.contains("youtube")
+                || p.contains("chrome")
+                || p.contains("browser")
+                || p.contains("webview")) {
+            return true;
+        }
+        // Any other 3rd-party fullscreen activity sitting outside ScalableUI panels.
+        if (pkg.startsWith("com.android.") || pkg.startsWith("com.google.android.")) {
+            // Allow other Google/Android system surfaces (Assistant, etc.) unless
+            // they are known home-covering hosts already handled above.
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Removes AppGrid / Settings / browsers / YouTube / WebView and other
+     * freestanding tasks via ActivityTaskManager. Dialer in oem_phone_card is kept.
      * OnHomeEvent alone can leave TaskView surfaces visible over the map/cards.
      */
     private void removeOverlayTasks() {
@@ -1541,13 +1905,7 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
                 }
                 String pkg = cn.getPackageName();
                 String cls = cn.getClassName();
-                // Only remove known overlay hosts — never Maps (TaskPanel owns it) or Spotify.
-                boolean appGrid = "com.android.car.carlauncher".equals(pkg)
-                        && cls != null && cls.contains("AppGrid");
-                boolean settings = "com.android.car.settings".equals(pkg);
-                boolean dialer = "com.android.car.dialer".equals(pkg);
-                boolean mock = "com.android.car.mockwidgets".equals(pkg);
-                if (!appGrid && !settings && !dialer && !mock) {
+                if (!shouldRemoveHomeOverlayTask(pkg, cls)) {
                     continue;
                 }
                 Log.i(TAG, "removeTask overlay id=" + task.taskId + " cn=" + cn);
@@ -1593,27 +1951,54 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
     }
 
     private void launchPhone() {
-        // Host Dialer in app_panel so it cannot go fullscreen over oem_dock.
-        startComponentInAppPanel("com.android.car.dialer/.ui.TelecomActivity");
+        if (mFullyRestricted) {
+            return;
+        }
+        // Unpaired → Car Settings Bluetooth; paired → Dialer in app_panel.
+        refreshBluetoothSubtitle();
+        if (mBondedBtName == null || mBondedBtName.isEmpty()) {
+            Log.i(TAG, "launchPhone → BT settings (unpaired)");
+            startComponentInAppPanel(BT_SETTINGS_COMPONENT);
+            return;
+        }
+        Log.i(TAG, "launchPhone → Dialer bonded=" + mBondedBtName);
+        startComponentInAppPanel(DIALER_COMPONENT);
+    }
+
+    /** Dialpad always opens Dialer regardless of BT pairing state. */
+    private void launchDialpad() {
+        startComponentInAppPanel(DIALER_COMPONENT);
     }
 
     private void launchClimate() {
         if (mFullyRestricted) {
             return;
         }
-        // Prefer direct in-process toggle (Dagger-injected) when available.
-        if (mToggleAospHvac != null) {
-            Log.i(TAG, "launchClimate → AOSP HvacPanelOverlay.toggle()");
-            try {
-                runOnViewThread(mToggleAospHvac);
-            } catch (Throwable t) {
-                Log.w(TAG, "AOSP HVAC toggle failed", t);
-            }
+        long now = SystemClock.elapsedRealtime();
+        if (now - mLastHvacToggleElapsedMs < HVAC_TOGGLE_DEBOUNCE_MS) {
+            Log.i(TAG, "launchClimate debounced");
             return;
         }
-        // Same-process SystemUI: receiver is registered for the current user
-        // (BroadcastDispatcher + UserTracker). Plain sendBroadcast() from a
-        // system Context can miss user 10 — must use sendBroadcastAsUser.
+        mLastHvacToggleElapsedMs = now;
+        // Prefer Design ClimatePanel (explicit component avoids Design/MaterialTheme chooser).
+        if (startDesignPanel(DESIGN_ACTION_OPEN_CLIMATE, DESIGN_CLIMATE_COMPONENT)) {
+            Log.i(TAG, "launchClimate → Design ClimatePanelActivity");
+            return;
+        }
+        // Fallback: AOSP bottom HVAC overlay when Design is not installed.
+        if (mToggleAospHvac != null) {
+            Log.i(TAG, "launchClimate → AOSP HvacPanelOverlay.toggle() (injected)");
+            try {
+                new android.os.Handler(android.os.Looper.getMainLooper())
+                        .post(mToggleAospHvac);
+                return;
+            } catch (Throwable t) {
+                Log.w(TAG, "AOSP HVAC injected toggle failed", t);
+            }
+        }
+        if (toggleAospHvacReflective()) {
+            return;
+        }
         int userId = ActivityManager.getCurrentUser();
         Log.i(TAG, "launchClimate → TOGGLE_HVAC_PANEL user=" + userId);
         Intent toggle = new Intent(
@@ -1622,6 +2007,7 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
         toggle.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
         try {
             mContext.sendBroadcastAsUser(toggle, UserHandle.of(userId));
+            mContext.sendBroadcastAsUser(toggle, UserHandle.SYSTEM);
         } catch (Exception e) {
             Log.w(TAG, "sendBroadcastAsUser failed, trying sendBroadcast", e);
             try {
@@ -1631,6 +2017,70 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
                 removeMisplacedClimateTasks();
                 startComponent("com.android.car.mockwidgets/.ClimateActivity");
             }
+        }
+    }
+
+    /**
+     * Opens the stock bottom-sheet {@code HvacPanelOverlay} by reflecting the
+     * Dagger provider on {@code CarSysUIComponent}. Used when the footer Factory
+     * was constructed without an injected toggle runnable.
+     */
+    private boolean toggleAospHvacReflective() {
+        try {
+            Object app = mContext.getApplicationContext();
+            // CarSystemUIApplication extends SystemUIApplicationImpl which holds
+            // public mSysUIComponent (no getSysUIComponent() on the Application).
+            Object sysui = null;
+            for (Class<?> c = app.getClass(); c != null; c = c.getSuperclass()) {
+                try {
+                    java.lang.reflect.Field f = c.getDeclaredField("mSysUIComponent");
+                    f.setAccessible(true);
+                    sysui = f.get(app);
+                    break;
+                } catch (NoSuchFieldException ignored) {
+                    // walk superclass
+                }
+            }
+            if (sysui == null) {
+                Log.w(TAG, "launchClimate: no mSysUIComponent on Application");
+                return false;
+            }
+            Object provider = null;
+            for (Class<?> c = sysui.getClass(); c != null; c = c.getSuperclass()) {
+                try {
+                    java.lang.reflect.Field f =
+                            c.getDeclaredField("hvacPanelOverlayViewControllerProvider");
+                    f.setAccessible(true);
+                    provider = f.get(sysui);
+                    break;
+                } catch (NoSuchFieldException ignored) {
+                    // walk superclass
+                }
+            }
+            if (provider == null) {
+                Log.w(TAG, "launchClimate: no hvacPanelOverlayViewControllerProvider");
+                return false;
+            }
+            final Object hvac = provider.getClass().getMethod("get").invoke(provider);
+            if (hvac == null) {
+                return false;
+            }
+            Log.i(TAG, "launchClimate → AOSP HvacPanelOverlay.toggle() (reflective)");
+            // Hvac overlay views are owned by the ActivityThread main looper — not
+            // wmshell.main (runOnViewThread). Posting there throws CalledFromWrongThread.
+            final android.os.Handler main = new android.os.Handler(
+                    android.os.Looper.getMainLooper());
+            main.post(() -> {
+                try {
+                    hvac.getClass().getMethod("toggle").invoke(hvac);
+                } catch (Throwable t) {
+                    Log.w(TAG, "reflective HVAC toggle failed", t);
+                }
+            });
+            return true;
+        } catch (Throwable t) {
+            Log.w(TAG, "launchClimate reflective HVAC lookup failed", t);
+            return false;
         }
     }
 
@@ -1701,12 +2151,99 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
     }
 
     private void launchMedia() {
-        // Keep playback on the OEM media card. Opening MediaActivity steals the map panel.
-        Log.i(TAG, "launchMedia ignored — use media card controls");
+        if (mFullyRestricted) {
+            return;
+        }
+        if (mActiveController == null) {
+            refreshMediaSessionsOnce();
+        }
+        String pkg = mActiveController != null ? mActiveController.getPackageName() : null;
+        if (pkg == null || pkg.isEmpty()) {
+            pkg = SPOTIFY_PACKAGE;
+        }
+        Log.i(TAG, "launchMedia → app_panel pkg=" + pkg);
+        Intent launcher = buildPackageLauncherIntent(pkg);
+        if (launcher == null && !SPOTIFY_PACKAGE.equals(pkg)) {
+            launcher = buildPackageLauncherIntent(SPOTIFY_PACKAGE);
+            pkg = SPOTIFY_PACKAGE;
+        }
+        // Open app_panel via EventDispatcher so the TaskView hosts the activity.
+        try {
+            dispatchScalableEvent(
+                    new com.android.car.scalableui.model.Event.Builder("_System_TaskOpenEvent")
+                            .setPanelId("app_panel")
+                            .build());
+        } catch (Throwable t) {
+            Log.w(TAG, "TaskOpen app_panel for media failed", t);
+        }
+        if (launcher != null) {
+            startAsForegroundUser(launcher);
+            return;
+        }
+        // Fallback: MediaDispatcherActivity (routes to last/primary media source).
+        Log.i(TAG, "launchMedia fallback MediaDispatcher");
+        startComponent(mPrimaryMediaComponent != null
+                ? mPrimaryMediaComponent
+                : DEFAULT_PRIMARY_MEDIA);
+    }
+
+    /** ACTION_MAIN + CATEGORY_LAUNCHER for {@code pkg}, or null if unresolved. */
+    private Intent buildPackageLauncherIntent(String pkg) {
+        if (pkg == null || pkg.isEmpty()) {
+            return null;
+        }
+        int userId = ActivityManager.getCurrentUser();
+        UserHandle user = UserHandle.of(userId);
+        // SystemUI runs as user 0 — resolve launcher against the foreground user.
+        try {
+            Context userContext = mContext.createContextAsUser(user, 0);
+            Intent launch = userContext.getPackageManager().getLaunchIntentForPackage(pkg);
+            if (launch != null) {
+                launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                return launch;
+            }
+        } catch (Throwable t) {
+            Log.w(TAG, "user getLaunchIntentForPackage failed for " + pkg, t);
+        }
+        try {
+            Intent launch = mContext.getPackageManager().getLaunchIntentForPackage(pkg);
+            if (launch != null) {
+                launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                return launch;
+            }
+        } catch (Throwable t) {
+            Log.w(TAG, "getLaunchIntentForPackage failed for " + pkg, t);
+        }
+        // Spotify Automotive has no CATEGORY_LAUNCHER — open MediaDispatcher which
+        // routes to the active AutomotiveMediaBrowserService (Spotify).
+        if (SPOTIFY_PACKAGE.equals(pkg)) {
+            return null;
+        }
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        intent.setPackage(pkg);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        try {
+            Context userContext = mContext.createContextAsUser(user, 0);
+            if (userContext.getPackageManager().resolveActivity(intent, 0) != null) {
+                return intent;
+            }
+        } catch (Throwable t) {
+            Log.w(TAG, "resolveActivity failed for " + pkg, t);
+        }
+        return null;
     }
 
     private void launchCarStatus() {
-        startComponentInAppPanel("com.android.car.mockwidgets/.DrivingStatsActivity");
+        // Design Vehicle panel — explicit component avoids shared-action chooser.
+        if (startDesignPanel(DESIGN_ACTION_OPEN_VEHICLE, DESIGN_VEHICLE_COMPONENT)) {
+            Log.i(TAG, "launchCarStatus → Design VehiclePanelActivity");
+            return;
+        }
+        // Fallback when Design is absent: expand the OEM stats DecorPanel (do NOT
+        // open translucent DrivingStatsActivity in app_panel — ghost over map).
+        Log.i(TAG, "launchCarStatus → expand stats card (Design missing)");
+        dispatchScalableEvent("toggle_card_expand_stats");
     }
 
     /**
@@ -1718,7 +2255,7 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
             return;
         }
         try {
-            com.android.car.scalableui.manager.StateManager.handleEvent(
+            dispatchScalableEvent(
                     new com.android.car.scalableui.model.Event.Builder("_System_TaskOpenEvent")
                             .setPanelId("app_panel")
                             .build());
@@ -1802,6 +2339,34 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
         mVhalHelper.subscribe(VehiclePropertyIds.HVAC_TEMPERATURE_SET, 0, mHvacCallback);
         mVhalHelper.subscribe(VehiclePropertyIds.HVAC_SEAT_TEMPERATURE, 0, mHvacCallback);
         mVhalHelper.subscribe(VehiclePropertyIds.HVAC_SEAT_VENTILATION, 0, mHvacCallback);
+        if ("oem_car_status_card".equals(mPanelId)) {
+            try {
+                Float range = mVhalHelper.getFloatProperty(VehiclePropertyIds.RANGE_REMAINING, 0);
+                if (range != null) {
+                    updateRangeUi(range);
+                }
+                mVhalHelper.subscribe(VehiclePropertyIds.RANGE_REMAINING, 0, mRangeCallback);
+            } catch (SecurityException e) {
+                Log.w(TAG, "RANGE_REMAINING unavailable — keeping mock stats", e);
+            } catch (Throwable t) {
+                Log.w(TAG, "RANGE_REMAINING bind failed — keeping mock stats", t);
+            }
+        }
+    }
+
+    private void updateRangeUi(float rangeMeters) {
+        if (mStatsRangeValue == null) {
+            return;
+        }
+        if (rangeMeters < 0f) {
+            return;
+        }
+        mLiveRangeBound = true;
+        int miles = Math.round(rangeMeters / METERS_PER_MILE);
+        mStatsRangeValue.setText(String.valueOf(miles));
+        if (mStatsRangeLabel != null) {
+            mStatsRangeLabel.setText("mi range");
+        }
     }
 
     @Override

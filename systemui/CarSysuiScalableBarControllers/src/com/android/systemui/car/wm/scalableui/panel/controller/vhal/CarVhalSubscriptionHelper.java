@@ -139,6 +139,14 @@ public final class CarVhalSubscriptionHelper {
         } catch (IllegalArgumentException e) {
             Log.w(TAG, "Property not available: " + propertyId, e);
             return false;
+        } catch (SecurityException e) {
+            Log.w(TAG, "No permission to subscribe property " + propertyId);
+            mCallbacks.remove(propertyId);
+            return false;
+        } catch (Exception e) {
+            Log.w(TAG, "subscribe failed for property " + propertyId, e);
+            mCallbacks.remove(propertyId);
+            return false;
         }
     }
 
@@ -166,6 +174,12 @@ public final class CarVhalSubscriptionHelper {
         } catch (CarNotConnectedException e) {
             Log.e(TAG, "CarNotConnectedException reading " + propertyId, e);
             notifyDisconnected();
+            return null;
+        } catch (SecurityException e) {
+            Log.w(TAG, "No permission to read property " + propertyId);
+            return null;
+        } catch (Exception e) {
+            Log.w(TAG, "Failed reading float property " + propertyId, e);
             return null;
         }
     }

@@ -13,7 +13,9 @@
         android:gravity="center_vertical"
         android:background="@drawable/oem_dock_bg"
         android:paddingStart="14dp"
-        android:paddingEnd="14dp">
+        android:paddingEnd="14dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -102,14 +104,14 @@
                 android:background="@drawable/oem_circle_blue"
                 android:scaleType="centerInside"
                 android:padding="14dp"
-                android:clickable="false"
-                android:focusable="false"
+                android:clickable="true"
+                android:focusable="true"
                 android:contentDescription="@string/sysui_nav_all_apps" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="1dp"
                 android:text="ALL APPS"
                 android:textColor="#EEFFFFFF"
                 android:textSize="10sp"
@@ -136,14 +138,14 @@
                 android:background="@drawable/oem_circle_home"
                 android:scaleType="centerInside"
                 android:padding="15dp"
-                android:clickable="false"
-                android:focusable="false"
+                android:clickable="true"
+                android:focusable="true"
                 android:contentDescription="@string/sysui_nav_home" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="1dp"
                 android:text="HOME"
                 android:textColor="#FFFFFFFF"
                 android:textSize="10sp"
@@ -171,14 +173,14 @@
                 android:background="@drawable/oem_circle_blue"
                 android:scaleType="centerInside"
                 android:padding="12dp"
-                android:clickable="false"
-                android:focusable="false"
+                android:clickable="true"
+                android:focusable="true"
                 android:contentDescription="Climate" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="1dp"
                 android:text="CLIMATE"
                 android:textColor="#EEFFFFFF"
                 android:textSize="10sp"
@@ -205,14 +207,14 @@
                 android:background="@drawable/oem_circle_green"
                 android:scaleType="centerInside"
                 android:padding="14dp"
-                android:clickable="false"
-                android:focusable="false"
+                android:clickable="true"
+                android:focusable="true"
                 android:contentDescription="@string/sysui_nav_recent" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="1dp"
                 android:text="RECENT"
                 android:textColor="#EEFFFFFF"
                 android:textSize="10sp"
@@ -226,15 +228,16 @@
             android:layout_weight="0.45" />
 
         <ImageButton
-            android:id="@+id/oem_launch_climate"
+            android:id="@+id/oem_launch_vehicle"
             android:layout_width="44dp"
             android:layout_height="44dp"
-            android:src="@drawable/oem_ic_vent_windshield"
+            android:src="@drawable/ic_nav_seat"
             android:background="@drawable/oem_climate_btn"
             android:padding="10dp"
             android:scaleType="centerInside"
-            android:contentDescription="HVAC" />
+            android:contentDescription="Vehicle" />
 
+        <!-- Fan = Design ClimatePanel (same as center CLIMATE). -->
         <ImageButton
             android:id="@+id/oem_launch_hvac"
             android:layout_width="48dp"
@@ -246,7 +249,7 @@
             android:scaleType="centerInside"
             android:clickable="true"
             android:focusable="true"
-            android:contentDescription="HVAC" />
+            android:contentDescription="Climate" />
 
         <!-- Passenger zone HVAC (ROW_1_RIGHT) — mirrors driver pill on the left. -->
         <LinearLayout

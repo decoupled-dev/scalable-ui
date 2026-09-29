@@ -5,6 +5,10 @@
     <uses-sdk android:minSdkVersion="35" android:targetSdkVersion="35" />
 
     <uses-permission android:name="android.car.permission.CONTROL_CAR_CLIMATE" />
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
 
     <application android:label="MockWidgets"
                  android:theme="@style/Theme.MockWidgets">
@@ -28,6 +32,17 @@
             android:exported="true"
             android:launchMode="singleTask"
             android:taskAffinity="com.android.car.mockwidgets.call"
+            android:resizeableActivity="true"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
+            android:excludeFromRecents="true">
+            <meta-data android:name="distractionOptimized" android:value="true"/>
+        </activity>
+
+        <activity
+            android:name=".PhoneRecentsActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:taskAffinity="com.android.car.mockwidgets.phone"
             android:resizeableActivity="true"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:excludeFromRecents="true">

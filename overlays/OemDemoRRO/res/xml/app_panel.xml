@@ -38,6 +38,8 @@
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=settings_panel" toVariant="@id/closed" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=map_panel" toVariant="@id/closed" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=hvac_left_panel" toVariant="@id/closed" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/fullscreen" toVariant="@id/closed" duration="400" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/opened" toVariant="@id/closed" duration="400" interpolator="@anim/pleos_fluid_interpolator"/>
         <Transition onEvent="_System_OnHomeEvent" toVariant="@id/closed" duration="400" interpolator="@anim/pleos_fluid_interpolator"/>
         <Transition onEvent="show_page2" fromVariant="@id/opened" toVariant="@id/page2_opened" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
         <Transition onEvent="toggle_fullscreen" fromVariant="@id/opened" toVariant="@id/fullscreen" duration="400" interpolator="@anim/pleos_fluid_interpolator"/>

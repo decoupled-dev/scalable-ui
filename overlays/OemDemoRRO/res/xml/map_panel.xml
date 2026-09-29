@@ -6,7 +6,7 @@
         <Visibility isVisible="true"/>
         <Alpha alpha="1.0"/>
         <Corner radius="28dp"/>
-        <Bounds left="16dp" top="72dp" right="704dp" bottom="700dp"/>
+        <Bounds left="16dp" top="72dp" right="700dp" bottom="700dp"/>
         <Focus onTransition="false"/>
     </Variant>
     <!-- Full-bleed behind dock/header: layer 15 covers cards if hide lags; dock stays 20. -->
@@ -23,7 +23,7 @@
         <Visibility isVisible="true"/>
         <Alpha alpha="1.0"/>
         <Corner radius="28dp"/>
-        <Bounds left="16dp" top="72dp" right="704dp" bottom="700dp"/>
+        <Bounds left="16dp" top="72dp" right="700dp" bottom="700dp"/>
         <Focus onTransition="true"/>
     </Variant>
     <Variant id="@+id/settings_stacked">
@@ -31,7 +31,7 @@
         <Visibility isVisible="true"/>
         <Alpha alpha="1.0"/>
         <Corner radius="28dp"/>
-        <Bounds left="16dp" top="72dp" right="704dp" bottom="700dp"/>
+        <Bounds left="16dp" top="72dp" right="700dp" bottom="700dp"/>
         <Focus onTransition="false"/>
     </Variant>
     <Variant id="@+id/stacked">
@@ -39,7 +39,7 @@
         <Visibility isVisible="true"/>
         <Alpha alpha="1.0"/>
         <Corner radius="28dp"/>
-        <Bounds left="16dp" top="72dp" right="704dp" bottom="700dp"/>
+        <Bounds left="16dp" top="72dp" right="700dp" bottom="700dp"/>
         <Focus onTransition="false"/>
     </Variant>
     <Variant id="@+id/page_2_shown">
@@ -47,7 +47,7 @@
         <Visibility isVisible="true"/>
         <Alpha alpha="1.0"/>
         <Corner radius="28dp"/>
-        <Bounds left="16dp" top="72dp" right="704dp" bottom="700dp"/>
+        <Bounds left="16dp" top="72dp" right="700dp" bottom="700dp"/>
         <Focus onTransition="false"/>
     </Variant>
     <Variant id="@+id/two_panel">
@@ -55,7 +55,7 @@
         <Visibility isVisible="true"/>
         <Alpha alpha="1.0"/>
         <Corner radius="28dp"/>
-        <Bounds left="16dp" top="72dp" right="704dp" bottom="700dp"/>
+        <Bounds left="16dp" top="72dp" right="700dp" bottom="700dp"/>
         <Focus onTransition="false"/>
     </Variant>
     <Transitions>

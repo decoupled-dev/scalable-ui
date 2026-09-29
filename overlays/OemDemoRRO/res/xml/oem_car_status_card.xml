@@ -1,28 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- OEM driving stats card — DecorPanel with compact layout. -->
-<DecorPanel id="oem_car_status_card" defaultVariant="@id/visible"
-    controller="@xml/sysui_scalable_footer_controller" displayId="0">
+<!-- TaskPanel — opaque TimeWidget (DrivingStats is translucent and ghosts red
+     over the map). Stock FooterController cannot host oem_car_status layout. -->
+<TaskPanel id="oem_car_status_card" defaultVariant="@id/visible"
+    role="@string/mockwidgets_time_widget_activity_componentName" displayId="0">
     <Variant id="@+id/visible">
-        <Layer layer="12"/>
+        <Layer layer="8"/>
         <Visibility isVisible="true"/>
         <Alpha alpha="1.0"/>
         <Corner radius="28dp"/>
-        <Bounds left="984dp" top="384dp" right="1264dp" bottom="700dp"/>
+        <!-- Phone-priority rail: Stats bottom-right compact strip. -->
+        <Bounds left="996dp" top="560dp" right="1264dp" bottom="700dp"/>
+        <Focus onTransition="true"/>
+    </Variant>
+    <Variant id="@+id/expanded">
+        <Layer layer="16"/>
+        <Visibility isVisible="true"/>
+        <Alpha alpha="1.0"/>
+        <Corner radius="28dp"/>
+        <Bounds left="712dp" top="72dp" right="1264dp" bottom="700dp"/>
         <Focus onTransition="true"/>
     </Variant>
     <Variant id="@+id/hidden">
-        <Layer layer="12"/>
+        <Layer layer="8"/>
         <Visibility isVisible="false"/>
         <Alpha alpha="0.0"/>
         <Corner radius="28dp"/>
-        <Bounds left="984dp" top="384dp" right="1264dp" bottom="700dp"/>
+        <Bounds left="996dp" top="560dp" right="1264dp" bottom="700dp"/>
         <Focus onTransition="false"/>
     </Variant>
     <Transitions>
         <Transition onEvent="toggle_map_fullscreen" fromVariant="@id/visible" toVariant="@id/hidden" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
         <Transition onEvent="toggle_map_fullscreen" fromVariant="@id/hidden" toVariant="@id/visible" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
-        <!-- Explicit hidden→visible so HOME restores cards after map fullscreen. -->
+        <Transition onEvent="toggle_map_fullscreen" fromVariant="@id/expanded" toVariant="@id/hidden" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="toggle_card_expand_stats" fromVariant="@id/visible" toVariant="@id/expanded" duration="350" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="toggle_card_expand_stats" fromVariant="@id/expanded" toVariant="@id/visible" duration="350" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="toggle_card_expand_media" fromVariant="@id/visible" toVariant="@id/hidden" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="toggle_card_expand_media" fromVariant="@id/hidden" toVariant="@id/visible" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="toggle_card_expand_media" fromVariant="@id/expanded" toVariant="@id/hidden" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="toggle_card_expand_climate" fromVariant="@id/visible" toVariant="@id/hidden" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="toggle_card_expand_climate" fromVariant="@id/hidden" toVariant="@id/visible" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="toggle_card_expand_climate" fromVariant="@id/expanded" toVariant="@id/hidden" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="toggle_card_expand_phone" fromVariant="@id/visible" toVariant="@id/hidden" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="toggle_card_expand_phone" fromVariant="@id/hidden" toVariant="@id/visible" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="toggle_card_expand_phone" fromVariant="@id/expanded" toVariant="@id/hidden" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
         <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/hidden" toVariant="@id/visible" duration="0"/>
+        <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/expanded" toVariant="@id/visible" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
         <Transition onEvent="_System_OnHomeEvent" toVariant="@id/visible" duration="0"/>
     </Transitions>
-</DecorPanel>
+</TaskPanel>

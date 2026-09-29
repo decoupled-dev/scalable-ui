@@ -76,6 +76,9 @@
     </string-array>
 
     <!-- ========== OEM card dashboard (map + 2x2 cards + dock) ========== -->
+    <!-- NOTE: Do NOT attach FooterController to oem_canvas / oem_car_status on the
+         stock CarSystemUI — getLayoutResourceName only knows media vs footer, so
+         canvas/stats inflate a second full dock (mid-screen ghost bar). -->
     <array name="window_states_pleos" replace="true">
         <item>@xml/oem_canvas</item>
         <item>@xml/oem_dock</item>
@@ -84,7 +87,6 @@
         <item>@xml/oem_media_card</item>
         <item>@xml/oem_climate_card</item>
         <item>@xml/oem_phone_card</item>
-        <item>@xml/oem_car_status_card</item>
         <item>@xml/panel_app_grid</item>
         <item>@xml/app_panel</item>
         <item>@xml/settings_panel</item>
@@ -95,6 +97,7 @@
     <string-array name="config_default_activities_pleos" translatable="false" replace="true">
         <item>oem_canvas;@layout/oem_canvas</item>
         <item>map_panel;com.google.android.apps.maps/com.google.android.maps.MapsActivity</item>
+        <item>oem_phone_card;com.android.car.dialer/.ui.TelecomActivity</item>
         <item>panel_app_grid;com.android.car.carlauncher/.AppGridActivity</item>
         <item>hvac_left_panel;com.android.car.mockwidgets/.ClimateActivity</item>
     </string-array>

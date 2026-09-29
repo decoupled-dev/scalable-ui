@@ -19,8 +19,11 @@ package com.android.systemui.car.wm.scalableui.panel.controller;
 import android.app.ActivityManager;
 import android.car.drivingstate.CarUxRestrictions;
 import android.car.drivingstate.CarUxRestrictionsManager;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.UserHandle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -294,6 +297,97 @@ public abstract class CarSysuiScalableBarControllerBase implements ScalableDecor
 
     /** Apply enabled state when VHAL reconnects. */
     protected abstract void applyVhalConnectedState();
+
+    /** Package hosting Design IVI glanceable / map screens. */
+    protected static final String DESIGN_PACKAGE = "com.test.design";
+    protected static final String DESIGN_ACTION_OPEN_CLIMATE =
+            "com.test.design.action.OPEN_CLIMATE";
+    protected static final String DESIGN_ACTION_OPEN_MEDIA =
+            "com.test.design.action.OPEN_MEDIA";
+    protected static final String DESIGN_ACTION_OPEN_VEHICLE =
+            "com.test.design.action.OPEN_VEHICLE";
+    protected static final String DESIGN_ACTION_OPEN_MAP =
+            "com.test.design.action.OPEN_MAP";
+    protected static final String DESIGN_CLIMATE_COMPONENT =
+            "com.test.design/.presentation.ivi.glanceables.ClimatePanelActivity";
+    protected static final String DESIGN_MEDIA_COMPONENT =
+            "com.test.design/.presentation.ivi.glanceables.MediaPanelActivity";
+    protected static final String DESIGN_VEHICLE_COMPONENT =
+            "com.test.design/.presentation.ivi.glanceables.VehiclePanelActivity";
+    protected static final String DESIGN_MAP_COMPONENT =
+            "com.test.design/.presentation.ivi.map.MapActivity";
+    protected static final String DESIGN_HOME_COMPONENT =
+            "com.test.design/.MainActivity";
+
+    /**
+     * Opens a Design screen with an explicit component (avoids Design/MaterialTheme
+     * chooser on shared actions) plus the documented action + DEFAULT category.
+     * Uses {@link Intent#FLAG_ACTIVITY_NEW_TASK} because SystemUI is not an Activity.
+     *
+     * @return true if the start was dispatched
+     */
+    protected boolean startDesignPanel(String action, String flattenedComponent) {
+        if (mFullyRestricted) {
+            return false;
+        }
+        if (!isDesignPackageInstalled()) {
+            Log.w(TAG, "Design package missing — cannot open " + action);
+            return false;
+        }
+        try {
+            ComponentName cn = ComponentName.unflattenFromString(flattenedComponent);
+            if (cn == null) {
+                Log.w(TAG, "Bad Design component: " + flattenedComponent);
+                return false;
+            }
+            Intent intent = new Intent(action);
+            intent.setComponent(cn);
+            intent.addCategory(Intent.CATEGORY_DEFAULT);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startDesignIntentAsUser(intent);
+            Log.i(TAG, "startDesignPanel action=" + action + " cn=" + cn);
+            return true;
+        } catch (Throwable t) {
+            Log.w(TAG, "startDesignPanel failed action=" + action, t);
+            return false;
+        }
+    }
+
+    protected boolean isDesignPackageInstalled() {
+        try {
+            mContext.getPackageManager().getPackageInfo(DESIGN_PACKAGE, 0);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
+
+    protected void startDesignIntentAsUser(Intent intent) {
+        int userId = ActivityManager.getCurrentUser();
+        UserHandle user = UserHandle.of(userId);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        try {
+            java.lang.reflect.Method getPi = android.app.PendingIntent.class.getMethod(
+                    "getActivityAsUser", Context.class, int.class, Intent.class, int.class,
+                    android.os.Bundle.class, UserHandle.class);
+            Object pi = getPi.invoke(null, mContext, 0, intent,
+                    android.app.PendingIntent.FLAG_IMMUTABLE
+                            | android.app.PendingIntent.FLAG_UPDATE_CURRENT,
+                    null, user);
+            if (pi instanceof android.app.PendingIntent) {
+                ((android.app.PendingIntent) pi).send();
+                return;
+            }
+        } catch (Throwable t) {
+            Log.w(TAG, "PendingIntent Design launch failed", t);
+        }
+        try {
+            android.app.ActivityOptions options = android.app.ActivityOptions.makeBasic();
+            mContext.startActivityAsUser(intent, options.toBundle(), user);
+        } catch (Throwable t) {
+            Log.e(TAG, "startActivityAsUser Design failed user=" + userId, t);
+        }
+    }
 
     /**
      * DecorPanel views are attached on the WM Shell thread, so UI updates must
