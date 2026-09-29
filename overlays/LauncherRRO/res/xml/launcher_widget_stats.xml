@@ -5,7 +5,7 @@
     <Variant id="@+id/base">
         <Layer layer="12"/>
         <Alpha alpha="1.0"/>
-        <Corner radius="28dp"/>
+        <Corner radius="@dimen/launcher_widget_corner"/>
         <Bounds
             left="100%"
             leftOffset="@dimen/launcher_widget_left"
@@ -36,7 +36,9 @@
         <Transition onEvent="_System_EnterSuwEvent" toVariant="@id/hidden"/>
         <Transition onEvent="_System_ExitSuwEvent" fromVariant="@id/hidden" toVariant="@id/visible"/>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=panel_app_grid" toVariant="@id/apps_open" duration="400" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_app" toVariant="@id/apps_open" duration="400" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/apps_open" toVariant="@id/visible" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskCloseEvent" onEventTokens="panelId=launcher_app" fromVariant="@id/apps_open" toVariant="@id/visible" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=map_panel" fromVariant="@id/apps_open" toVariant="@id/visible" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
     </Transitions>
 </TaskPanel>

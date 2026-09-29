@@ -242,25 +242,43 @@ public final class CarVhalSubscriptionHelper {
         }
     }
 
-    /** Clamp to CarPropertyConfig area min/max when available. */
-    private float clampFloat(int propertyId, int areaId, float value) {
+    /**
+     * Area min/max for a float property, or null when the config has no numeric bounds.
+     * Index 0 is min, index 1 is max.
+     */
+    public float[] getFloatRange(int propertyId, int areaId) {
+        if (mCarPropertyManager == null) {
+            return null;
+        }
         try {
             CarPropertyConfig<?> config = mCarPropertyManager.getCarPropertyConfig(propertyId);
             if (config == null) {
-                return value;
+                return null;
             }
             Object minObj = config.getMinValue(areaId);
             Object maxObj = config.getMaxValue(areaId);
-            if (minObj instanceof Number) {
-                value = Math.max(((Number) minObj).floatValue(), value);
+            if (!(minObj instanceof Number) || !(maxObj instanceof Number)) {
+                return null;
             }
-            if (maxObj instanceof Number) {
-                value = Math.min(((Number) maxObj).floatValue(), value);
+            float min = ((Number) minObj).floatValue();
+            float max = ((Number) maxObj).floatValue();
+            if (max < min) {
+                return null;
             }
+            return new float[] {min, max};
         } catch (Exception e) {
-            Log.w(TAG, "clampFloat failed prop=" + propertyId, e);
+            Log.w(TAG, "getFloatRange failed prop=" + propertyId + " area=" + areaId, e);
+            return null;
         }
-        return value;
+    }
+
+    /** Clamp to CarPropertyConfig area min/max when available. */
+    private float clampFloat(int propertyId, int areaId, float value) {
+        float[] range = getFloatRange(propertyId, areaId);
+        if (range == null) {
+            return value;
+        }
+        return Math.max(range[0], Math.min(range[1], value));
     }
 
     private int clampInt(int propertyId, int areaId, int value) {

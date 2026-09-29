@@ -4,7 +4,7 @@
          Zero while the system bars are hidden. Grow a side when a card covers it. -->
     <!-- Widget column sits on the right. 528dp clears it and the zoom control beside it. -->
     <dimen name="launcher_map_inset_left">0dp</dimen>
-    <!-- Clears the top status pill (pill bottom is 72dp). -->
+    <!-- Clears the three status pills (bar height is 80dp). -->
     <dimen name="launcher_map_inset_top">80dp</dimen>
     <dimen name="launcher_map_inset_right">528dp</dimen>
     <!-- Dock top sits 96dp above the bottom edge. 108dp clears it by 12dp. -->
@@ -26,6 +26,10 @@
     <dimen name="launcher_app_grid_bottom_offset">120dp</dimen>
     <dimen name="launcher_app_grid_edge">16dp</dimen>
     <dimen name="launcher_app_grid_corner">28dp</dimen>
+    <!-- Matches MockWidgets glass_panel so the window clip and the card stroke meet. -->
+    <dimen name="launcher_widget_corner">48dp</dimen>
+    <!-- Launched apps float at 90% width: 5% of the canvas on each side. -->
+    <dimen name="launcher_app_corner">32dp</dimen>
     <!-- Closed copy sits just off the right edge, same width as the open panel. -->
     <dimen name="launcher_app_grid_closed_right_offset">-860dp</dimen>
     <!-- While the grid is open, widgets are gone. The right inset keeps map
@@ -48,4 +52,12 @@
     <dimen name="launcher_widget_media_bottom">660dp</dimen>
     <dimen name="launcher_widget_stats_top">672dp</dimen>
     <dimen name="launcher_widget_stats_bottom">956dp</dimen>
+
+    <!-- Stock status bar, drawn as the three top pills. -->
+    <dimen name="car_top_system_bar_height">80dp</dimen>
+    <!-- Quick-control popups fill the map between the pills and the dock. -->
+    <dimen name="car_status_icon_panel_default_width">1674dp</dimen>
+    <dimen name="car_profile_quick_controls_panel_width">1674dp</dimen>
+    <dimen name="car_sensor_qc_panel_width">1674dp</dimen>
+    <dimen name="launcher_qc_panel_min_height">840dp</dimen>
 </resources>

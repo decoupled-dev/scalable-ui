@@ -559,13 +559,26 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
         if (live != null) {
             current = live;
         }
-        float next = current + delta;
-        // Helper clamps to VHAL min/max and swallows IllegalArgumentException.
+        float next = clampHvac(area, current + delta);
+        // Already at the VHAL bound. Writing past it makes CarPropertyManager throw
+        // IllegalStateException and crash SystemUI.
+        if (Math.abs(next - current) < 0.01f) {
+            updateHvacDisplay(area, current);
+            return;
+        }
         if (mVhalHelper.setFloatProperty(VehiclePropertyIds.HVAC_TEMPERATURE_SET, area, next)) {
             Float applied = mVhalHelper.getFloatProperty(
                     VehiclePropertyIds.HVAC_TEMPERATURE_SET, area);
             updateHvacDisplay(area, applied != null ? applied : next);
         }
+    }
+
+    private float clampHvac(int area, float value) {
+        float[] range = mVhalHelper.getFloatRange(VehiclePropertyIds.HVAC_TEMPERATURE_SET, area);
+        if (range == null) {
+            return value;
+        }
+        return Math.max(range[0], Math.min(range[1], value));
     }
 
     private void adjustSeat(int area, int delta) {
@@ -580,11 +593,10 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
     }
 
     private void updateHvacDisplay(int area, float temp) {
-        String format = resolveRroString("sysui_hvac_temp_format");
-        if (format == null) {
-            format = "%.0f°";
-        }
-        String text = String.format(Locale.getDefault(), format, temp);
+        // %.0f rounds the real bounds 17.5 → "18°" and 32.5 → "33°". The next
+        // press then looks valid and crashes when the write is rejected.
+        boolean whole = Math.abs(temp - Math.rint(temp)) < 0.05f;
+        String text = String.format(Locale.getDefault(), whole ? "%.0f°" : "%.1f°", temp);
         if (area == AREA_DRIVER) {
             mDriverHvacTemp = temp;
             if (mDriverHvacTempText != null) {
@@ -596,6 +608,29 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
                 mPassengerHvacTempText.setText(text);
             }
         }
+        refreshHvacButtons();
+    }
+
+    private void refreshHvacButtons() {
+        boolean base = !mFullyRestricted && mVhalConnected;
+        setHvacStepEnabled(mDriverHvacDown, mDriverHvacUp, mDriverHvacTemp, AREA_DRIVER, base);
+        setHvacStepEnabled(mPassengerHvacDown, mPassengerHvacUp, mPassengerHvacTemp,
+                AREA_PASSENGER, base);
+    }
+
+    private void setHvacStepEnabled(View down, View up, float temp, int area, boolean base) {
+        boolean canDown = base;
+        boolean canUp = base;
+        if (base) {
+            float[] range = mVhalHelper.getFloatRange(
+                    VehiclePropertyIds.HVAC_TEMPERATURE_SET, area);
+            if (range != null) {
+                canDown = temp > range[0] + 0.01f;
+                canUp = temp < range[1] - 0.01f;
+            }
+        }
+        setViewEnabled(down, canDown);
+        setViewEnabled(up, canUp);
     }
 
     private void updateSeatDisplay(int area, int seatTemp) {
@@ -672,12 +707,9 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
     protected void applyUxRestrictions() {
         setScrimVisible(mHeaderUxScrim, mFullyRestricted);
         boolean enabled = !mFullyRestricted && mVhalConnected;
-        setViewEnabled(mDriverHvacUp, enabled);
-        setViewEnabled(mDriverHvacDown, enabled);
+        refreshHvacButtons();
         setViewEnabled(mDriverSeatUp, enabled);
         setViewEnabled(mDriverSeatDown, enabled);
-        setViewEnabled(mPassengerHvacUp, enabled);
-        setViewEnabled(mPassengerHvacDown, enabled);
         setViewEnabled(mPassengerSeatUp, enabled);
         setViewEnabled(mPassengerSeatDown, enabled);
         setViewEnabled(mVentDefrost, enabled);

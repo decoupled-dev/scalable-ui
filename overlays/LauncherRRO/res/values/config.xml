@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Map is the full-screen background (layer 2). Stock system bars stay off.
-         Add a card by appending a panel here at a higher layer. Grow
-         launcher_map_inset_* on the side the card covers so map chrome stays
-         in the safe area. The right inset clears the climate, media, and
-         driving-stats cards.
+    <!-- Map is the full-screen background (layer 2). The top system bar is
+         three stock-icon pills. The bottom bar stays off; the dock replaces it.
+         The right inset clears the climate, media, and driving-stats cards.
          The map bounds stay at 100%. -->
     <bool name="config_enableScalableUI">true</bool>
-    <bool name="config_enableTopSystemBar">false</bool>
+    <bool name="config_enableTopSystemBar">true</bool>
     <bool name="config_enableBottomSystemBar">false</bool>
     <bool name="config_enableLeftSystemBar">false</bool>
     <bool name="config_enableRightSystemBar">false</bool>
@@ -15,7 +13,6 @@
     <array name="window_states" translatable="false">
         <item>@xml/map_panel</item>
         <item>@xml/launcher_dock</item>
-        <item>@xml/launcher_status</item>
         <item>@xml/launcher_climate_left</item>
         <item>@xml/launcher_climate_right</item>
         <item>@xml/launcher_widget_climate</item>

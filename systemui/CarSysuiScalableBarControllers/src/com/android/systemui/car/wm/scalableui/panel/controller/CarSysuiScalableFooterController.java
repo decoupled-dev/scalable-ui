@@ -1309,7 +1309,15 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
         float base = current != null ? current
                 : (driver ? mDriverHvacTemp : mPassengerHvacTemp);
         float next = base + delta;
-        // setFloatProperty clamps to VHAL min/max and must never throw.
+        float[] range = mVhalHelper.getFloatRange(VehiclePropertyIds.HVAC_TEMPERATURE_SET, area);
+        if (range != null) {
+            next = Math.max(range[0], Math.min(range[1], next));
+        }
+        // Already at the VHAL bound. A write past min/max throws IllegalStateException.
+        if (Math.abs(next - base) < 0.01f) {
+            setHvacTempText(driver ? mHvacTempText : mPassengerHvacTempText, base);
+            return;
+        }
         if (mVhalHelper.setFloatProperty(
                 VehiclePropertyIds.HVAC_TEMPERATURE_SET, area, next)) {
             Float applied = mVhalHelper.getFloatProperty(
@@ -1466,19 +1474,25 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
         // starts them — leaving cards/canvas stuck in hidden after map fullscreen
         // while mMapFullscreen alone flips the pin icon off.
         mMapFullscreen = false;
+        // App grid and launched apps slide closed on OnHome. A second event in this
+        // frame, or removeTask before that slide finishes, snaps the panel shut.
+        final boolean slideAppsHome = isPanelVariant("panel_app_grid", "opened")
+                || isPanelVariant("launcher_app", "opened");
         dispatchScalableEvent("_System_OnHomeEvent");
-        // Explicitly close freestanding app hosts so TaskViews cannot stay over home.
-        try {
-            dispatchScalableEvent(
-                    new com.android.car.scalableui.model.Event.Builder("_System_TaskOpenEvent")
-                            .setPanelId("map_panel")
-                            .build());
-        } catch (Throwable t) {
-            Log.w(TAG, "TaskOpen map_panel failed", t);
+        if (!slideAppsHome) {
+            // Explicitly close freestanding app hosts so TaskViews cannot stay over home.
+            try {
+                dispatchScalableEvent(
+                        new com.android.car.scalableui.model.Event.Builder("_System_TaskOpenEvent")
+                                .setPanelId("map_panel")
+                                .build());
+            } catch (Throwable t) {
+                Log.w(TAG, "TaskOpen map_panel failed", t);
+            }
+            // Drop sticky AppGrid / Settings / browsers / YouTube / WebView covering home —
+            // keep Maps, Spotify sessions, and Dialer (oem_phone_card).
+            removeOverlayTasks();
         }
-        // Drop sticky AppGrid / Settings / browsers / YouTube / WebView covering home —
-        // keep Maps, Spotify sessions, and Dialer (oem_phone_card).
-        removeOverlayTasks();
         // Maps leaf task can drift to tip-style right bounds (e.g. left=832) while
         // map_panel stays at OEM left (32,144)-(1408,1400). OnHome is then a no-op
         // (already opened) and the left half of the map panel stays black.
@@ -1487,6 +1501,9 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
         // and re-fire OnHome so cards/canvas that missed the first event become visible.
         final Rect opened = expectedMapPanelBounds();
         Runnable restore = () -> {
+            if (slideAppsHome) {
+                removeOverlayTasks();
+            }
             resizeMapsTask(opened);
             try {
                 dispatchScalableEvent("_System_OnHomeEvent");
@@ -1497,7 +1514,7 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
             Log.i(TAG, "launchHome restored map+cards");
         };
         if (mView != null) {
-            mView.postDelayed(restore, 350L);
+            mView.postDelayed(restore, slideAppsHome ? 420L : 350L);
             mView.postDelayed(() -> resizeMapsTask(opened), 800L);
         } else {
             restore.run();
@@ -1579,6 +1596,19 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
      * Read live map_panel variant. {@link #mMapFullscreen} alone drifts when system
      * OnHome / TaskOpen resets the panel without going through {@link #launchHome()}.
      */
+    private boolean isPanelVariant(String panelId, String variant) {
+        try {
+            com.android.car.scalableui.model.PanelState state =
+                    com.android.car.scalableui.manager.StateManager.getPanelState(panelId);
+            if (state != null && state.getCurrentVariant() != null) {
+                return variant.equals(state.getCurrentVariant().getIdName());
+            }
+        } catch (Throwable t) {
+            Log.w(TAG, "isPanelVariant failed " + panelId, t);
+        }
+        return false;
+    }
+
     private boolean isMapPanelFullscreen() {
         try {
             com.android.car.scalableui.model.PanelState state =

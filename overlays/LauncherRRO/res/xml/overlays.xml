@@ -9,4 +9,28 @@
 
     <item target="array/window_states" value="@array/window_states"/>
     <item target="array/config_default_activities" value="@array/config_default_activities"/>
+
+    <item target="layout/car_top_system_bar" value="@layout/car_top_system_bar"/>
+    <item target="layout/qc_bluetooth_panel" value="@layout/qc_bluetooth_panel"/>
+    <item target="layout/qc_connectivity_panel" value="@layout/qc_connectivity_panel"/>
+    <item target="layout/qc_display_panel" value="@layout/qc_display_panel"/>
+    <item target="layout/qc_volume_panel" value="@layout/qc_volume_panel"/>
+    <item target="layout/qc_profile_switcher" value="@layout/qc_profile_switcher"/>
+    <item target="layout/qc_mic_panel" value="@layout/qc_mic_panel"/>
+    <item target="layout/qc_camera_panel" value="@layout/qc_camera_panel"/>
+
+    <item target="dimen/car_top_system_bar_height" value="@dimen/car_top_system_bar_height"/>
+    <item target="dimen/car_status_icon_panel_default_width" value="@dimen/car_status_icon_panel_default_width"/>
+    <item target="dimen/car_profile_quick_controls_panel_width" value="@dimen/car_profile_quick_controls_panel_width"/>
+    <item target="dimen/car_sensor_qc_panel_width" value="@dimen/car_sensor_qc_panel_width"/>
+
+    <item target="attr/controller" value="@attr/controller"/>
+    <item target="attr/icon" value="@attr/icon"/>
+    <item target="attr/highlightWhenSelected" value="@attr/highlightWhenSelected"/>
+    <item target="attr/longIntent" value="@attr/longIntent"/>
+    <item target="attr/panelLayoutRes" value="@attr/panelLayoutRes"/>
+    <item target="attr/remoteQCProvider" value="@attr/remoteQCProvider"/>
+    <item target="attr/localQCProvider" value="@attr/localQCProvider"/>
+    <item target="attr/intent" value="@attr/intent"/>
+    <item target="attr/disableWhileDriving" value="@attr/disableWhileDriving"/>
 </overlay>

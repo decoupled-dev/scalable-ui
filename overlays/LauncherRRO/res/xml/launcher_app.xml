@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Apps opened from the half-screen grid. This panel is the display launch root,
+  so those tasks land here instead of staying inside panel_app_grid.
+  The card is 90% of the canvas width, with equal space on the left and right,
+  above the full-screen map. Dock and status stay on top.
+-->
+<TaskPanel id="launcher_app" defaultVariant="@id/closed" role="@string/launcher_app_role" displayId="0">
+    <Variant id="@+id/base">
+        <Layer layer="20"/>
+        <Alpha alpha="1.0"/>
+        <Corner radius="@dimen/launcher_app_corner"/>
+        <Focus onTransition="false"/>
+    </Variant>
+    <Variant id="@+id/opened" parent="@id/base">
+        <Visibility isVisible="true"/>
+        <Focus onTransition="true"/>
+        <Bounds
+            left="5%"
+            top="@dimen/launcher_app_grid_top"
+            right="95%"
+            bottom="100%"
+            bottomOffset="@dimen/launcher_app_grid_bottom_offset"/>
+    </Variant>
+    <Variant id="@+id/closed" parent="@id/base">
+        <Visibility isVisible="false"/>
+        <Alpha alpha="0.0"/>
+        <Bounds
+            left="5%"
+            top="100%"
+            right="95%"
+            bottom="100%"
+            bottomOffset="@dimen/launcher_app_grid_bottom_offset"/>
+    </Variant>
+    <Transitions>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_app" toVariant="@id/opened" duration="400" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_OnHomeEvent" toVariant="@id/closed" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskCloseEvent" onEventTokens="panelId=launcher_app" toVariant="@id/closed" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=panel_app_grid" toVariant="@id/closed" duration="300" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=map_panel" toVariant="@id/closed" duration="300" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+    </Transitions>
+</TaskPanel>

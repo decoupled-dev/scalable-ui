@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Stock display quick controls: brightness and day/night, sized to the map area. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:systemui="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="840dp"
+    android:background="@*com.android.systemui:color/status_icon_panel_bg_color"
+    android:layoutDirection="locale">
+
+    <com.android.car.ui.FocusParkingView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <com.android.car.ui.FocusArea
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <com.android.systemui.car.qc.base.SystemUIQCView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    systemui:remoteQCProvider="content://com.android.car.settings.qc/brightness_slider_with_icon"/>
+
+                <com.android.systemui.car.qc.base.SystemUIQCView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    systemui:remoteQCProvider="content://com.android.car.settings.qc/adaptive_brightness_switch"/>
+
+                <com.android.systemui.car.qc.base.SystemUIQCView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    systemui:remoteQCProvider="content://com.android.car.settings.qc/theme_toggle"/>
+
+                <com.android.systemui.car.qc.base.SystemUIQCView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    systemui:remoteQCProvider="content://com.android.car.carlauncher.calmmode/calm_mode"/>
+            </LinearLayout>
+        </ScrollView>
+
+        <com.android.systemui.car.qc.footer.base.QCFooterButton
+            android:id="@*com.android.systemui:id/qc_display_footer_button"
+            style="@*com.android.systemui:style/QCFooterButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@*com.android.systemui:string/qc_footer_display_settings"
+            systemui:intent="intent:#Intent;action=android.settings.DISPLAY_SETTINGS;launchFlags=0x14000000;end"/>
+    </com.android.car.ui.FocusArea>
+</FrameLayout>
