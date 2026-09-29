@@ -1664,35 +1664,17 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
         }
     }
 
-    /** Toggle map between left-column home and full-bleed behind the dock. */
+    /**
+     * Hide widgets, the app grid, and the launched app so the map uses the full
+     * width. Status pills and the bottom temperature pills stay. A second press
+     * restores the widgets. Panel transitions live on {@code toggle_fullscreen}.
+     */
     private void toggleMapFullscreen() {
         if (mFullyRestricted) {
             return;
         }
-        // Destination must match StateManager (variant-based) transitions, not a stale flag.
-        final boolean currentlyFs = isMapPanelFullscreen();
-        final boolean goingFs = !currentlyFs;
-        Log.i(TAG, "toggle_map_fullscreen → " + (goingFs ? "fullscreen" : "opened")
-                + " (panel=" + (currentlyFs ? "fullscreen" : "opened")
-                + " flag=" + mMapFullscreen + ")");
-        try {
-            dispatchScalableEvent("toggle_map_fullscreen");
-        } catch (Throwable t) {
-            Log.w(TAG, "toggle_map_fullscreen failed", t);
-            return;
-        }
-        mMapFullscreen = goingFs;
-        final Rect target = goingFs
-                ? expectedMapFullscreenBounds()
-                : expectedMapPanelBounds();
-        Runnable realign = () -> resizeMapsTask(target);
-        if (mView != null) {
-            // After panel transition (~400ms) force Maps leaf task into new bounds.
-            mView.postDelayed(realign, 450L);
-            mView.postDelayed(realign, 900L);
-        } else {
-            realign.run();
-        }
+        Log.i(TAG, "toggle_fullscreen");
+        dispatchScalableEvent("toggle_fullscreen");
     }
 
     /** Expected OEM map_panel opened bounds (matches OemDemoRRO map_panel.xml). */

@@ -174,9 +174,14 @@ log "Restoring permissions..."
 "${ADB[@]}" shell pm grant --user "$USER_ID" com.android.systemui android.permission.BLUETOOTH_CONNECT 2>/dev/null || true
 "${ADB[@]}" shell pm grant --user "$USER_ID" com.android.car.mockwidgets android.car.permission.CONTROL_CAR_CLIMATE 2>/dev/null || true
 
-# 1280x800 dp canvas fills tangorpro only at 320 dpi (2560x1600).
-log "Setting display density to 320 dpi..."
-"${ADB[@]}" shell wm density 320 || true
+# LauncherRRO dimens target the 240 dpi canvas (1707x1067 dp on 2560x1600).
+# display_density_forced is per user. SystemUI starts as user 0 and parses
+# panel bounds once, so user 0 must be 240 too or everything lays out at the
+# 320 dpi hardware density until the next SystemUI restart.
+log "Setting display density to 240 dpi (users 0 and $USER_ID)..."
+"${ADB[@]}" shell settings put --user 0 secure display_density_forced 240 || true
+"${ADB[@]}" shell settings put --user "$USER_ID" secure display_density_forced 240 || true
+"${ADB[@]}" shell wm density 240 || true
 
 # Placeholder is installed but often left disabled, which makes map_panel
 # fail with START_CLASS_NOT_FOUND and leaves the canvas black.

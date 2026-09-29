@@ -11,7 +11,8 @@
     <dimen name="launcher_map_inset_bottom">108dp</dimen>
     <!-- 240 dpi canvas is about 1707 x 1067 dp. Center on 50% / 100%. -->
     <!-- Negative so left sits left of center and right sits right of center. -->
-    <dimen name="launcher_dock_half_width">-120dp</dimen>
+    <!-- Three dock icons: home, navigation, apps. -->
+    <dimen name="launcher_dock_half_width">-148dp</dimen>
     <dimen name="launcher_dock_bottom_margin">16dp</dimen>
     <dimen name="launcher_dock_top_offset">-96dp</dimen>
     <dimen name="launcher_status_half_width">-188dp</dimen>
@@ -38,7 +39,7 @@
     <dimen name="launcher_app_grid_corner">28dp</dimen>
     <!-- Matches MockWidgets glass_panel so the window clip and the card stroke meet. -->
     <dimen name="launcher_widget_corner">48dp</dimen>
-    <!-- Launched apps float on the right at 70% width. The left 30% stays clear. -->
+    <!-- Launched apps fill the canvas. Side gaps match launcher_app_grid_edge. -->
     <dimen name="launcher_app_corner">32dp</dimen>
     <!-- Closed copy sits just off the right edge, same width as the open panel. -->
     <dimen name="launcher_app_grid_closed_right_offset">-860dp</dimen>

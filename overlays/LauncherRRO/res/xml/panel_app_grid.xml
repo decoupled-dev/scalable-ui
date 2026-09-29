@@ -37,7 +37,8 @@
     <Transitions>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=panel_app_grid" toVariant="@id/opened" duration="400" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_app" fromVariant="@id/opened" toVariant="@id/closed" duration="300" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
-        <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/opened" toVariant="@id/closed" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/opened" toVariant="@id/closed" duration="450" interpolator="@android:anim/decelerate_interpolator"/>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=map_panel" fromVariant="@id/opened" toVariant="@id/closed" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="toggle_fullscreen" fromVariant="@id/opened" toVariant="@id/closed" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
     </Transitions>
 </TaskPanel>

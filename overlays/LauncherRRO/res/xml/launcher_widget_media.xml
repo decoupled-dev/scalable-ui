@@ -18,12 +18,14 @@
     </Variant>
     <Variant id="@+id/visible" parent="@id/base">
         <Visibility isVisible="true"/>
+        <Alpha alpha="1.0"/>
     </Variant>
     <Variant id="@+id/hidden" parent="@id/base">
         <Visibility isVisible="false"/>
         <Alpha alpha="0.0"/>
     </Variant>
     <Variant id="@+id/apps_open" parent="@id/base">
+        <Visibility isVisible="true"/>
         <Alpha alpha="0.0"/>
         <Bounds
             left="100%"
@@ -38,8 +40,11 @@
         <Transition onEvent="_System_ExitSuwEvent" fromVariant="@id/hidden" toVariant="@id/visible"/>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=panel_app_grid" toVariant="@id/apps_open" duration="400" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_app" toVariant="@id/apps_open" duration="400" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
-        <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/apps_open" toVariant="@id/visible" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/apps_open" toVariant="@id/visible" duration="450" interpolator="@android:anim/decelerate_interpolator"/>
+        <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/hidden" toVariant="@id/visible" duration="450" interpolator="@android:anim/decelerate_interpolator"/>
         <Transition onEvent="_System_TaskCloseEvent" onEventTokens="panelId=launcher_app" fromVariant="@id/apps_open" toVariant="@id/visible" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
-        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=map_panel" fromVariant="@id/apps_open" toVariant="@id/visible" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=map_panel" fromVariant="@id/apps_open" toVariant="@id/visible" duration="450" interpolator="@android:anim/decelerate_interpolator"/>
+        <Transition onEvent="toggle_fullscreen" fromVariant="@id/visible" toVariant="@id/apps_open" duration="400" interpolator="@android:anim/decelerate_interpolator"/>
+        <Transition onEvent="toggle_fullscreen" fromVariant="@id/hidden" toVariant="@id/apps_open" duration="400" interpolator="@android:anim/decelerate_interpolator"/>
     </Transitions>
 </TaskPanel>
