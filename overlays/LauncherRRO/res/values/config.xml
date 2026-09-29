@@ -19,6 +19,11 @@
         <item>@xml/launcher_dock</item>
         <item>@xml/launcher_climate_left</item>
         <item>@xml/launcher_climate_right</item>
+        <!-- Opaque plates under the three TaskPanels (layer 11) so the map
+             cannot show through climate / media / stats in light or dark. -->
+        <item>@xml/launcher_widget_climate_bg</item>
+        <item>@xml/launcher_widget_media_bg</item>
+        <item>@xml/launcher_widget_stats_bg</item>
         <item>@xml/launcher_widget_climate</item>
         <item>@xml/launcher_widget_media</item>
         <item>@xml/launcher_widget_stats</item>

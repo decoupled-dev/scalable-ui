@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Light system theme. Matches the widget cards. -->
-    <color name="launcher_surface">#F4F6F8</color>
-    <color name="launcher_on_surface">#1A1C1E</color>
-    <color name="launcher_icon_bg">#E4E7EB</color>
-    <color name="launcher_stroke">#1F1A1C1E</color>
+    <!-- Light system theme. Fully opaque widget / chrome surfaces. -->
+    <color name="launcher_surface">#FFF4F6F8</color>
+    <color name="launcher_on_surface">#FF1A1C1E</color>
+    <color name="launcher_icon_bg">#FFE4E7EB</color>
+    <color name="launcher_stroke">#FFC5C9CE</color>
 </resources>
