@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Existing ClimateActivity, top card in the left column. -->
+<!-- Existing ClimateActivity, top card in the right column. -->
 <TaskPanel id="launcher_climate" defaultVariant="@id/visible"
     role="@string/launcher_climate_component" displayId="0">
     <Restart policy="LAST" maxRetry="3"/>
@@ -8,9 +8,11 @@
         <Alpha alpha="1.0"/>
         <Corner radius="28dp"/>
         <Bounds
-            left="@dimen/launcher_widget_left"
+            left="100%"
+            leftOffset="@dimen/launcher_widget_left"
             top="@dimen/launcher_widget_climate_top"
-            right="@dimen/launcher_widget_right"
+            right="100%"
+            rightOffset="@dimen/launcher_widget_right"
             bottom="@dimen/launcher_widget_climate_bottom"/>
         <Focus onTransition="false"/>
     </Variant>
@@ -24,9 +26,11 @@
     <Variant id="@+id/apps_open" parent="@id/base">
         <Alpha alpha="0.0"/>
         <Bounds
-            left="@dimen/launcher_widget_offscreen_left"
+            left="100%"
+            leftOffset="@dimen/launcher_widget_offscreen_left"
             top="@dimen/launcher_widget_climate_top"
-            right="@dimen/launcher_widget_offscreen_right"
+            right="100%"
+            rightOffset="@dimen/launcher_widget_offscreen_right"
             bottom="@dimen/launcher_widget_climate_bottom"/>
     </Variant>
     <Transitions>

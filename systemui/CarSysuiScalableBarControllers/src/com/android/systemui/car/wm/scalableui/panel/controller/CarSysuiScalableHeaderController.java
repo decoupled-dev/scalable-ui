@@ -17,6 +17,7 @@
 package com.android.systemui.car.wm.scalableui.panel.controller;
 
 import android.app.ActivityManager;
+import android.app.UiModeManager;
 import android.car.VehicleAreaSeat;
 import android.car.hardware.CarHvacFanDirection;
 import android.car.VehiclePropertyIds;
@@ -25,11 +26,13 @@ import android.car.hardware.property.CarPropertyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.UserHandle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.car.scalableui.loader.xml.parser.PanelControllerParser;
@@ -183,6 +186,57 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
         bindChromeScrim(root);
         wireClickListeners();
         wireDesignScreen(root);
+        wireNightMode(root);
+    }
+
+    /**
+     * Status-pill control that toggles day and night the same way the stock
+     * dark-theme quick-settings tile does: {@link UiModeManager#setNightModeActivated}.
+     * The icon shows the theme the next tap will switch to.
+     */
+    private void wireNightMode(View root) {
+        if (root == null) {
+            return;
+        }
+        int id = resolveRroId("sysui_night_mode");
+        if (id == 0) {
+            return;
+        }
+        View button = root.findViewById(id);
+        if (button == null) {
+            return;
+        }
+        updateNightModeIcon(button, isNightMode());
+        button.setOnClickListener(v -> toggleNightMode(v));
+    }
+
+    private void toggleNightMode(View button) {
+        UiModeManager uiModeManager = mContext.getSystemService(UiModeManager.class);
+        if (uiModeManager == null) {
+            return;
+        }
+        boolean enableNight = !isNightMode();
+        uiModeManager.setNightModeActivated(enableNight);
+        updateNightModeIcon(button, enableNight);
+    }
+
+    private boolean isNightMode() {
+        int uiMode = mContext.getResources().getConfiguration().uiMode;
+        return (uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+    }
+
+    private void updateNightModeIcon(View button, boolean night) {
+        if (button instanceof ImageView) {
+            int drawable = resolveRroDrawable(night ? "ic_status_day" : "ic_status_night");
+            if (drawable != 0) {
+                try {
+                    ((ImageView) button).setImageResource(drawable);
+                } catch (RuntimeException e) {
+                    Log.w(TAG, "night mode icon", e);
+                }
+            }
+        }
+        button.setContentDescription(night ? "Light theme" : "Dark theme");
     }
 
     /** Opens the design climate or vehicle screen when the card is tapped. */

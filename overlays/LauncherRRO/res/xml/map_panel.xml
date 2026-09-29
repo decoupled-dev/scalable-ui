@@ -21,6 +21,7 @@
             left="@dimen/launcher_map_inset_left"
             top="@dimen/launcher_map_inset_top"
             right="100%"
+            rightOffset="@dimen/launcher_map_inset_right"
             bottom="100%"
             bottomOffset="@dimen/launcher_map_inset_bottom"/>
         <Insets
@@ -31,6 +32,22 @@
     </Variant>
     <Variant id="@+id/opened" parent="@id/base">
         <Visibility isVisible="true"/>
+    </Variant>
+    <!-- A launched app covers the full width. Map bounds stay full-screen;
+         insets push map chrome out of that coverage. -->
+    <Variant id="@+id/app_open" parent="@id/base">
+        <Visibility isVisible="true"/>
+        <SafeBounds
+            left="0dp"
+            top="@dimen/launcher_map_inset_top"
+            right="24dp"
+            bottom="100%"
+            bottomOffset="@dimen/launcher_map_inset_bottom"/>
+        <Insets
+            left="0dp"
+            top="@dimen/launcher_map_inset_top"
+            right="100%"
+            bottom="@dimen/launcher_map_inset_bottom"/>
     </Variant>
     <!-- Widgets hide. Map chrome moves into the left half, clear of the app grid. -->
     <Variant id="@+id/apps_open" parent="@id/base">
@@ -59,8 +76,14 @@
         <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/closed" toVariant="@id/opened"/>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=map_panel" fromVariant="@id/closed" toVariant="@id/opened"/>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=panel_app_grid" fromVariant="@id/opened" toVariant="@id/apps_open" duration="400" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=panel_app_grid" fromVariant="@id/app_open" toVariant="@id/apps_open" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_app" fromVariant="@id/opened" toVariant="@id/app_open" duration="400" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_app" fromVariant="@id/apps_open" toVariant="@id/app_open" duration="400" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/apps_open" toVariant="@id/opened" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/app_open" toVariant="@id/opened" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskCloseEvent" onEventTokens="panelId=launcher_app" fromVariant="@id/app_open" toVariant="@id/opened" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=map_panel" fromVariant="@id/apps_open" toVariant="@id/opened" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=map_panel" fromVariant="@id/app_open" toVariant="@id/opened" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         <Transition onEvent="_System_BeforeUserSwitch" toVariant="@id/userswitch"/>
         <Transition onEvent="_System_UserSwitchComplete" fromVariant="@id/userswitch" toVariant="@id/opened"/>
     </Transitions>

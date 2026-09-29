@@ -4,6 +4,8 @@
   Closed sits just off the right edge so TaskOpen slides it in. Home closes it.
 -->
 <TaskPanel id="panel_app_grid" defaultVariant="@id/closed" role="@string/appgrid_componentName" displayId="0">
+    <!-- New tasks leave this half panel and open in launcher_app. -->
+    <TaskBehavior newTaskLaunchPolicy="DEFAULT"/>
     <Variant id="@+id/base">
         <Layer layer="16"/>
         <Alpha alpha="1.0"/>
@@ -34,6 +36,7 @@
     </Variant>
     <Transitions>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=panel_app_grid" toVariant="@id/opened" duration="400" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_app" toVariant="@id/closed" duration="300" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         <Transition onEvent="_System_OnHomeEvent" toVariant="@id/closed" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=map_panel" toVariant="@id/closed" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
     </Transitions>

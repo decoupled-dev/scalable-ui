@@ -3,7 +3,7 @@
     <!-- Map is the full-screen background (layer 2). Stock system bars stay off.
          Add a card by appending a panel here at a higher layer. Grow
          launcher_map_inset_* on the side the card covers so map chrome stays
-         in the safe area. The left inset clears the climate, media, and
+         in the safe area. The right inset clears the climate, media, and
          driving-stats cards.
          The map bounds stay at 100%. -->
     <bool name="config_enableScalableUI">true</bool>
@@ -22,6 +22,7 @@
         <item>@xml/launcher_widget_media</item>
         <item>@xml/launcher_widget_stats</item>
         <item>@xml/panel_app_grid</item>
+        <item>@xml/launcher_app</item>
     </array>
 
     <string-array name="config_default_activities" translatable="false">
