@@ -33,20 +33,20 @@
     <Variant id="@+id/opened" parent="@id/base">
         <Visibility isVisible="true"/>
     </Variant>
-    <!-- Launched app is a centered 90% card. Map bounds stay full-screen.
-         Side insets match the gutters so map chrome stays beside the card. -->
+    <!-- Launched app is the right 70%. Map bounds stay full-screen.
+         Chrome stays in the uncovered left 30%. -->
     <Variant id="@+id/app_open" parent="@id/base">
         <Visibility isVisible="true"/>
         <SafeBounds
             left="16dp"
             top="@dimen/launcher_map_inset_top"
-            right="5%"
+            right="30%"
             bottom="100%"
             bottomOffset="@dimen/launcher_map_inset_bottom"/>
         <Insets
             left="16dp"
             top="@dimen/launcher_map_inset_top"
-            right="95%"
+            right="70%"
             bottom="@dimen/launcher_map_inset_bottom"/>
     </Variant>
     <!-- Widgets hide. Map chrome moves into the left half, clear of the app grid. -->

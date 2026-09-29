@@ -38,7 +38,7 @@
     <dimen name="launcher_app_grid_corner">28dp</dimen>
     <!-- Matches MockWidgets glass_panel so the window clip and the card stroke meet. -->
     <dimen name="launcher_widget_corner">48dp</dimen>
-    <!-- Launched apps float at 90% width: 5% of the canvas on each side. -->
+    <!-- Launched apps float on the right at 70% width. The left 30% stays clear. -->
     <dimen name="launcher_app_corner">32dp</dimen>
     <!-- Closed copy sits just off the right edge, same width as the open panel. -->
     <dimen name="launcher_app_grid_closed_right_offset">-860dp</dimen>

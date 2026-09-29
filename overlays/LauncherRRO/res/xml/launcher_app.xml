@@ -2,8 +2,9 @@
 <!--
   Apps opened from the half-screen grid. This panel is the display launch root,
   so those tasks land here instead of staying inside panel_app_grid.
-  The card is 90% of the canvas width, with equal space on the left and right,
-  above the full-screen map. Dock and status stay on top.
+  The card is 70% of the canvas width and sits on the right. The left
+  30% stays clear so the map zoom controls are not covered. Dock and
+  status stay on top.
 -->
 <TaskPanel id="launcher_app" defaultVariant="@id/closed" role="@string/launcher_app_role" displayId="0">
     <Variant id="@+id/base">
@@ -16,9 +17,10 @@
         <Visibility isVisible="true"/>
         <Focus onTransition="true"/>
         <Bounds
-            left="5%"
+            left="30%"
             top="@dimen/launcher_app_grid_top"
-            right="95%"
+            right="100%"
+            rightOffset="@dimen/launcher_app_grid_edge"
             bottom="100%"
             bottomOffset="@dimen/launcher_app_grid_bottom_offset"/>
     </Variant>
@@ -26,9 +28,10 @@
         <Visibility isVisible="false"/>
         <Alpha alpha="0.0"/>
         <Bounds
-            left="5%"
+            left="30%"
             top="100%"
-            right="95%"
+            right="100%"
+            rightOffset="@dimen/launcher_app_grid_edge"
             bottom="100%"
             bottomOffset="@dimen/launcher_app_grid_bottom_offset"/>
     </Variant>
