@@ -16,9 +16,9 @@
         android:layout_marginStart="6dp"
         android:layout_marginEnd="6dp"
         android:background="@drawable/launcher_dock_icon_bg"
-        android:backgroundTint="#FF3A7BD5"
+        android:backgroundTint="@color/launcher_dock_icon_fill"
         android:contentDescription="Home"
-        android:padding="14dp"
+        android:padding="10dp"
         android:scaleType="centerInside"
         android:src="@drawable/ic_dock_home" />
 
@@ -29,9 +29,9 @@
         android:layout_marginStart="6dp"
         android:layout_marginEnd="6dp"
         android:background="@drawable/launcher_dock_icon_bg"
-        android:backgroundTint="#FF1A73E8"
+        android:backgroundTint="@color/launcher_dock_icon_fill"
         android:contentDescription="Navigation"
-        android:padding="14dp"
+        android:padding="10dp"
         android:scaleType="centerInside"
         android:src="@drawable/ic_dock_nav" />
 
@@ -42,9 +42,9 @@
         android:layout_marginStart="6dp"
         android:layout_marginEnd="6dp"
         android:background="@drawable/launcher_dock_icon_bg"
-        android:backgroundTint="#FF5B5BD6"
+        android:backgroundTint="@color/launcher_dock_icon_fill"
         android:contentDescription="Apps"
-        android:padding="14dp"
+        android:padding="10dp"
         android:scaleType="centerInside"
         android:src="@drawable/ic_dock_apps" />
 
@@ -55,9 +55,9 @@
         android:layout_marginStart="6dp"
         android:layout_marginEnd="6dp"
         android:background="@drawable/launcher_dock_icon_bg"
-        android:backgroundTint="#FF8E24AA"
+        android:backgroundTint="@color/launcher_dock_icon_fill"
         android:contentDescription="Assistant"
-        android:padding="14dp"
+        android:padding="10dp"
         android:scaleType="centerInside"
         android:src="@drawable/ic_dock_mic" />
 
@@ -68,9 +68,9 @@
         android:layout_marginStart="6dp"
         android:layout_marginEnd="6dp"
         android:background="@drawable/launcher_dock_icon_bg"
-        android:backgroundTint="#FFEF6C00"
+        android:backgroundTint="@color/launcher_dock_icon_fill"
         android:contentDescription="Climate"
-        android:padding="14dp"
+        android:padding="10dp"
         android:scaleType="centerInside"
         android:src="@drawable/ic_dock_climate" />
 
@@ -81,9 +81,9 @@
         android:layout_marginStart="6dp"
         android:layout_marginEnd="6dp"
         android:background="@drawable/launcher_dock_icon_bg"
-        android:backgroundTint="#FF00897B"
+        android:backgroundTint="@color/launcher_dock_icon_fill"
         android:contentDescription="Vehicle"
-        android:padding="14dp"
+        android:padding="10dp"
         android:scaleType="centerInside"
         android:src="@drawable/ic_dock_vehicle" />
 
@@ -94,9 +94,9 @@
         android:layout_marginStart="6dp"
         android:layout_marginEnd="6dp"
         android:background="@drawable/launcher_dock_icon_bg"
-        android:backgroundTint="#FF546E7A"
+        android:backgroundTint="@color/launcher_dock_icon_fill"
         android:contentDescription="Car settings"
-        android:padding="14dp"
+        android:padding="10dp"
         android:scaleType="centerInside"
         android:src="@drawable/ic_dock_settings" />
 </LinearLayout>

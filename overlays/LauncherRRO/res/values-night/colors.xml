@@ -4,5 +4,7 @@
     <color name="launcher_surface">#FF1C1F24</color>
     <color name="launcher_on_surface">#FFFFFFFF</color>
     <color name="launcher_icon_bg">#FF2C3138</color>
+    <!-- One step above the dock pill (#1C1F24) so circles read as buttons. -->
+    <color name="launcher_dock_icon_fill">#FF3A414A</color>
     <color name="launcher_stroke">#FF3C434C</color>
 </resources>
