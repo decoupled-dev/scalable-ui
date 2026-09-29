@@ -556,6 +556,8 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
     private void wireOptionalLaunches(View root) {
         wireLaunch(root, "oem_launch_phone", this::launchPhone);
         wireLaunch(root, "oem_launch_dialpad", this::launchDialpad);
+        // Same intent as the stock CarSystemUI assistant button.
+        wireLaunch(root, "oem_launch_assistant", this::launchDefaultAssistant);
         // Center CLIMATE column + fan icon → Design ClimatePanel.
         wireLaunch(root, "oem_launch_hvac", this::launchClimate);
         wireLaunch(root, "oem_launch_hvac_panel", this::launchClimate);
@@ -565,6 +567,7 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
         wireLaunch(root, "oem_launch_climate", this::launchCarStatus);
         wireLaunch(root, "oem_launch_car_status", this::launchCarStatus);
         wireLaunch(root, "oem_launch_vehicle", this::launchCarStatus);
+        wireLaunch(root, "oem_launch_car_settings", this::launchCarSettings);
         // Whole-card tap targets (only when the card has no dedicated action chips).
         if ("oem_car_status_card".equals(mPanelId)) {
             root.setOnClickListener(v -> launchCarStatus());
@@ -1982,6 +1985,65 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
         startComponentInAppPanel(DIALER_COMPONENT);
     }
 
+    /**
+     * Same path as the stock CarSystemUI assistant button when Settings points at
+     * a voice-interaction service: show that user's active assistant session.
+     */
+    private void launchDefaultAssistant() {
+        if (mFullyRestricted) {
+            return;
+        }
+        try {
+            Class<?> sm = Class.forName("android.os.ServiceManager");
+            Object binder = sm.getMethod("getService", String.class)
+                    .invoke(null, "voiceinteraction");
+            Class<?> stub = Class.forName(
+                    "com.android.internal.app.IVoiceInteractionManagerService$Stub");
+            Object service = stub.getMethod("asInterface", android.os.IBinder.class)
+                    .invoke(null, binder);
+            if (service == null) {
+                Log.w(TAG, "no voiceinteraction service");
+                return;
+            }
+            java.lang.reflect.Method chosen = null;
+            for (java.lang.reflect.Method method : service.getClass().getMethods()) {
+                String name = method.getName();
+                if ("showSessionForActiveService".equals(name)) {
+                    chosen = method;
+                    break;
+                }
+                if ("showSession".equals(name) && chosen == null) {
+                    chosen = method;
+                }
+            }
+            if (chosen == null) {
+                Log.w(TAG, "no showSession method");
+                return;
+            }
+            Class<?>[] types = chosen.getParameterTypes();
+            Object[] args = new Object[types.length];
+            for (int i = 0; i < types.length; i++) {
+                if (types[i] == android.os.Bundle.class) {
+                    args[i] = new android.os.Bundle();
+                } else if (types[i] == int.class) {
+                    args[i] = Integer.valueOf(0);
+                } else if (types[i] == boolean.class) {
+                    args[i] = Boolean.FALSE;
+                } else if (!types[i].isPrimitive()) {
+                    args[i] = null;
+                } else {
+                    Log.w(TAG, "skip " + chosen.getName() + " param " + types[i]);
+                    return;
+                }
+            }
+            Log.i(TAG, "show assistant via " + chosen.getName());
+            Object result = chosen.invoke(service, args);
+            Log.i(TAG, "assistant result " + result);
+        } catch (Throwable t) {
+            Log.w(TAG, "show assistant failed", t);
+        }
+    }
+
     private void launchClimate() {
         if (mFullyRestricted) {
             return;
@@ -2246,6 +2308,13 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
         return null;
     }
 
+    /** Opens the Car Settings homepage in the app panel. */
+    private void launchCarSettings() {
+        Log.i(TAG, "launchCarSettings");
+        startComponent(
+                "com.android.car.settings/.common.CarSettingActivities$HomepageActivity");
+    }
+
     private void launchCarStatus() {
         // Design Vehicle panel — explicit component avoids shared-action chooser.
         if (startDesignPanel(DESIGN_ACTION_OPEN_VEHICLE, DESIGN_VEHICLE_COMPONENT)) {
@@ -2334,6 +2403,12 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
         setViewEnabled(mNavHome, enabled);
         setViewEnabled(mNavRecent, enabled);
         setViewEnabled(mNavPinned, enabled);
+        if (mView != null) {
+            setViewEnabled(findClickable(mView, "oem_launch_assistant"), enabled);
+            setViewEnabled(findClickable(mView, "oem_launch_hvac"), enabled);
+            setViewEnabled(findClickable(mView, "oem_launch_vehicle"), enabled);
+            setViewEnabled(findClickable(mView, "oem_launch_car_settings"), enabled);
+        }
         setViewEnabled(mMediaPrev, enabled);
         setViewEnabled(mMediaPlayPause, enabled);
         setViewEnabled(mMediaNext, enabled);

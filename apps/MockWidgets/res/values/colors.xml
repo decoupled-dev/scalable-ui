@@ -3,7 +3,9 @@
     <!-- Light theme. Fully opaque surfaces so the map does not show through. -->
     <color name="widget_surface">#FFF4F6F8</color>
     <color name="glass_panel_bg">#FFF4F6F8</color>
+    <!-- Inner chips stay light. Outer card outline stays dark so it separates from the map. -->
     <color name="glass_panel_border">#FFC5C9CE</color>
+    <color name="glass_panel_outline">#FF3A4250</color>
     <color name="glass_button_bg">#FFE4E7EB</color>
     <color name="glass_button_active_bg">#FFD3F3F7</color>
     <color name="glass_button_danger_bg">#FFFFCDD2</color>

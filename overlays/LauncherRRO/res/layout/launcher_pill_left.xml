@@ -9,40 +9,59 @@
     android:paddingStart="8dp"
     android:paddingEnd="8dp">
 
-    <ImageButton
-        android:id="@+id/launcher_status_wifi"
+    <!-- Slots keep a static icon until the stock panel button is installed. -->
+    <FrameLayout
+        android:id="@+id/launcher_status_wifi_slot"
         android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/launcher_wifi"
-        android:padding="10dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_status_wifi"
-        android:tint="@color/launcher_on_surface" />
+        android:layout_height="48dp">
 
-    <ImageButton
-        android:id="@+id/launcher_status_bluetooth"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="4dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/launcher_bluetooth"
-        android:padding="10dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_status_bluetooth"
-        android:tint="@color/launcher_on_surface" />
+        <ImageButton
+            android:id="@+id/launcher_status_wifi"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/launcher_wifi"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_status_wifi"
+            android:tint="@color/launcher_on_surface" />
+    </FrameLayout>
 
-    <ImageButton
-        android:id="@+id/launcher_status_brightness"
+    <FrameLayout
+        android:id="@+id/launcher_status_bluetooth_slot"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginStart="4dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/launcher_brightness"
-        android:padding="10dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_status_brightness"
-        android:tint="@color/launcher_on_surface" />
+        android:layout_marginStart="4dp">
+
+        <ImageButton
+            android:id="@+id/launcher_status_bluetooth"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/launcher_bluetooth"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_status_bluetooth"
+            android:tint="@color/launcher_on_surface" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/launcher_status_brightness_slot"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="4dp">
+
+        <ImageButton
+            android:id="@+id/launcher_status_brightness"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/launcher_brightness"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_status_brightness"
+            android:tint="@color/launcher_on_surface" />
+    </FrameLayout>
 
     <ImageButton
         android:id="@+id/sysui_night_mode"

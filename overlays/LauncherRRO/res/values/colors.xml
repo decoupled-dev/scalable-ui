@@ -4,5 +4,6 @@
     <color name="launcher_surface">#FFF4F6F8</color>
     <color name="launcher_on_surface">#FF1A1C1E</color>
     <color name="launcher_icon_bg">#FFE4E7EB</color>
-    <color name="launcher_stroke">#FFC5C9CE</color>
+    <!-- Dark enough to read against the pale fill and a light map. -->
+    <color name="launcher_stroke">#FF3A4250</color>
 </resources>

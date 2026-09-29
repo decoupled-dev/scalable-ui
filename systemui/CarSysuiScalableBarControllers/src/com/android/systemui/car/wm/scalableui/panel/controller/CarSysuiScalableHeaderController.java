@@ -31,8 +31,10 @@ import android.os.UserHandle;
 import android.os.UserManager;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -42,6 +44,7 @@ import com.android.car.scalableui.model.PanelControllerMetadata;
 import com.android.car.scalableui.panel.DecorPanelController;
 
 import java.io.PrintWriter;
+import java.lang.reflect.Field;
 import java.util.Locale;
 
 /**
@@ -252,18 +255,144 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
     }
 
     /**
-     * Left pill opens Wi-Fi, Bluetooth, and display settings. The right pill
-     * shows the current user and opens user settings. Day/night stays on the
-     * left pill via {@link #wireNightMode}.
+     * Left pill opens the stock connectivity, Bluetooth, and display quick-control
+     * panels. The right pill opens the stock profile switcher and hosts the stock
+     * camera and mic privacy chips. The top system bar stays disabled. Day/night
+     * stays a local toggle via {@link #wireNightMode}. If a stock panel cannot be
+     * created, that icon falls back to the matching Settings screen.
      */
     private void wireStatusPills(View root) {
         if (root == null) {
             return;
         }
-        wireSettingsButton(root, "launcher_status_wifi", Settings.ACTION_WIFI_SETTINGS);
-        wireSettingsButton(root, "launcher_status_bluetooth", Settings.ACTION_BLUETOOTH_SETTINGS);
-        wireSettingsButton(root, "launcher_status_brightness", Settings.ACTION_DISPLAY_SETTINGS);
+        if ("launcher_pill_left".equals(mPanelId)) {
+            View stockBar = inflateSystemUiLayout("qc_status_icons_horizontal");
+            bindStockPanelOrSettings(root, "launcher_status_wifi_slot",
+                    "launcher_status_wifi", stockBar, "qc_connectivity_panel",
+                    Settings.ACTION_WIFI_SETTINGS, false);
+            bindStockPanelOrSettings(root, "launcher_status_bluetooth_slot",
+                    "launcher_status_bluetooth", stockBar, "qc_bluetooth_panel",
+                    Settings.ACTION_BLUETOOTH_SETTINGS, false);
+            bindStockPanelOrSettings(root, "launcher_status_brightness_slot",
+                    "launcher_status_brightness", stockBar, "qc_display_panel",
+                    Settings.ACTION_DISPLAY_SETTINGS, false);
+        }
         wireUserProfile(root);
+        wirePrivacyChips(root);
+    }
+
+    /**
+     * Moves the stock {@code CarSystemBarPanelButtonView} for {@code panelLayout}
+     * into the pill slot and lets SystemUI bind its quick-control popup.
+     * The popup anchors to that button, so the button has to live in the slot.
+     * {@code invisibleHitTarget} keeps the pill's own icon and label visible and
+     * uses the stock button only as the touch target.
+     */
+    private void bindStockPanelOrSettings(View root, String slotName, String fallbackName,
+            View stockTree, String panelLayout, String settingsAction,
+            boolean invisibleHitTarget) {
+        int slotId = resolveRroId(slotName);
+        View slot = slotId == 0 ? null : root.findViewById(slotId);
+        View panel = stockTree == null ? null : detachPanelButton(stockTree, panelLayout);
+        if (slot instanceof ViewGroup && panel != null
+                && installStockPanel((ViewGroup) slot, panel, fallbackName, invisibleHitTarget)) {
+            Log.i(TAG, "stock panel " + panelLayout + " -> " + slotName);
+            return;
+        }
+        if (panel != null && panel.getParent() instanceof ViewGroup) {
+            ((ViewGroup) panel.getParent()).removeView(panel);
+        }
+        wireSettingsButton(root, fallbackName, settingsAction);
+    }
+
+    private boolean installStockPanel(ViewGroup slot, View panel, String fallbackName,
+            boolean invisibleHitTarget) {
+        int fallbackId = resolveRroId(fallbackName);
+        View fallback = fallbackId == 0 ? null : slot.findViewById(fallbackId);
+        if (fallback != null) {
+            fallback.setVisibility(invisibleHitTarget ? View.VISIBLE : View.GONE);
+        }
+        panel.setLayoutParams(new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        panel.setMinimumWidth(0);
+        panel.setMinimumHeight(0);
+        panel.setBackground(null);
+        // Profile keeps the pill's own icon and name. The stock button is only
+        // the touch target, because the popup anchors to the button view itself.
+        panel.setAlpha(invisibleHitTarget ? 0f : 1f);
+        slot.addView(panel);
+        if (initializeElements(slot)) {
+            panel.setBackground(null);
+            if (invisibleHitTarget) {
+                panel.setAlpha(0f);
+            }
+            return true;
+        }
+        slot.removeView(panel);
+        if (fallback != null) {
+            fallback.setVisibility(View.VISIBLE);
+        }
+        return false;
+    }
+
+    /** @return the stock panel button, detached from {@code stockTree}. */
+    private View detachPanelButton(View stockTree, String panelLayout) {
+        int panelLayoutId = mContext.getResources().getIdentifier(
+                panelLayout, "layout", "com.android.systemui");
+        if (panelLayoutId == 0) {
+            Log.e(TAG, "SystemUI panel layout missing: " + panelLayout);
+            return null;
+        }
+        View button = findPanelButton(stockTree, panelLayoutId);
+        if (button == null) {
+            Log.e(TAG, "panel button missing: " + panelLayout);
+            return null;
+        }
+        if (button.getParent() instanceof ViewGroup) {
+            ((ViewGroup) button.getParent()).removeView(button);
+        }
+        return button;
+    }
+
+    private View findPanelButton(View view, int panelLayoutId) {
+        if (view.getClass().getName().endsWith("CarSystemBarPanelButtonView")) {
+            try {
+                Field field = view.getClass().getDeclaredField("mPanelLayoutRes");
+                field.setAccessible(true);
+                if (field.getInt(view) == panelLayoutId) {
+                    return view;
+                }
+            } catch (Throwable t) {
+                Log.w(TAG, "mPanelLayoutRes", t);
+            }
+        }
+        if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) view;
+            for (int i = 0; i < group.getChildCount(); i++) {
+                View found = findPanelButton(group.getChildAt(i), panelLayoutId);
+                if (found != null) {
+                    return found;
+                }
+            }
+        }
+        return null;
+    }
+
+    private boolean initializeElements(ViewGroup group) {
+        Object initializer = systemBarElementInitializer();
+        if (initializer == null) {
+            Log.e(TAG, "system bar element initializer unavailable");
+            return false;
+        }
+        try {
+            initializer.getClass()
+                    .getMethod("initializeCarSystemBarElements", ViewGroup.class)
+                    .invoke(initializer, group);
+            return true;
+        } catch (Throwable t) {
+            Log.e(TAG, "initializeCarSystemBarElements failed", t);
+            return false;
+        }
     }
 
     private void wireSettingsButton(View root, String name, String action) {
@@ -298,14 +427,127 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
                 ((TextView) nameView).setText(currentUserName());
             }
         }
-        int buttonId = resolveRroId("launcher_user_profile");
-        if (buttonId == 0) {
+        if (!"launcher_pill_right".equals(mPanelId)) {
             return;
         }
-        View button = root.findViewById(buttonId);
-        if (button != null) {
-            button.setOnClickListener(v -> openSettings(Settings.ACTION_USER_SETTINGS));
+        View profileTree = inflateSystemUiLayout("user_name_container");
+        bindStockPanelOrSettings(root, "launcher_user_anchor", "launcher_user_profile",
+                profileTree, "qc_profile_switcher", Settings.ACTION_USER_SETTINGS, true);
+    }
+
+    /**
+     * Hosts the stock camera and microphone privacy chips in the profile pill.
+     * Their view controllers track sensor privacy and app-op usage, pick the
+     * status-bar icons, and open the same quick-control panels as the system bar.
+     * The top system bar stays disabled.
+     */
+    private void wirePrivacyChips(View root) {
+        if (!"launcher_pill_right".equals(mPanelId)) {
+            return;
         }
+        int containerId = resolveRroId("launcher_privacy_chips");
+        if (containerId == 0) {
+            return;
+        }
+        View container = root.findViewById(containerId);
+        if (!(container instanceof ViewGroup)) {
+            return;
+        }
+        ViewGroup group = (ViewGroup) container;
+        if (group.getChildCount() > 0) {
+            return;
+        }
+        // Camera then microphone, matching the stock status bar order.
+        View camera = inflateSystemUiLayout("camera_privacy_chip");
+        View mic = inflateSystemUiLayout("mic_privacy_chip");
+        int chipWidth = privacyChipWidth();
+        if (camera != null) {
+            group.addView(camera, chipLayoutParams(chipWidth));
+        }
+        if (mic != null) {
+            group.addView(mic, chipLayoutParams(chipWidth));
+        }
+        if (group.getChildCount() == 0) {
+            return;
+        }
+        if (initializeElements(group)) {
+            Log.i(TAG, "privacy chips initialized");
+        }
+    }
+
+    private View inflateSystemUiLayout(String layoutName) {
+        int layoutId = mContext.getResources().getIdentifier(
+                layoutName, "layout", "com.android.systemui");
+        if (layoutId == 0) {
+            Log.e(TAG, "SystemUI layout missing: " + layoutName);
+            return null;
+        }
+        try {
+            // Null parent: the pill is an overlay view, and generating layout
+            // params from it cannot resolve SystemUI dimens on the chip.
+            return LayoutInflater.from(mContext).inflate(layoutId, null);
+        } catch (Throwable t) {
+            Log.e(TAG, "inflate " + layoutName, t);
+            return null;
+        }
+    }
+
+    private int privacyChipWidth() {
+        int id = mContext.getResources().getIdentifier(
+                "privacy_chip_width", "dimen", "com.android.systemui");
+        if (id != 0) {
+            return mContext.getResources().getDimensionPixelSize(id);
+        }
+        return (int) android.util.TypedValue.applyDimension(
+                android.util.TypedValue.COMPLEX_UNIT_DIP, 56,
+                mContext.getResources().getDisplayMetrics());
+    }
+
+    private static android.widget.LinearLayout.LayoutParams chipLayoutParams(int width) {
+        return new android.widget.LinearLayout.LayoutParams(
+                width, ViewGroup.LayoutParams.MATCH_PARENT);
+    }
+
+    /**
+     * The privacy-chip controllers and their panels are created by SystemUI's
+     * dagger graph. This library cannot depend on those classes, so the
+     * initializer is read from the running SystemUI component.
+     */
+    private Object systemBarElementInitializer() {
+        try {
+            Object app = mContext.getApplicationContext();
+            Object component = null;
+            try {
+                component = readField(app, "mSysUIComponent");
+            } catch (NoSuchFieldException ignored) {
+                Object initializer = readField(app, "mInitializer");
+                component = readField(initializer, "mSysUIComponent");
+            }
+            if (component == null) {
+                return null;
+            }
+            Object provider = readField(component, "carSystemBarElementInitializerProvider");
+            if (provider == null) {
+                return null;
+            }
+            return provider.getClass().getMethod("get").invoke(provider);
+        } catch (Throwable t) {
+            Log.e(TAG, "systemBarElementInitializer", t);
+            return null;
+        }
+    }
+
+    private static Object readField(Object target, String name) throws ReflectiveOperationException {
+        for (Class<?> type = target.getClass(); type != null; type = type.getSuperclass()) {
+            try {
+                Field field = type.getDeclaredField(name);
+                field.setAccessible(true);
+                return field.get(target);
+            } catch (NoSuchFieldException ignored) {
+                // Walk to the superclass.
+            }
+        }
+        throw new NoSuchFieldException(name);
     }
 
     private String currentUserName() {

@@ -11,8 +11,8 @@
     <dimen name="launcher_map_inset_bottom">108dp</dimen>
     <!-- 240 dpi canvas is about 1707 x 1067 dp. Center on 50% / 100%. -->
     <!-- Negative so left sits left of center and right sits right of center. -->
-    <!-- Three dock icons: home, navigation, apps. -->
-    <dimen name="launcher_dock_half_width">-148dp</dimen>
+    <!-- Home, navigation, apps, assistant, climate, vehicle, settings. -->
+    <dimen name="launcher_dock_half_width">-292dp</dimen>
     <dimen name="launcher_dock_bottom_margin">16dp</dimen>
     <dimen name="launcher_dock_top_offset">-96dp</dimen>
     <dimen name="launcher_status_half_width">-188dp</dimen>
@@ -26,8 +26,9 @@
     <dimen name="launcher_pill_left_right">252dp</dimen>
     <!-- Negative so the clock sits across the center. -->
     <dimen name="launcher_pill_center_half">-96dp</dimen>
-    <!-- Negative so the profile pill sits in from the right edge. -->
-    <dimen name="launcher_pill_right_inset">-248dp</dimen>
+    <!-- Negative so the profile pill sits in from the right edge.
+         Extra width holds the stock camera and mic chips beside the user name. -->
+    <dimen name="launcher_pill_right_inset">-320dp</dimen>
     <dimen name="launcher_climate_left_left">16dp</dimen>
     <dimen name="launcher_climate_left_right">216dp</dimen>
     <dimen name="launcher_climate_right_left">1064dp</dimen>
