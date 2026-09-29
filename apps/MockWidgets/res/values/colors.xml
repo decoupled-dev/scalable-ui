@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Light Mode Glassmorphism Colors -->
-    <color name="glass_panel_bg">#33FFFFFF</color>
-    <color name="glass_panel_border">#4DFFFFFF</color>
-    <color name="glass_button_bg">#4DFFFFFF</color>
-    <color name="glass_button_active_bg">#80FFFFFF</color>
-    <color name="glass_button_danger_bg">#80FF5252</color>
-    
-    <color name="glass_text_primary">#FFFFFF</color>
-    <color name="glass_text_secondary">#B3FFFFFF</color>
-    <color name="glass_accent">#00E5FF</color>
-    <color name="glass_accent_danger">#FF5252</color>
+    <!-- Light theme. Opaque surfaces so the map does not show through. -->
+    <color name="widget_surface">#F4F6F8</color>
+    <color name="glass_panel_bg">#F4F6F8</color>
+    <color name="glass_panel_border">#1F1A1C1E</color>
+    <color name="glass_button_bg">#E4E7EB</color>
+    <color name="glass_button_active_bg">#D3F3F7</color>
+    <color name="glass_button_danger_bg">#FFCDD2</color>
+    <color name="glass_divider">#1F1A1C1E</color>
+    <color name="glass_chip_bg">#E7EAEE</color>
+    <color name="glass_positive">#1B7F3A</color>
+
+    <color name="glass_text_primary">#1A1C1E</color>
+    <color name="glass_text_secondary">#5F6368</color>
+    <color name="glass_accent">#007C91</color>
+    <color name="glass_accent_danger">#C62828</color>
 </resources>

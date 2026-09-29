@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Map behind the quarters. Climate and vehicle each take 1/4 of the width.
+         Together they cover half the screen and can slide in from either side. -->
+    <bool name="config_enableTopSystemBar">false</bool>
+    <bool name="config_enableBottomSystemBar">false</bool>
+    <bool name="config_enableLeftSystemBar">false</bool>
+    <bool name="config_enableRightSystemBar">false</bool>
+    <array name="window_states" translatable="false">
+        <item>@xml/map_panel</item>
+        <item>@xml/climate_panel</item>
+        <item>@xml/vehicle_panel</item>
+        <item>@xml/slide_from_left</item>
+        <item>@xml/slide_from_right</item>
+    </array>
+
+    <string-array name="config_default_activities" translatable="false">
+        <item>map_panel;com.google.android.apps.maps/com.google.android.maps.MapsActivity</item>
+        <item>climate_panel;com.test.design/.presentation.ivi.glanceables.ClimateHomePanelActivity</item>
+        <item>vehicle_panel;com.test.design/.presentation.ivi.glanceables.VehicleHomePanelActivity</item>
+    </string-array>
+</resources>

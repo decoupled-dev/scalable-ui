@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Follows system night mode. Does not replace Scalable UI panels. -->
+<overlay>
+    <item target="bool/car_ui_is_light_theme" value="@bool/car_ui_is_light_theme" />
+    <item target="color/app_bar_background_color" value="@color/app_bar_background_color" />
+</overlay>

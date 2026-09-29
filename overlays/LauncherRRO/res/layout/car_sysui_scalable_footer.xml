@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Device CarSystemUI asks for this layout name from the dock controller. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/launcher_dock_bg"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp">
+
+    <ImageButton
+        android:id="@+id/sysui_nav_pinned"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="6dp"
+        android:background="@drawable/launcher_dock_icon_bg"
+        android:backgroundTint="#FF3A7BD5"
+        android:contentDescription="Home"
+        android:padding="14dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_dock_home" />
+
+    <ImageButton
+        android:id="@+id/sysui_nav_all_apps"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="6dp"
+        android:background="@drawable/launcher_dock_icon_bg"
+        android:backgroundTint="#FF5B5BD6"
+        android:contentDescription="Apps"
+        android:padding="14dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_dock_apps" />
+
+    <ImageButton
+        android:id="@+id/sysui_nav_recent"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="6dp"
+        android:background="@drawable/launcher_dock_icon_bg"
+        android:backgroundTint="#FF8E8E93"
+        android:contentDescription="Recent apps"
+        android:padding="14dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_dock_recent" />
+</LinearLayout>

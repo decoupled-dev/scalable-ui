@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bottom half of the sliding column, under climate. -->
+<TaskPanel id="vehicle_panel" defaultVariant="@id/open_left"
+    role="@string/design_vehicle_panel_component" displayId="0">
+    <Variant id="@+id/open_left">
+        <Layer layer="12"/>
+        <Visibility isVisible="true"/>
+        <Alpha alpha="1.0"/>
+        <Corner radius="28dp"/>
+        <Bounds left="16dp" top="396dp" right="320dp" bottom="704dp"/>
+        <Focus onTransition="false"/>
+    </Variant>
+    <Variant id="@+id/open_right">
+        <Layer layer="12"/>
+        <Visibility isVisible="true"/>
+        <Alpha alpha="1.0"/>
+        <Corner radius="28dp"/>
+        <Bounds left="960dp" top="396dp" right="1264dp" bottom="704dp"/>
+        <Focus onTransition="false"/>
+    </Variant>
+    <Variant id="@+id/closed_left">
+        <Layer layer="12"/>
+        <Visibility isVisible="false"/>
+        <Alpha alpha="0.0"/>
+        <Corner radius="28dp"/>
+        <Bounds left="-320dp" top="396dp" right="-16dp" bottom="704dp"/>
+        <Focus onTransition="false"/>
+    </Variant>
+    <Variant id="@+id/closed_right">
+        <Layer layer="12"/>
+        <Visibility isVisible="false"/>
+        <Alpha alpha="0.0"/>
+        <Corner radius="28dp"/>
+        <Bounds left="1296dp" top="396dp" right="1600dp" bottom="704dp"/>
+        <Focus onTransition="false"/>
+    </Variant>
+    <Transitions>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=vehicle_panel"
+            toVariant="@id/open_left" duration="450" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=slide_from_left"
+            toVariant="@id/open_left" duration="450" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=slide_from_right"
+            toVariant="@id/open_right" duration="450" interpolator="@anim/pleos_fluid_interpolator"/>
+    </Transitions>
+</TaskPanel>

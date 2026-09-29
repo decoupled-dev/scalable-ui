@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Header controller already on CarSystemUI. It inflates layout/car_sysui_scalable_header. -->
+<Controller id="launcher_status_controller">
+    <ControllerName>com.android.systemui.car.wm.scalableui.panel.controller.CarSysuiScalableHeaderController</ControllerName>
+    <RroPackage>com.android.systemui.rro.scalableUI.launcher</RroPackage>
+</Controller>

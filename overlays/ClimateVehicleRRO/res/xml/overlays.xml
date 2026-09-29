@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Climate + vehicle quarters. Hides every Car SystemUI system bar. -->
+<overlay>
+    <item target="bool/config_enableTopSystemBar" value="@bool/config_enableTopSystemBar"/>
+    <item target="bool/config_enableBottomSystemBar" value="@bool/config_enableBottomSystemBar"/>
+    <item target="bool/config_enableLeftSystemBar" value="@bool/config_enableLeftSystemBar"/>
+    <item target="bool/config_enableRightSystemBar" value="@bool/config_enableRightSystemBar"/>
+
+    <item target="array/window_states" value="@array/window_states"/>
+    <item target="array/config_default_activities" value="@array/config_default_activities"/>
+</overlay>

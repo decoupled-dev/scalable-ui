@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Adds one left-edge panel. Keeps the current map panel; does not load OemDemo. -->
+<overlay>
+    <item target="array/window_states" value="@array/window_states"/>
+    <item target="array/config_default_activities" value="@array/config_default_activities"/>
+</overlay>

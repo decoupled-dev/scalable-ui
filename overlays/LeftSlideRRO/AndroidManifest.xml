@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.android.systemui.rro.scalableUI.leftSlide"
+    android:versionCode="6"
+    android:versionName="6">
+
+    <uses-sdk android:minSdkVersion="35" android:targetSdkVersion="35" />
+
+    <application android:hasCode="false" />
+    <overlay
+        android:targetPackage="com.android.systemui"
+        android:isStatic="false"
+        android:priority="1002"
+        android:resourcesMap="@xml/overlays" />
+</manifest>

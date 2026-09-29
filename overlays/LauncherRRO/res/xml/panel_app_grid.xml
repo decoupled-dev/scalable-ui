@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  App grid on the right half, with space above and below and rounded corners.
+  Closed sits just off the right edge so TaskOpen slides it in. Home closes it.
+-->
+<TaskPanel id="panel_app_grid" defaultVariant="@id/closed" role="@string/appgrid_componentName" displayId="0">
+    <Variant id="@+id/base">
+        <Layer layer="16"/>
+        <Alpha alpha="1.0"/>
+        <Corner radius="@dimen/launcher_app_grid_corner"/>
+        <Focus onTransition="false"/>
+    </Variant>
+    <Variant id="@+id/opened" parent="@id/base">
+        <Visibility isVisible="true"/>
+        <Focus onTransition="true"/>
+        <Bounds
+            left="50%"
+            leftOffset="@dimen/launcher_app_grid_edge"
+            top="@dimen/launcher_app_grid_top"
+            right="100%"
+            rightOffset="@dimen/launcher_app_grid_edge"
+            bottom="100%"
+            bottomOffset="@dimen/launcher_app_grid_bottom_offset"/>
+    </Variant>
+    <Variant id="@+id/closed" parent="@id/base">
+        <Visibility isVisible="true"/>
+        <Bounds
+            left="100%"
+            top="@dimen/launcher_app_grid_top"
+            right="100%"
+            rightOffset="@dimen/launcher_app_grid_closed_right_offset"
+            bottom="100%"
+            bottomOffset="@dimen/launcher_app_grid_bottom_offset"/>
+    </Variant>
+    <Transitions>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=panel_app_grid" toVariant="@id/opened" duration="400" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_OnHomeEvent" toVariant="@id/closed" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=map_panel" toVariant="@id/closed" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+    </Transitions>
+</TaskPanel>

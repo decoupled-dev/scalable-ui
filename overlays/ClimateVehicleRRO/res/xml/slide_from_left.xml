@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Off-screen trigger. Opening it slides climate and vehicle in from the left. -->
+<TaskPanel id="slide_from_left" defaultVariant="@id/hidden"
+    role="@string/slide_from_left_component" displayId="0">
+    <Variant id="@+id/hidden">
+        <Layer layer="1"/>
+        <Visibility isVisible="false"/>
+        <Alpha alpha="0.0"/>
+        <Bounds left="-8dp" top="-8dp" right="0dp" bottom="0dp"/>
+        <Focus onTransition="false"/>
+    </Variant>
+    <Transitions>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=slide_from_left"
+            toVariant="@id/hidden" duration="0"/>
+    </Transitions>
+</TaskPanel>

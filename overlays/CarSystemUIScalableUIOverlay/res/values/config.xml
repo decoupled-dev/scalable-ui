@@ -23,10 +23,10 @@
     </integer>
 
     <!-- Configure which system bars should be displayed. -->
-    <bool name="config_enableTopSystemBar">true</bool>
+    <bool name="config_enableTopSystemBar">false</bool>
     <bool name="config_enableLeftSystemBar">false</bool>
     <bool name="config_enableRightSystemBar">false</bool>
-    <bool name="config_enableBottomSystemBar">true</bool>
+    <bool name="config_enableBottomSystemBar">false</bool>
 
     <!-- Configure the type of each system bar. Each system bar must have a unique type. -->
     <!--    STATUS_BAR = 0-->

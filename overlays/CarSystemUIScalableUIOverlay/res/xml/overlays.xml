@@ -6,6 +6,8 @@
     <item target="bool/config_enableSafeAreaAndToolbarPerDisplay" value="@bool/config_enableSafeAreaAndToolbarPerDisplay"/>
     <item target="bool/config_enableTopSystemBar" value="@bool/config_enableTopSystemBar"/>
     <item target="bool/config_enableBottomSystemBar" value="@bool/config_enableBottomSystemBar"/>
+    <item target="bool/config_enableLeftSystemBar" value="@bool/config_enableLeftSystemBar"/>
+    <item target="bool/config_enableRightSystemBar" value="@bool/config_enableRightSystemBar"/>
     <item target="integer/config_systemBarSuwBehavior" value="@integer/config_systemBarSuwBehavior"/>
 
     <!-- Panel layout -->

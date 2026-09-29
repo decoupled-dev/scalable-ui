@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Map is the full-screen background (layer 2). Stock system bars stay off.
+         Add a card by appending a panel here at a higher layer. Grow
+         launcher_map_inset_* on the side the card covers so map chrome stays
+         in the safe area. The left inset clears the climate, media, and
+         driving-stats cards.
+         The map bounds stay at 100%. -->
+    <bool name="config_enableScalableUI">true</bool>
+    <bool name="config_enableTopSystemBar">false</bool>
+    <bool name="config_enableBottomSystemBar">false</bool>
+    <bool name="config_enableLeftSystemBar">false</bool>
+    <bool name="config_enableRightSystemBar">false</bool>
+
+    <array name="window_states" translatable="false">
+        <item>@xml/map_panel</item>
+        <item>@xml/launcher_dock</item>
+        <item>@xml/launcher_status</item>
+        <item>@xml/launcher_climate_left</item>
+        <item>@xml/launcher_climate_right</item>
+        <item>@xml/launcher_widget_climate</item>
+        <item>@xml/launcher_widget_media</item>
+        <item>@xml/launcher_widget_stats</item>
+        <item>@xml/panel_app_grid</item>
+    </array>
+
+    <string-array name="config_default_activities" translatable="false">
+        <item>map_panel;com.google.android.apps.maps/com.google.android.maps.MapsActivity</item>
+        <item>launcher_climate;com.android.car.mockwidgets/com.android.car.mockwidgets.ClimateActivity</item>
+        <item>launcher_media;com.android.car.mockwidgets/com.android.car.mockwidgets.MockMediaActivity</item>
+        <item>launcher_stats;com.android.car.mockwidgets/com.android.car.mockwidgets.DrivingStatsActivity</item>
+    </string-array>
+</resources>

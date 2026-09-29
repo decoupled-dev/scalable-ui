@@ -1,7 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.tcs.scalableui.disable">
+    package="com.tcs.scalableui.disable"
+    android:versionCode="2"
+    android:versionName="2">
+
+    <uses-sdk android:minSdkVersion="35" android:targetSdkVersion="35" />
+
     <application android:hasCode="false" />
-    <overlay android:targetPackage="com.android.systemui"
-             android:priority="9999"
-             android:isStatic="false" />
+    <overlay
+        android:targetPackage="com.android.systemui"
+        android:priority="9999"
+        android:isStatic="false" />
 </manifest>

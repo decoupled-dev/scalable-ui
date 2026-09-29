@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Safe area reported to the map. Bounds stay full-screen.
+         Zero while the system bars are hidden. Grow a side when a card covers it. -->
+    <!-- Widget column is 16dp..480dp. 528dp clears the zoom control beside it. -->
+    <dimen name="launcher_map_inset_left">528dp</dimen>
+    <!-- Clears the top status pill (pill bottom is 72dp). -->
+    <dimen name="launcher_map_inset_top">80dp</dimen>
+    <dimen name="launcher_map_inset_right">0dp</dimen>
+    <!-- Dock top sits 96dp above the bottom edge. 108dp clears it by 12dp. -->
+    <dimen name="launcher_map_inset_bottom">108dp</dimen>
+    <!-- 240 dpi canvas is about 1707 x 1067 dp. Center on 50% / 100%. -->
+    <!-- Negative so left sits left of center and right sits right of center. -->
+    <dimen name="launcher_dock_half_width">-120dp</dimen>
+    <dimen name="launcher_dock_bottom_margin">16dp</dimen>
+    <dimen name="launcher_dock_top_offset">-96dp</dimen>
+    <dimen name="launcher_status_half_width">-160dp</dimen>
+    <dimen name="launcher_status_top">8dp</dimen>
+    <dimen name="launcher_status_bottom">72dp</dimen>
+    <dimen name="launcher_climate_left_left">16dp</dimen>
+    <dimen name="launcher_climate_left_right">216dp</dimen>
+    <dimen name="launcher_climate_right_left">1064dp</dimen>
+    <dimen name="launcher_climate_right_right">1264dp</dimen>
+    <!-- App grid is the right half, inset from the top, bottom, and edges. -->
+    <dimen name="launcher_app_grid_top">88dp</dimen>
+    <dimen name="launcher_app_grid_bottom_offset">120dp</dimen>
+    <dimen name="launcher_app_grid_edge">16dp</dimen>
+    <dimen name="launcher_app_grid_corner">28dp</dimen>
+    <!-- Closed copy sits just off the right edge, same width as the open panel. -->
+    <dimen name="launcher_app_grid_closed_right_offset">-860dp</dimen>
+    <!-- While the grid is open, widgets are gone so the left inset shrinks and
+         the right inset keeps map chrome in the uncovered half. -->
+    <dimen name="launcher_map_inset_left_apps">24dp</dimen>
+    <dimen name="launcher_map_inset_right_apps">880dp</dimen>
+    <dimen name="launcher_widget_offscreen_left">-500dp</dimen>
+    <dimen name="launcher_widget_offscreen_right">-36dp</dimen>
+    <!-- Three equal cards on the 240 dpi canvas, above the left climate pill. -->
+    <dimen name="launcher_widget_left">16dp</dimen>
+    <dimen name="launcher_widget_right">480dp</dimen>
+    <dimen name="launcher_widget_climate_top">16dp</dimen>
+    <dimen name="launcher_widget_climate_bottom">303dp</dimen>
+    <dimen name="launcher_widget_media_top">315dp</dimen>
+    <dimen name="launcher_widget_media_bottom">601dp</dimen>
+    <dimen name="launcher_widget_stats_top">613dp</dimen>
+    <dimen name="launcher_widget_stats_bottom">900dp</dimen>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.android.systemui.rro.scalableUI.launcher"
+    android:versionCode="13"
+    android:versionName="13">
+
+    <uses-sdk android:minSdkVersion="35" android:targetSdkVersion="35" />
+
+    <application android:hasCode="false" />
+    <overlay
+        android:targetPackage="com.android.systemui"
+        android:isStatic="false"
+        android:priority="1004"
+        android:resourcesMap="@xml/overlays" />
+</manifest>

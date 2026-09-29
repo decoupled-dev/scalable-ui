@@ -3,8 +3,7 @@
     android:id="@+id/root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="@android:color/transparent">
+    android:background="@color/widget_surface">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -34,7 +33,7 @@
                     android:layout_height="40dp"
                     android:layout_gravity="center"
                     android:src="@android:drawable/ic_media_play"
-                    android:tint="#00E5FF"/>
+                    android:tint="@color/glass_accent"/>
             </FrameLayout>
 
             <LinearLayout
@@ -49,7 +48,7 @@
                     android:visibility="gone"
                     android:textAlignment="center"
                     android:text="NOW PLAYING"
-                    android:textColor="#00E5FF"
+                    android:textColor="@color/glass_accent"
                     android:textSize="12sp"
                     android:fontFamily="sans-serif-medium"
                     android:letterSpacing="0.1"/>
@@ -60,7 +59,7 @@
                     android:layout_height="wrap_content"
                     android:textAlignment="center"
                     android:text="Starlight Symphony"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/glass_text_primary"
                     android:textSize="24sp"
                     android:fontFamily="sans-serif-light"
                     android:layout_marginTop="4dp"/>
@@ -72,7 +71,7 @@
                     android:visibility="gone"
                     android:textAlignment="center"
                     android:text="Nebula Waves"
-                    android:textColor="#B3FFFFFF"
+                    android:textColor="@color/glass_text_secondary"
                     android:textSize="16sp"
                     android:fontFamily="sans-serif-medium"/>
             </LinearLayout>
@@ -88,8 +87,8 @@
             android:progress="42"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="24dp"
-            android:progressTint="#00E5FF"
-            android:thumbTint="#00E5FF"/>
+            android:progressTint="@color/glass_accent"
+            android:thumbTint="@color/glass_accent"/>
 
         <!-- Media Controls -->
         <LinearLayout
@@ -104,7 +103,7 @@
                 android:layout_height="56dp"
                 android:background="@drawable/glass_button_bg"
                 android:src="@android:drawable/ic_media_previous"
-                android:tint="#FFFFFF"
+                android:tint="@color/glass_text_primary"
                 android:elevation="4dp"/>
 
             <ImageButton
@@ -113,7 +112,7 @@
                 android:layout_height="72dp"
                 android:background="@drawable/glass_button_active_bg"
                 android:src="@android:drawable/ic_media_pause"
-                android:tint="#00E5FF"
+                android:tint="@color/glass_accent"
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="24dp"
                 android:elevation="8dp"/>
@@ -124,7 +123,7 @@
                 android:layout_height="56dp"
                 android:background="@drawable/glass_button_bg"
                 android:src="@android:drawable/ic_media_next"
-                android:tint="#FFFFFF"
+                android:tint="@color/glass_text_primary"
                 android:elevation="4dp"/>
                 
             <Button
@@ -135,7 +134,7 @@
                 android:text="Focus"
                 android:layout_marginLeft="24dp"
                 android:background="@drawable/glass_button_bg"
-                android:textColor="#B3FFFFFF"
+                android:textColor="@color/glass_text_secondary"
                 android:fontFamily="sans-serif-medium"/>
 
             <Button
@@ -146,7 +145,7 @@
                 android:text="Fullscreen"
                 android:layout_marginLeft="16dp"
                 android:background="@drawable/glass_button_bg"
-                android:textColor="#B3FFFFFF"
+                android:textColor="@color/glass_text_secondary"
                 android:fontFamily="sans-serif-medium"/>
         </LinearLayout>
 

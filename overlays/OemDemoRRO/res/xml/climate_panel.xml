@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  CarLauncher home climate widget. Hosts the design climate screen
+  (ClimateHomePanelActivity) in the climate card slot.
+-->
+<TaskPanel id="climate_panel" defaultVariant="@id/visible"
+    role="@string/design_climate_panel_component" displayId="0">
+    <Variant id="@+id/visible">
+        <Layer layer="11"/>
+        <Visibility isVisible="true"/>
+        <Alpha alpha="1.0"/>
+        <Corner radius="28dp"/>
+        <Bounds left="984dp" top="72dp" right="1264dp" bottom="384dp"/>
+        <Focus onTransition="false"/>
+    </Variant>
+    <Variant id="@+id/hidden">
+        <Layer layer="11"/>
+        <Visibility isVisible="false"/>
+        <Alpha alpha="0.0"/>
+        <Corner radius="28dp"/>
+        <Bounds left="984dp" top="72dp" right="1264dp" bottom="384dp"/>
+        <Focus onTransition="false"/>
+    </Variant>
+    <Transitions>
+        <Transition onEvent="toggle_map_fullscreen" fromVariant="@id/visible" toVariant="@id/hidden" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="toggle_map_fullscreen" fromVariant="@id/hidden" toVariant="@id/visible" duration="300" interpolator="@anim/pleos_fluid_interpolator"/>
+        <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/hidden" toVariant="@id/visible" duration="0"/>
+        <Transition onEvent="_System_OnHomeEvent" toVariant="@id/visible" duration="0"/>
+    </Transitions>
+</TaskPanel>

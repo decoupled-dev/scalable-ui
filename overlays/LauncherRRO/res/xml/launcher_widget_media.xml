@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Existing MockMediaActivity, middle card in the left column. -->
+<TaskPanel id="launcher_media" defaultVariant="@id/visible"
+    role="@string/launcher_media_component" displayId="0">
+    <Restart policy="LAST" maxRetry="3"/>
+    <Variant id="@+id/base">
+        <Layer layer="12"/>
+        <Alpha alpha="1.0"/>
+        <Corner radius="28dp"/>
+        <Bounds
+            left="@dimen/launcher_widget_left"
+            top="@dimen/launcher_widget_media_top"
+            right="@dimen/launcher_widget_right"
+            bottom="@dimen/launcher_widget_media_bottom"/>
+        <Focus onTransition="false"/>
+    </Variant>
+    <Variant id="@+id/visible" parent="@id/base">
+        <Visibility isVisible="true"/>
+    </Variant>
+    <Variant id="@+id/hidden" parent="@id/base">
+        <Visibility isVisible="false"/>
+        <Alpha alpha="0.0"/>
+    </Variant>
+    <Variant id="@+id/apps_open" parent="@id/base">
+        <Alpha alpha="0.0"/>
+        <Bounds
+            left="@dimen/launcher_widget_offscreen_left"
+            top="@dimen/launcher_widget_media_top"
+            right="@dimen/launcher_widget_offscreen_right"
+            bottom="@dimen/launcher_widget_media_bottom"/>
+    </Variant>
+    <Transitions>
+        <Transition onEvent="_System_EnterSuwEvent" toVariant="@id/hidden"/>
+        <Transition onEvent="_System_ExitSuwEvent" fromVariant="@id/hidden" toVariant="@id/visible"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=panel_app_grid" toVariant="@id/apps_open" duration="400" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/apps_open" toVariant="@id/visible" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=map_panel" fromVariant="@id/apps_open" toVariant="@id/visible" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+    </Transitions>
+</TaskPanel>

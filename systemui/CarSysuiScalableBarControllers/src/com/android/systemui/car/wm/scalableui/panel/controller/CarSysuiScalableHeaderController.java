@@ -22,11 +22,13 @@ import android.car.hardware.CarHvacFanDirection;
 import android.car.VehiclePropertyIds;
 import android.car.hardware.CarPropertyValue;
 import android.car.hardware.property.CarPropertyManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.UserHandle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -180,6 +182,51 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
         bindClimateExtras(root);
         bindChromeScrim(root);
         wireClickListeners();
+        wireDesignScreen(root);
+    }
+
+    /** Opens the design climate or vehicle screen when the card is tapped. */
+    private void wireDesignScreen(View root) {
+        String className = null;
+        if ("sysui_driver_zone_panel".equals(mPanelId)
+                || "oem_climate_card".equals(mPanelId)) {
+            className = "com.test.design.presentation.ivi.glanceables.ClimatePanelActivity";
+        } else if ("sysui_passenger_zone_panel".equals(mPanelId)
+                || "oem_car_status_card".equals(mPanelId)) {
+            className = "com.test.design.presentation.ivi.glanceables.VehiclePanelActivity";
+        }
+        if (className == null || root == null) {
+            return;
+        }
+        final String component = className;
+        wireDesignClick(root, v -> launchDesignScreen(component));
+    }
+
+    /** Keep HVAC +/- listeners. Every other tap opens the design screen. */
+    private void wireDesignClick(View view, View.OnClickListener listener) {
+        boolean keepHvac = view instanceof ImageButton && view.hasOnClickListeners();
+        if (!keepHvac) {
+            view.setOnClickListener(listener);
+        }
+        if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) view;
+            for (int i = 0; i < group.getChildCount(); i++) {
+                wireDesignClick(group.getChildAt(i), listener);
+            }
+        }
+    }
+
+    private void launchDesignScreen(String className) {
+        Intent intent = new Intent();
+        intent.setComponent(new ComponentName("com.test.design", className));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        int userId = ActivityManager.getCurrentUser();
+        try {
+            mContext.startActivityAsUser(intent, UserHandle.of(userId));
+            Log.i(TAG, "launchDesignScreen " + className + " user=" + userId);
+        } catch (Throwable t) {
+            Log.e(TAG, "launchDesignScreen failed " + className, t);
+        }
     }
 
     private void bindClimateExtras(View root) {

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Full-screen map background, matching
+  packages/apps/Car/SystemUI/samples/MinimizedControlsDynamic background_map_panel
+  and DEWDPort's always-full map.
+
+  Bounds stay at 100% so cards can stack above the map without resizing it.
+  System bars are hidden. SafeBounds and Insets are sent to Maps so its
+  controls sit above the floating dock. The map surface stays full-screen.
+-->
+<TaskPanel id="map_panel" defaultVariant="@id/opened" role="@string/map_componentName" displayId="0">
+    <Restart policy="LAST" maxRetry="3"/>
+    <TaskBehavior taskProperties="UNTRIMMABLE"/>
+    <Variant id="@+id/base">
+        <Layer layer="2"/>
+        <Focus onTransition="false"/>
+        <Alpha alpha="1.0"/>
+        <Corner radius="0dp"/>
+        <Bounds left="0dp" top="0dp" right="100%" bottom="100%"/>
+        <SafeBounds
+            left="@dimen/launcher_map_inset_left"
+            top="@dimen/launcher_map_inset_top"
+            right="100%"
+            bottom="100%"
+            bottomOffset="@dimen/launcher_map_inset_bottom"/>
+        <Insets
+            left="@dimen/launcher_map_inset_left"
+            top="@dimen/launcher_map_inset_top"
+            right="@dimen/launcher_map_inset_right"
+            bottom="@dimen/launcher_map_inset_bottom"/>
+    </Variant>
+    <Variant id="@+id/opened" parent="@id/base">
+        <Visibility isVisible="true"/>
+    </Variant>
+    <!-- Widgets hide. Map chrome moves into the left half, clear of the app grid. -->
+    <Variant id="@+id/apps_open" parent="@id/base">
+        <Visibility isVisible="true"/>
+        <SafeBounds
+            left="@dimen/launcher_map_inset_left_apps"
+            top="@dimen/launcher_map_inset_top"
+            right="50%"
+            bottom="100%"
+            bottomOffset="@dimen/launcher_map_inset_bottom"/>
+        <Insets
+            left="@dimen/launcher_map_inset_left_apps"
+            top="@dimen/launcher_map_inset_top"
+            right="@dimen/launcher_map_inset_right_apps"
+            bottom="@dimen/launcher_map_inset_bottom"/>
+    </Variant>
+    <Variant id="@+id/closed" parent="@id/base">
+        <Visibility isVisible="false"/>
+    </Variant>
+    <Variant id="@+id/suw" parent="@id/closed"/>
+    <Variant id="@+id/userswitch" parent="@id/closed"/>
+
+    <Transitions>
+        <Transition onEvent="_System_EnterSuwEvent" toVariant="@id/suw"/>
+        <Transition onEvent="_System_ExitSuwEvent" fromVariant="@id/suw" toVariant="@id/opened"/>
+        <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/closed" toVariant="@id/opened"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=map_panel" fromVariant="@id/closed" toVariant="@id/opened"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=panel_app_grid" fromVariant="@id/opened" toVariant="@id/apps_open" duration="400" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/apps_open" toVariant="@id/opened" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=map_panel" fromVariant="@id/apps_open" toVariant="@id/opened" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_BeforeUserSwitch" toVariant="@id/userswitch"/>
+        <Transition onEvent="_System_UserSwitchComplete" fromVariant="@id/userswitch" toVariant="@id/opened"/>
+    </Transitions>
+</TaskPanel>

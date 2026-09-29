@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Floating status pill. Map bounds stay full-screen; the top inset clears it. -->
+<DecorPanel id="launcher_status" defaultVariant="@id/visible"
+    controller="@xml/launcher_status_controller" displayId="0">
+    <Variant id="@+id/base">
+        <Layer layer="30"/>
+        <Alpha alpha="1.0"/>
+        <Corner radius="36dp"/>
+        <Bounds
+            left="50%"
+            leftOffset="@dimen/launcher_status_half_width"
+            top="@dimen/launcher_status_top"
+            right="50%"
+            rightOffset="@dimen/launcher_status_half_width"
+            bottom="@dimen/launcher_status_bottom"/>
+        <Focus onTransition="false"/>
+    </Variant>
+    <Variant id="@+id/visible" parent="@id/base">
+        <Visibility isVisible="true"/>
+    </Variant>
+    <Variant id="@+id/hidden" parent="@id/base">
+        <Visibility isVisible="false"/>
+    </Variant>
+    <Transitions>
+        <Transition onEvent="_System_EnterSuwEvent" toVariant="@id/hidden"/>
+        <Transition onEvent="_System_ExitSuwEvent" fromVariant="@id/hidden" toVariant="@id/visible"/>
+    </Transitions>
+</DecorPanel>
