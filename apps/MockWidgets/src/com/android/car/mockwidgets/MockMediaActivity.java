@@ -63,11 +63,7 @@ public class MockMediaActivity extends Activity {
         ImageButton btnPlay = findViewById(R.id.btn_play);
         btnPlay.setOnClickListener(v -> {
             mIsPlaying = !mIsPlaying;
-            if (mIsPlaying) {
-                btnPlay.setImageResource(android.R.drawable.ic_media_pause);
-            } else {
-                btnPlay.setImageResource(android.R.drawable.ic_media_play);
-            }
+            btnPlay.setImageResource(mIsPlaying ? R.drawable.ic_pause : R.drawable.ic_play);
         });
 
         // Playback Progress Simulation

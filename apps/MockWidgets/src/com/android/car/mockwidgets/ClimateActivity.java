@@ -157,15 +157,15 @@ public class ClimateActivity extends Activity {
     }
 
     private void updateAcDisplay() {
-        mBtnAc.setText(mAcOn ? "A/C ON" : "A/C OFF");
-        int tint = getColor(mAcOn ? R.color.glass_button_active_bg : R.color.glass_button_bg);
-        mBtnAc.setBackgroundTintList(android.content.res.ColorStateList.valueOf(tint));
+        mBtnAc.setText("A/C");
+        mBtnAc.setBackgroundResource(mAcOn ? R.drawable.widget_chip_active : R.drawable.widget_chip);
+        mBtnAc.setTextColor(getColor(mAcOn ? R.color.glass_accent : R.color.glass_text_secondary));
     }
 
     private void updateAutoDisplay() {
-        mBtnAuto.setText(mAutoOn ? "AUTO: ON" : "AUTO");
-        int tint = getColor(mAutoOn ? R.color.glass_button_active_bg : R.color.glass_button_bg);
-        mBtnAuto.setBackgroundTintList(android.content.res.ColorStateList.valueOf(tint));
+        mBtnAuto.setText("Auto");
+        mBtnAuto.setBackgroundResource(mAutoOn ? R.drawable.widget_chip_active : R.drawable.widget_chip);
+        mBtnAuto.setTextColor(getColor(mAutoOn ? R.color.glass_accent : R.color.glass_text_secondary));
     }
 
     @Override
