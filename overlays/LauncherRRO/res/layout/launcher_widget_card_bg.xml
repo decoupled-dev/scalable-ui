@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Opaque underlay for the climate / media / stats TaskPanels so the map
+     never shows through, even if the hosted activity window is translucent. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/launcher_widget_card_bg" />
