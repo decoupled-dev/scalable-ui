@@ -10,30 +10,13 @@
     android:paddingEnd="14dp">
 
     <TextClock
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:format12Hour="h:mm"
         android:format24Hour="HH:mm"
         android:textColor="@color/launcher_on_surface"
         android:textSize="22sp"
         android:textStyle="bold" />
-
-    <ImageView
-        android:layout_width="28dp"
-        android:layout_height="28dp"
-        android:layout_marginStart="8dp"
-        android:contentDescription="Bluetooth"
-        android:src="@drawable/ic_status_bluetooth"
-        android:tint="@color/launcher_on_surface" />
-
-    <ImageView
-        android:layout_width="28dp"
-        android:layout_height="28dp"
-        android:layout_marginStart="12dp"
-        android:contentDescription="Wi-Fi"
-        android:src="@drawable/ic_status_wifi"
-        android:tint="@color/launcher_on_surface" />
 
     <ImageButton
         android:id="@+id/sysui_night_mode"

@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Map is the full-screen background (layer 2). The top system bar is
-         three stock-icon pills. The bottom bar stays off; the dock replaces it.
+    <!-- Map is the full-screen background (layer 2). Three decor pills sit
+         on top: connectivity and display, the clock, and the user profile.
+         Stock system bars stay off. The bottom dock replaces the nav bar.
          The right inset clears the climate, media, and driving-stats cards.
          The map bounds stay at 100%. -->
     <bool name="config_enableScalableUI">true</bool>
-    <bool name="config_enableTopSystemBar">true</bool>
+    <bool name="config_enableTopSystemBar">false</bool>
     <bool name="config_enableBottomSystemBar">false</bool>
     <bool name="config_enableLeftSystemBar">false</bool>
     <bool name="config_enableRightSystemBar">false</bool>
 
     <array name="window_states" translatable="false">
         <item>@xml/map_panel</item>
+        <item>@xml/launcher_pill_left</item>
+        <item>@xml/launcher_pill_center</item>
+        <item>@xml/launcher_pill_right</item>
         <item>@xml/launcher_dock</item>
         <item>@xml/launcher_climate_left</item>
         <item>@xml/launcher_climate_right</item>

@@ -28,6 +28,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.UserHandle;
+import android.os.UserManager;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -175,6 +177,15 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
         if ("sysui_passenger_zone_panel".equals(mPanelId)) {
             return "car_sysui_scalable_header_passenger_zone";
         }
+        if ("launcher_pill_left".equals(mPanelId)) {
+            return "launcher_pill_left";
+        }
+        if ("launcher_pill_center".equals(mPanelId)) {
+            return "launcher_pill_center";
+        }
+        if ("launcher_pill_right".equals(mPanelId)) {
+            return "launcher_pill_right";
+        }
         return "car_sysui_scalable_header";
     }
 
@@ -187,6 +198,7 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
         wireClickListeners();
         wireDesignScreen(root);
         wireNightMode(root);
+        wireStatusPills(root);
     }
 
     /**
@@ -237,6 +249,78 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
             }
         }
         button.setContentDescription(night ? "Light theme" : "Dark theme");
+    }
+
+    /**
+     * Left pill opens Wi-Fi, Bluetooth, and display settings. The right pill
+     * shows the current user and opens user settings. Day/night stays on the
+     * left pill via {@link #wireNightMode}.
+     */
+    private void wireStatusPills(View root) {
+        if (root == null) {
+            return;
+        }
+        wireSettingsButton(root, "launcher_status_wifi", Settings.ACTION_WIFI_SETTINGS);
+        wireSettingsButton(root, "launcher_status_bluetooth", Settings.ACTION_BLUETOOTH_SETTINGS);
+        wireSettingsButton(root, "launcher_status_brightness", Settings.ACTION_DISPLAY_SETTINGS);
+        wireUserProfile(root);
+    }
+
+    private void wireSettingsButton(View root, String name, String action) {
+        int id = resolveRroId(name);
+        if (id == 0) {
+            return;
+        }
+        View button = root.findViewById(id);
+        if (button == null) {
+            return;
+        }
+        button.setOnClickListener(v -> openSettings(action));
+    }
+
+    private void openSettings(String action) {
+        Intent intent = new Intent(action);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        int userId = ActivityManager.getCurrentUser();
+        try {
+            mContext.startActivityAsUser(intent, UserHandle.of(userId));
+            Log.i(TAG, "openSettings " + action + " user=" + userId);
+        } catch (Throwable t) {
+            Log.e(TAG, "openSettings failed " + action, t);
+        }
+    }
+
+    private void wireUserProfile(View root) {
+        int nameId = resolveRroId("launcher_user_name");
+        if (nameId != 0) {
+            View nameView = root.findViewById(nameId);
+            if (nameView instanceof TextView) {
+                ((TextView) nameView).setText(currentUserName());
+            }
+        }
+        int buttonId = resolveRroId("launcher_user_profile");
+        if (buttonId == 0) {
+            return;
+        }
+        View button = root.findViewById(buttonId);
+        if (button != null) {
+            button.setOnClickListener(v -> openSettings(Settings.ACTION_USER_SETTINGS));
+        }
+    }
+
+    private String currentUserName() {
+        try {
+            UserManager userManager = mContext.getSystemService(UserManager.class);
+            if (userManager != null) {
+                String name = userManager.getUserName();
+                if (name != null && !name.isEmpty()) {
+                    return name;
+                }
+            }
+        } catch (Throwable t) {
+            Log.w(TAG, "currentUserName", t);
+        }
+        return "Profile";
     }
 
     /** Opens the design climate or vehicle screen when the card is tapped. */

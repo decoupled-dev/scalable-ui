@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Center header pill, clock. -->
+<DecorPanel id="launcher_pill_center" defaultVariant="@id/visible"
+    controller="@xml/launcher_status_controller" displayId="0">
+    <Variant id="@+id/base">
+        <Layer layer="30"/>
+        <Alpha alpha="1.0"/>
+        <Corner radius="32dp"/>
+        <Bounds
+            left="50%"
+            leftOffset="@dimen/launcher_pill_center_half"
+            top="@dimen/launcher_pill_top"
+            right="50%"
+            rightOffset="@dimen/launcher_pill_center_half"
+            bottom="@dimen/launcher_pill_bottom"/>
+        <Focus onTransition="false"/>
+    </Variant>
+    <Variant id="@+id/visible" parent="@id/base">
+        <Visibility isVisible="true"/>
+    </Variant>
+    <Variant id="@+id/hidden" parent="@id/base">
+        <Visibility isVisible="false"/>
+    </Variant>
+    <Transitions>
+        <Transition onEvent="_System_EnterSuwEvent" toVariant="@id/hidden"/>
+        <Transition onEvent="_System_ExitSuwEvent" fromVariant="@id/hidden" toVariant="@id/visible"/>
+    </Transitions>
+</DecorPanel>

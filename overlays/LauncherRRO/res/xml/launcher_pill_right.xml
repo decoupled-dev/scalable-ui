@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Floating status pill. Map bounds stay full-screen; the top inset clears it. -->
-<DecorPanel id="launcher_status" defaultVariant="@id/visible"
+<!-- Right header pill, user profile. -->
+<DecorPanel id="launcher_pill_right" defaultVariant="@id/visible"
     controller="@xml/launcher_status_controller" displayId="0">
     <Variant id="@+id/base">
         <Layer layer="30"/>
         <Alpha alpha="1.0"/>
-        <Corner radius="36dp"/>
+        <Corner radius="32dp"/>
         <Bounds
-            left="50%"
-            leftOffset="@dimen/launcher_status_half_width"
-            top="@dimen/launcher_status_top"
-            right="50%"
-            rightOffset="@dimen/launcher_status_half_width"
-            bottom="@dimen/launcher_status_bottom"/>
-        <Focus onTransition="false"/>
+            left="100%"
+            leftOffset="@dimen/launcher_pill_right_inset"
+            top="@dimen/launcher_pill_top"
+            right="100%"
+            rightOffset="@dimen/launcher_pill_edge"
+            bottom="@dimen/launcher_pill_bottom"/>
+        <Focus onTransition="true"/>
     </Variant>
     <Variant id="@+id/visible" parent="@id/base">
         <Visibility isVisible="true"/>

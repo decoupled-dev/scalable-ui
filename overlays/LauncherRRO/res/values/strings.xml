@@ -9,4 +9,8 @@
     <string name="launcher_stats_component" translatable="false">com.android.car.mockwidgets/.DrivingStatsActivity</string>
     <string name="launcher_dark_theme" translatable="false">Dark theme</string>
     <string name="launcher_light_theme" translatable="false">Light theme</string>
+    <string name="launcher_wifi" translatable="false">Wi-Fi</string>
+    <string name="launcher_bluetooth" translatable="false">Bluetooth</string>
+    <string name="launcher_brightness" translatable="false">Brightness</string>
+    <string name="launcher_user_profile" translatable="false">Profile</string>
 </resources>
