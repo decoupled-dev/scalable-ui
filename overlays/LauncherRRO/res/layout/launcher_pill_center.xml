@@ -5,17 +5,13 @@
     android:layout_height="match_parent"
     android:background="@drawable/launcher_dock_bg"
     android:gravity="center"
-    android:orientation="horizontal"
-    android:paddingStart="20dp"
-    android:paddingEnd="20dp">
+    android:orientation="horizontal">
 
     <TextClock
+        style="@style/LauncherPillText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:format12Hour="h:mm"
         android:format24Hour="HH:mm"
-        android:singleLine="true"
-        android:textColor="@color/launcher_on_surface"
-        android:textSize="22sp"
-        android:textStyle="bold" />
+        android:letterSpacing="0.02" />
 </LinearLayout>

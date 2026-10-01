@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="oval">
-    <solid android:color="@color/launcher_icon_bg" />
-</shape>
+<!-- Filled circle behind dock and temperature glyphs, with press feedback. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/launcher_ripple_on_fill">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/launcher_dock_icon_fill" />
+        </shape>
+    </item>
+</ripple>

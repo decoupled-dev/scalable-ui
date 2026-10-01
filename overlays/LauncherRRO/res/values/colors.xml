@@ -3,9 +3,12 @@
     <!-- Light system theme. Fully opaque widget / chrome surfaces. -->
     <color name="launcher_surface">#FFF4F6F8</color>
     <color name="launcher_on_surface">#FF1A1C1E</color>
-    <color name="launcher_icon_bg">#FFE4E7EB</color>
-    <!-- Dark grey so white glyphs stay readable on the pale dock pill. -->
+    <!-- Dark grey so white glyphs stay readable on the pale dock and
+         temperature pills. One fill for every circular button. -->
     <color name="launcher_dock_icon_fill">#FF3A4250</color>
     <!-- Dark enough to read against the pale fill and a light map. -->
     <color name="launcher_stroke">#FF3A4250</color>
+    <!-- Press feedback: white over the dark circles, ink over the pale pill. -->
+    <color name="launcher_ripple_on_fill">#40FFFFFF</color>
+    <color name="launcher_ripple_on_surface">#241A1C1E</color>
 </resources>

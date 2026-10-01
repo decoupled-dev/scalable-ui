@@ -1,45 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/sysui_driver_zone_root"
+<!-- Fallback name for the driver zone. The controller normally inflates
+     oem_climate_card for sysui_driver_zone_panel; keep one source of truth. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/launcher_dock_bg"
-    android:gravity="center"
-    android:orientation="horizontal"
-    android:paddingStart="6dp"
-    android:paddingEnd="6dp">
+    android:layout_height="match_parent">
 
-    <ImageButton
-        android:id="@+id/sysui_driver_hvac_down"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="@drawable/launcher_dock_icon_bg"
-        android:backgroundTint="@color/launcher_icon_bg"
-        android:contentDescription="Decrease temperature"
-        android:padding="12dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/ic_climate_minus"
-        android:tint="@color/launcher_on_surface" />
-
-    <TextView
-        android:id="@+id/sysui_driver_hvac_temp"
-        android:layout_width="72dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="22°"
-        android:textColor="@color/launcher_on_surface"
-        android:textSize="22sp"
-        android:textStyle="bold" />
-
-    <ImageButton
-        android:id="@+id/sysui_driver_hvac_up"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="@drawable/launcher_dock_icon_bg"
-        android:backgroundTint="@color/launcher_icon_bg"
-        android:contentDescription="Increase temperature"
-        android:padding="12dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/ic_climate_plus"
-        android:tint="@color/launcher_on_surface" />
-</LinearLayout>
+    <include layout="@layout/oem_climate_card" />
+</FrameLayout>

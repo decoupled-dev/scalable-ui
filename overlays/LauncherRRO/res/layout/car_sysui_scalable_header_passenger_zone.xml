@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Bottom-right passenger temperature pill. Mirrors the driver pill. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/sysui_passenger_zone_root"
     android:layout_width="match_parent"
@@ -6,40 +7,26 @@
     android:background="@drawable/launcher_dock_bg"
     android:gravity="center"
     android:orientation="horizontal"
-    android:paddingStart="6dp"
-    android:paddingEnd="6dp">
+    android:paddingStart="@dimen/launcher_bar_end_padding"
+    android:paddingEnd="@dimen/launcher_bar_end_padding">
 
     <ImageButton
         android:id="@+id/sysui_passenger_hvac_down"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="@drawable/launcher_dock_icon_bg"
-        android:backgroundTint="@color/launcher_icon_bg"
-        android:contentDescription="Decrease temperature"
-        android:padding="12dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/ic_climate_minus"
-        android:tint="@color/launcher_on_surface" />
+        style="@style/LauncherDockButton"
+        android:contentDescription="@string/launcher_temp_down"
+        android:src="@drawable/ic_climate_minus" />
 
     <TextView
         android:id="@+id/sysui_passenger_hvac_temp"
-        android:layout_width="72dp"
+        style="@style/LauncherPillText"
+        android:layout_width="@dimen/launcher_temp_text_width"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="22°"
-        android:textColor="@color/launcher_on_surface"
-        android:textSize="22sp"
-        android:textStyle="bold" />
+        android:text="@string/launcher_temp_placeholder" />
 
     <ImageButton
         android:id="@+id/sysui_passenger_hvac_up"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="@drawable/launcher_dock_icon_bg"
-        android:backgroundTint="@color/launcher_icon_bg"
-        android:contentDescription="Increase temperature"
-        android:padding="12dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/ic_climate_plus"
-        android:tint="@color/launcher_on_surface" />
+        style="@style/LauncherDockButton"
+        android:contentDescription="@string/launcher_temp_up"
+        android:src="@drawable/ic_climate_plus" />
 </LinearLayout>

@@ -5,7 +5,7 @@
     <Variant id="@+id/base">
         <Layer layer="30"/>
         <Alpha alpha="1.0"/>
-        <Corner radius="32dp"/>
+        <Corner radius="@dimen/launcher_pill_corner"/>
         <Bounds
             left="50%"
             leftOffset="@dimen/launcher_pill_center_half"

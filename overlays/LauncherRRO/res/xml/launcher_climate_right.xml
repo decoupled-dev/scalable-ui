@@ -5,14 +5,14 @@
     <Variant id="@+id/base">
         <Layer layer="30"/>
         <Alpha alpha="1.0"/>
-        <Corner radius="36dp"/>
+        <Corner radius="@dimen/launcher_bar_corner"/>
         <Bounds
             left="100%"
-            leftOffset="-216dp"
+            leftOffset="@dimen/launcher_temp_pill_right_inset"
             top="100%"
             topOffset="@dimen/launcher_dock_top_offset"
             right="100%"
-            rightOffset="16dp"
+            rightOffset="@dimen/launcher_pill_edge"
             bottom="100%"
             bottomOffset="@dimen/launcher_dock_bottom_margin"/>
         <Focus onTransition="true"/>

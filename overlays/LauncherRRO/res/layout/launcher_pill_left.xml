@@ -1,77 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Left status pill: Wi-Fi, Bluetooth, brightness, day/night. -->
+<!-- Left status pill: Wi-Fi, Bluetooth, display brightness, day/night. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/launcher_dock_bg"
-    android:gravity="center_vertical"
+    android:gravity="center"
     android:orientation="horizontal"
-    android:paddingStart="8dp"
-    android:paddingEnd="8dp">
+    android:paddingStart="@dimen/launcher_status_pill_end_padding"
+    android:paddingEnd="@dimen/launcher_status_pill_end_padding">
 
     <!-- Slots keep a static icon until the stock panel button is installed. -->
     <FrameLayout
         android:id="@+id/launcher_status_wifi_slot"
-        android:layout_width="48dp"
-        android:layout_height="48dp">
+        android:layout_width="@dimen/launcher_status_button_size"
+        android:layout_height="@dimen/launcher_status_button_size">
 
         <ImageButton
             android:id="@+id/launcher_status_wifi"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
+            style="@style/LauncherStatusButton"
             android:contentDescription="@string/launcher_wifi"
-            android:padding="10dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_status_wifi"
-            android:tint="@color/launcher_on_surface" />
+            android:src="@drawable/ic_status_wifi" />
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/launcher_status_bluetooth_slot"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="4dp">
+        android:layout_width="@dimen/launcher_status_button_size"
+        android:layout_height="@dimen/launcher_status_button_size"
+        android:layout_marginStart="@dimen/launcher_status_button_gap">
 
         <ImageButton
             android:id="@+id/launcher_status_bluetooth"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
+            style="@style/LauncherStatusButton"
             android:contentDescription="@string/launcher_bluetooth"
-            android:padding="10dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_status_bluetooth"
-            android:tint="@color/launcher_on_surface" />
+            android:src="@drawable/ic_status_bluetooth" />
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/launcher_status_brightness_slot"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="4dp">
+        android:layout_width="@dimen/launcher_status_button_size"
+        android:layout_height="@dimen/launcher_status_button_size"
+        android:layout_marginStart="@dimen/launcher_status_button_gap">
 
         <ImageButton
             android:id="@+id/launcher_status_brightness"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
+            style="@style/LauncherStatusButton"
             android:contentDescription="@string/launcher_brightness"
-            android:padding="10dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_status_brightness"
-            android:tint="@color/launcher_on_surface" />
+            android:src="@drawable/ic_status_brightness" />
     </FrameLayout>
 
+    <!-- The controller swaps the glyph to the theme the next tap selects. -->
     <ImageButton
         android:id="@+id/sysui_night_mode"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="4dp"
-        android:background="@android:color/transparent"
+        style="@style/LauncherStatusButton"
+        android:layout_marginStart="@dimen/launcher_status_button_gap"
         android:contentDescription="@string/launcher_dark_theme"
-        android:padding="10dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_status_night"
-        android:tint="@color/launcher_on_surface" />
+        android:src="@drawable/ic_status_night" />
 </LinearLayout>

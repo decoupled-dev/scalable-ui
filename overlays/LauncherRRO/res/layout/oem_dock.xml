@@ -1,102 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Layout name oem_dock: FooterController selects it when the panel id is oem_dock. -->
+<!--
+  Floating dock. FooterController selects this name when the panel id is oem_dock.
+  System navigation on the left, app shortcuts on the right, a hairline between.
+  Width is sized to the content in launcher_dock_half_width.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/launcher_dock_bg"
     android:gravity="center"
     android:orientation="horizontal"
-    android:paddingStart="8dp"
-    android:paddingEnd="8dp">
+    android:paddingStart="@dimen/launcher_bar_end_padding"
+    android:paddingEnd="@dimen/launcher_bar_end_padding">
 
     <ImageButton
         android:id="@+id/sysui_nav_home"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_marginStart="6dp"
-        android:layout_marginEnd="6dp"
-        android:background="@drawable/launcher_dock_icon_bg"
-        android:backgroundTint="@color/launcher_dock_icon_fill"
-        android:contentDescription="Home"
-        android:padding="10dp"
-        android:scaleType="centerInside"
+        style="@style/LauncherDockButton"
+        android:contentDescription="@string/launcher_dock_home"
         android:src="@drawable/ic_dock_home" />
 
     <ImageButton
         android:id="@+id/sysui_footer_fullscreen_toggle"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_marginStart="6dp"
-        android:layout_marginEnd="6dp"
-        android:background="@drawable/launcher_dock_icon_bg"
-        android:backgroundTint="@color/launcher_dock_icon_fill"
-        android:contentDescription="Navigation"
-        android:padding="10dp"
-        android:scaleType="centerInside"
+        style="@style/LauncherDockButton"
+        android:contentDescription="@string/launcher_dock_navigation"
         android:src="@drawable/ic_dock_nav" />
 
     <ImageButton
         android:id="@+id/sysui_nav_all_apps"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_marginStart="6dp"
-        android:layout_marginEnd="6dp"
-        android:background="@drawable/launcher_dock_icon_bg"
-        android:backgroundTint="@color/launcher_dock_icon_fill"
-        android:contentDescription="Apps"
-        android:padding="10dp"
-        android:scaleType="centerInside"
+        style="@style/LauncherDockButton"
+        android:contentDescription="@string/launcher_dock_apps"
         android:src="@drawable/ic_dock_apps" />
+
+    <View
+        style="@style/LauncherDockDivider"
+        android:importantForAccessibility="no" />
 
     <ImageButton
         android:id="@+id/oem_launch_assistant"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_marginStart="6dp"
-        android:layout_marginEnd="6dp"
-        android:background="@drawable/launcher_dock_icon_bg"
-        android:backgroundTint="@color/launcher_dock_icon_fill"
-        android:contentDescription="Assistant"
-        android:padding="10dp"
-        android:scaleType="centerInside"
+        style="@style/LauncherDockButton"
+        android:contentDescription="@string/launcher_dock_assistant"
         android:src="@drawable/ic_dock_mic" />
 
     <ImageButton
         android:id="@+id/oem_launch_hvac"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_marginStart="6dp"
-        android:layout_marginEnd="6dp"
-        android:background="@drawable/launcher_dock_icon_bg"
-        android:backgroundTint="@color/launcher_dock_icon_fill"
-        android:contentDescription="Climate"
-        android:padding="10dp"
-        android:scaleType="centerInside"
+        style="@style/LauncherDockButton"
+        android:contentDescription="@string/launcher_dock_climate"
         android:src="@drawable/ic_dock_climate" />
 
     <ImageButton
         android:id="@+id/oem_launch_vehicle"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_marginStart="6dp"
-        android:layout_marginEnd="6dp"
-        android:background="@drawable/launcher_dock_icon_bg"
-        android:backgroundTint="@color/launcher_dock_icon_fill"
-        android:contentDescription="Vehicle"
-        android:padding="10dp"
-        android:scaleType="centerInside"
+        style="@style/LauncherDockButton"
+        android:contentDescription="@string/launcher_dock_vehicle"
         android:src="@drawable/ic_dock_vehicle" />
 
     <ImageButton
         android:id="@+id/oem_launch_car_settings"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_marginStart="6dp"
-        android:layout_marginEnd="6dp"
-        android:background="@drawable/launcher_dock_icon_bg"
-        android:backgroundTint="@color/launcher_dock_icon_fill"
-        android:contentDescription="Car settings"
-        android:padding="10dp"
-        android:scaleType="centerInside"
+        style="@style/LauncherDockButton"
+        android:contentDescription="@string/launcher_dock_settings"
         android:src="@drawable/ic_dock_settings" />
 </LinearLayout>

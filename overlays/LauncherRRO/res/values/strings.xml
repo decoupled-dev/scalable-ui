@@ -7,10 +7,26 @@
     <string name="launcher_climate_component" translatable="false">com.test.design/.presentation.ivi.glanceables.ClimateHomePanelActivity</string>
     <string name="launcher_media_component" translatable="false">com.test.design/.presentation.ivi.glanceables.MediaHomePanelActivity</string>
     <string name="launcher_stats_component" translatable="false">com.test.design/.presentation.ivi.glanceables.VehicleHomePanelActivity</string>
+
+    <!-- Header pills. -->
     <string name="launcher_dark_theme" translatable="false">Dark theme</string>
     <string name="launcher_light_theme" translatable="false">Light theme</string>
     <string name="launcher_wifi" translatable="false">Wi-Fi</string>
     <string name="launcher_bluetooth" translatable="false">Bluetooth</string>
     <string name="launcher_brightness" translatable="false">Brightness</string>
     <string name="launcher_user_profile" translatable="false">Profile</string>
+
+    <!-- Dock. -->
+    <string name="launcher_dock_home" translatable="false">Home</string>
+    <string name="launcher_dock_navigation" translatable="false">Map fullscreen</string>
+    <string name="launcher_dock_apps" translatable="false">All apps</string>
+    <string name="launcher_dock_assistant" translatable="false">Assistant</string>
+    <string name="launcher_dock_climate" translatable="false">Climate</string>
+    <string name="launcher_dock_vehicle" translatable="false">Vehicle</string>
+    <string name="launcher_dock_settings" translatable="false">Car settings</string>
+
+    <!-- Temperature pills. The controller replaces the placeholder once VHAL reports. -->
+    <string name="launcher_temp_down" translatable="false">Decrease temperature</string>
+    <string name="launcher_temp_up" translatable="false">Increase temperature</string>
+    <string name="launcher_temp_placeholder" translatable="false">--°</string>
 </resources>
