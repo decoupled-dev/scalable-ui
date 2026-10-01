@@ -50,7 +50,6 @@ import com.android.car.scalableui.panel.DecorPanelController;
 
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
-import java.util.Locale;
 
 /**
  * Controller for the Pleos dual-zone header (driver + passenger HVAC and seat temperature).
@@ -61,7 +60,6 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
     private static final String TAG = "CarSysuiHeaderCtrl";
     private static final String DEFAULT_RRO_PACKAGE =
             "com.android.systemui.rro.scalableUI.sysuiBars";
-    private static final float HVAC_STEP_CELSIUS = 0.5f;
     private static final int SEAT_TEMP_STEP = 1;
     private static final int SEAT_TEMP_MIN = 0;
     private static final int SEAT_TEMP_MAX = 3;
@@ -71,6 +69,10 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
 
     private float mDriverHvacTemp = 22.0f;
     private float mPassengerHvacTemp = 22.0f;
+    /** {@code HVAC_TEMPERATURE_SET} stays Celsius; the pill follows this. */
+    private boolean mFahrenheit;
+    /** min C, step C, min F, step F from the HVAC config array. */
+    private float[] mTempScale;
     private int mDriverSeatTemp = 2;
     private int mPassengerSeatTemp = 2;
 
@@ -121,6 +123,13 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
                     if (prop == VehiclePropertyIds.HVAC_TEMPERATURE_SET && raw instanceof Float) {
                         float temp = (Float) raw;
                         runOnViewThread(() -> updateHvacDisplay(area, temp));
+                    } else if (prop == VehiclePropertyIds.HVAC_TEMPERATURE_DISPLAY_UNITS
+                            && raw instanceof Integer) {
+                        boolean fahrenheit = HvacTemperatureUnits.isFahrenheit((Integer) raw);
+                        runOnViewThread(() -> {
+                            mFahrenheit = fahrenheit;
+                            refreshAllDisplays();
+                        });
                     } else if (prop == VehiclePropertyIds.HVAC_SEAT_TEMPERATURE
                             && raw instanceof Integer) {
                         int seatTemp = (Integer) raw;
@@ -956,10 +965,10 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
 
     private void wireClickListeners() {
         if (mDriverHvacUp != null) {
-            mDriverHvacUp.setOnClickListener(v -> adjustHvac(AREA_DRIVER, HVAC_STEP_CELSIUS));
+            mDriverHvacUp.setOnClickListener(v -> adjustHvac(AREA_DRIVER, 1));
         }
         if (mDriverHvacDown != null) {
-            mDriverHvacDown.setOnClickListener(v -> adjustHvac(AREA_DRIVER, -HVAC_STEP_CELSIUS));
+            mDriverHvacDown.setOnClickListener(v -> adjustHvac(AREA_DRIVER, -1));
         }
         if (mDriverSeatUp != null) {
             mDriverSeatUp.setOnClickListener(v -> adjustSeat(AREA_DRIVER, SEAT_TEMP_STEP));
@@ -968,11 +977,10 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
             mDriverSeatDown.setOnClickListener(v -> adjustSeat(AREA_DRIVER, -SEAT_TEMP_STEP));
         }
         if (mPassengerHvacUp != null) {
-            mPassengerHvacUp.setOnClickListener(v -> adjustHvac(AREA_PASSENGER, HVAC_STEP_CELSIUS));
+            mPassengerHvacUp.setOnClickListener(v -> adjustHvac(AREA_PASSENGER, 1));
         }
         if (mPassengerHvacDown != null) {
-            mPassengerHvacDown.setOnClickListener(
-                    v -> adjustHvac(AREA_PASSENGER, -HVAC_STEP_CELSIUS));
+            mPassengerHvacDown.setOnClickListener(v -> adjustHvac(AREA_PASSENGER, -1));
         }
         if (mPassengerSeatUp != null) {
             mPassengerSeatUp.setOnClickListener(v -> adjustSeat(AREA_PASSENGER, SEAT_TEMP_STEP));
@@ -1119,6 +1127,7 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
     @Override
     protected void onControllerAttached() {
         mVhalHelper.subscribe(VehiclePropertyIds.HVAC_TEMPERATURE_SET, 0, mHvacCallback);
+        mVhalHelper.subscribe(VehiclePropertyIds.HVAC_TEMPERATURE_DISPLAY_UNITS, 0, mHvacCallback);
         mVhalHelper.subscribe(VehiclePropertyIds.HVAC_SEAT_TEMPERATURE, 0, mHvacCallback);
         mVhalHelper.subscribe(VehiclePropertyIds.HVAC_FAN_DIRECTION, 0, mHvacCallback);
         mVhalHelper.subscribe(VehiclePropertyIds.HVAC_FAN_SPEED, 0, mHvacCallback);
@@ -1130,12 +1139,14 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
     protected void onControllerDetached() {
         mContext.getMainExecutor().execute(this::removeMainThreadHosts);
         mVhalHelper.unsubscribe(VehiclePropertyIds.HVAC_TEMPERATURE_SET);
+        mVhalHelper.unsubscribe(VehiclePropertyIds.HVAC_TEMPERATURE_DISPLAY_UNITS);
         mVhalHelper.unsubscribe(VehiclePropertyIds.HVAC_SEAT_TEMPERATURE);
         mVhalHelper.unsubscribe(VehiclePropertyIds.HVAC_FAN_DIRECTION);
         mVhalHelper.unsubscribe(VehiclePropertyIds.HVAC_FAN_SPEED);
     }
 
     private void readInitialValues() {
+        readTemperatureDisplayUnit();
         Float driverTemp = mVhalHelper.getFloatProperty(
                 VehiclePropertyIds.HVAC_TEMPERATURE_SET, AREA_DRIVER);
         if (driverTemp != null) {
@@ -1168,7 +1179,14 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
         }
     }
 
-    private void adjustHvac(int area, float delta) {
+    private void readTemperatureDisplayUnit() {
+        mFahrenheit = HvacTemperatureUnits.isFahrenheit(mVhalHelper.getIntProperty(
+                VehiclePropertyIds.HVAC_TEMPERATURE_DISPLAY_UNITS, 0));
+        mTempScale = mVhalHelper.getHvacTemperatureScale();
+        Log.i(TAG, "HVAC display unit=" + (mFahrenheit ? "F" : "C"));
+    }
+
+    private void adjustHvac(int area, int direction) {
         if (mFullyRestricted || !mVhalConnected) {
             return;
         }
@@ -1178,7 +1196,8 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
         if (live != null) {
             current = live;
         }
-        float next = clampHvac(area, current + delta);
+        float next = clampHvac(area, HvacTemperatureUnits.nextSetpointCelsius(
+                current, direction, mFahrenheit, mTempScale));
         // Already at the VHAL bound. Writing past it makes CarPropertyManager throw
         // IllegalStateException and crash SystemUI.
         if (Math.abs(next - current) < 0.01f) {
@@ -1212,10 +1231,7 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
     }
 
     private void updateHvacDisplay(int area, float temp) {
-        // %.0f rounds the real bounds 17.5 → "18°" and 32.5 → "33°". The next
-        // press then looks valid and crashes when the write is rejected.
-        boolean whole = Math.abs(temp - Math.rint(temp)) < 0.05f;
-        String text = String.format(Locale.getDefault(), whole ? "%.0f°" : "%.1f°", temp);
+        String text = HvacTemperatureUnits.format(temp, mFahrenheit, mTempScale);
         if (area == AREA_DRIVER) {
             mDriverHvacTemp = temp;
             if (mDriverHvacTempText != null) {
@@ -1346,6 +1362,12 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
     @Override
     protected void applyVhalConnectedState() {
         setScrimVisible(mHeaderVhalScrim, false);
+        // onControllerAttached can run before CarPropertyManager exists.
+        mVhalHelper.subscribe(VehiclePropertyIds.HVAC_TEMPERATURE_SET, 0, mHvacCallback);
+        mVhalHelper.subscribe(VehiclePropertyIds.HVAC_TEMPERATURE_DISPLAY_UNITS, 0, mHvacCallback);
+        mVhalHelper.subscribe(VehiclePropertyIds.HVAC_SEAT_TEMPERATURE, 0, mHvacCallback);
+        mVhalHelper.subscribe(VehiclePropertyIds.HVAC_FAN_DIRECTION, 0, mHvacCallback);
+        mVhalHelper.subscribe(VehiclePropertyIds.HVAC_FAN_SPEED, 0, mHvacCallback);
         readInitialValues();
         refreshAllDisplays();
         applyUxRestrictions();
@@ -1353,6 +1375,7 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
 
     @Override
     protected void dumpControllerState(PrintWriter pw) {
+        pw.println("  tempDisplayUnit=" + (mFahrenheit ? "F" : "C"));
         pw.println("  driverHvacTemp=" + mDriverHvacTemp + "C");
         pw.println("  passengerHvacTemp=" + mPassengerHvacTemp + "C");
         pw.println("  driverSeatTemp=" + mDriverSeatTemp);

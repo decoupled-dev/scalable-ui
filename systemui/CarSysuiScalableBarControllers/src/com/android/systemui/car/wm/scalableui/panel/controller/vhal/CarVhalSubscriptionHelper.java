@@ -18,6 +18,7 @@ package com.android.systemui.car.wm.scalableui.panel.controller.vhal;
 
 import android.car.Car;
 import android.car.CarNotConnectedException;
+import android.car.VehiclePropertyIds;
 import android.car.hardware.CarPropertyConfig;
 import android.car.hardware.property.CarPropertyManager;
 import android.content.Context;
@@ -268,6 +269,37 @@ public final class CarVhalSubscriptionHelper {
             return new float[] {min, max};
         } catch (Exception e) {
             Log.w(TAG, "getFloatRange failed prop=" + propertyId + " area=" + areaId, e);
+            return null;
+        }
+    }
+
+    /**
+     * HVAC setpoint scale from the property config array, divided by 10.
+     * Index 0 min Celsius, 1 Celsius step, 2 min Fahrenheit, 3 Fahrenheit step.
+     * Null when the vehicle does not publish the six-value config.
+     */
+    public float[] getHvacTemperatureScale() {
+        if (mCarPropertyManager == null) {
+            return null;
+        }
+        try {
+            CarPropertyConfig<?> config = mCarPropertyManager.getCarPropertyConfig(
+                    VehiclePropertyIds.HVAC_TEMPERATURE_SET);
+            if (config == null) {
+                return null;
+            }
+            java.util.List<Integer> array = config.getConfigArray();
+            if (array == null || array.size() < 6) {
+                return null;
+            }
+            return new float[] {
+                    array.get(0) / 10f,
+                    array.get(2) / 10f,
+                    array.get(3) / 10f,
+                    array.get(5) / 10f
+            };
+        } catch (Exception e) {
+            Log.w(TAG, "getHvacTemperatureScale failed", e);
             return null;
         }
     }

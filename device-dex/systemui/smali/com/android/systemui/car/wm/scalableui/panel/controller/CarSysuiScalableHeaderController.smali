@@ -48,6 +48,10 @@
 
 .field private mDriverHvacTemp:F
 
+.field private mFahrenheit:Z
+
+.field private mTempScale:[F
+
 .field private mDriverHvacTempText:Landroid/widget/TextView;
 
 .field private mDriverHvacUp:Landroid/widget/ImageButton;
@@ -283,7 +287,7 @@
 .end method
 
 .method private adjustHvac(IF)V
-    .registers 7
+    .registers 8
 
     .line 1171
     iget-boolean v0, p0, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->mFullyRestricted:Z
@@ -329,7 +333,19 @@
 
     .line 1180
     :cond_20
-    add-float/2addr p2, v0
+    const/4 v1, 0x0
+
+    int-to-float v1, v1
+
+    cmpl-float v1, p2, v1
+
+    iget-boolean v3, p0, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->mFahrenheit:Z
+
+    iget-object v4, p0, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->mTempScale:[F
+
+    invoke-static {v0, v1, v3, v4}, Lcom/android/systemui/car/wm/scalableui/panel/controller/HvacTemperatureUnits;->nextSetpointCelsius(FIZ[F)F
+
+    move-result p2
 
     invoke-direct {p0, p1, p2}, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->clampHvac(IF)F
 
@@ -468,7 +484,6 @@
 
     invoke-virtual {p0, v0}, Landroid/view/View;->setId(I)V
 
-    # PrivacyChip resolves its children by id in setOnClickListener; keep them.
     invoke-virtual {p0}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
     move-result-object v0
@@ -483,15 +498,15 @@
 
     move-result v0
 
-    if-eqz v0, :cond_not_chip
+    if-eqz v0, :cond_18
 
     return-void
 
-    :cond_not_chip
     .line 508
+    :cond_18
     instance-of v0, p0, Landroid/view/ViewGroup;
 
-    if-eqz v0, :cond_1e
+    if-eqz v0, :cond_2f
 
     .line 509
     check-cast p0, Landroid/view/ViewGroup;
@@ -499,12 +514,12 @@
     .line 510
     const/4 v0, 0x0
 
-    :goto_e
+    :goto_1f
     invoke-virtual {p0}, Landroid/view/ViewGroup;->getChildCount()I
 
     move-result v1
 
-    if-ge v0, v1, :cond_1e
+    if-ge v0, v1, :cond_2f
 
     .line 511
     invoke-virtual {p0, v0}, Landroid/view/ViewGroup;->getChildAt(I)Landroid/view/View;
@@ -516,10 +531,10 @@
     .line 510
     add-int/lit8 v0, v0, 0x1
 
-    goto :goto_e
+    goto :goto_1f
 
     .line 514
-    :cond_1e
+    :cond_2f
     return-void
 .end method
 
@@ -3646,8 +3661,64 @@
     throw p0
 .end method
 
+.method private readTemperatureDisplayUnit()V
+    .registers 4
+
+    iget-object v0, p0, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->mVhalHelper:Lcom/android/systemui/car/wm/scalableui/panel/controller/vhal/CarVhalSubscriptionHelper;
+
+    const v1, 0x1140050e
+
+    const/4 v2, 0x0
+
+    invoke-virtual {v0, v1, v2}, Lcom/android/systemui/car/wm/scalableui/panel/controller/vhal/CarVhalSubscriptionHelper;->getIntProperty(II)Ljava/lang/Integer;
+
+    move-result-object v0
+
+    invoke-static {v0}, Lcom/android/systemui/car/wm/scalableui/panel/controller/HvacTemperatureUnits;->isFahrenheit(Ljava/lang/Integer;)Z
+
+    move-result v0
+
+    iput-boolean v0, p0, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->mFahrenheit:Z
+
+    const-string v1, "CarSysuiHeaderCtrl"
+
+    if-eqz v0, :cond_c
+
+    const-string v0, "HVAC display unit=F"
+
+    goto :goto_log
+
+    :cond_c
+    const-string v0, "HVAC display unit=C"
+
+    :goto_log
+    invoke-static {v1, v0}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
+
+    iget-object v0, p0, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->mVhalHelper:Lcom/android/systemui/car/wm/scalableui/panel/controller/vhal/CarVhalSubscriptionHelper;
+
+    invoke-virtual {v0}, Lcom/android/systemui/car/wm/scalableui/panel/controller/vhal/CarVhalSubscriptionHelper;->getHvacTemperatureScale()[F
+
+    move-result-object v0
+
+    iput-object v0, p0, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->mTempScale:[F
+
+    return-void
+.end method
+
+.method public applyTemperatureDisplayUnit(Z)V
+    .registers 2
+
+    iput-boolean p1, p0, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->mFahrenheit:Z
+
+    invoke-direct {p0}, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->refreshAllDisplays()V
+
+    return-void
+.end method
+
 .method private readInitialValues()V
     .registers 5
+
+    invoke-direct {p0}, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->readTemperatureDisplayUnit()V
 
     .line 1138
     iget-object v0, p0, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->mVhalHelper:Lcom/android/systemui/car/wm/scalableui/panel/controller/vhal/CarVhalSubscriptionHelper;
@@ -4566,61 +4637,15 @@
 .method private updateHvacDisplay(IF)V
     .registers 7
 
-    .line 1216
-    float-to-double v0, p2
+    iget-boolean v0, p0, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->mFahrenheit:Z
 
-    invoke-static {v0, v1}, Ljava/lang/Math;->rint(D)D
+    iget-object v2, p0, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->mTempScale:[F
 
-    move-result-wide v2
-
-    sub-double/2addr v0, v2
-
-    invoke-static {v0, v1}, Ljava/lang/Math;->abs(D)D
-
-    move-result-wide v0
-
-    const-wide v2, 0x3fa99999a0000000L    # 0.05000000074505806
-
-    cmpg-double v0, v0, v2
-
-    const/4 v1, 0x1
-
-    if-gez v0, :cond_16
-
-    move v0, v1
-
-    goto :goto_17
-
-    :cond_16
-    const/4 v0, 0x0
-
-    .line 1217
-    :goto_17
-    invoke-static {}, Ljava/util/Locale;->getDefault()Ljava/util/Locale;
-
-    move-result-object v2
-
-    if-eqz v0, :cond_20
-
-    const-string v0, "%.0f\u00b0"
-
-    goto :goto_22
-
-    :cond_20
-    const-string v0, "%.1f\u00b0"
-
-    :goto_22
-    invoke-static {p2}, Ljava/lang/Float;->valueOf(F)Ljava/lang/Float;
-
-    move-result-object v3
-
-    filled-new-array {v3}, [Ljava/lang/Object;
-
-    move-result-object v3
-
-    invoke-static {v2, v0, v3}, Ljava/lang/String;->format(Ljava/util/Locale;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+    invoke-static {p2, v0, v2}, Lcom/android/systemui/car/wm/scalableui/panel/controller/HvacTemperatureUnits;->format(FZ[F)Ljava/lang/String;
 
     move-result-object v0
+
+    const/4 v1, 0x1
 
     .line 1218
     if-ne p1, v1, :cond_3c
@@ -5305,6 +5330,43 @@
     return-void
 .end method
 
+.method private wireMapScrim(Landroid/view/View;)V
+    .registers 3
+
+    if-nez p1, :cond_3
+
+    return-void
+
+    :cond_3
+    const-string v0, "launcher_map_scrim_touch"
+
+    invoke-virtual {p0, v0}, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->resolveRroId(Ljava/lang/String;)I
+
+    move-result v0
+
+    if-nez v0, :cond_c
+
+    return-void
+
+    :cond_c
+    invoke-virtual {p1, v0}, Landroid/view/View;->findViewById(I)Landroid/view/View;
+
+    move-result-object p1
+
+    if-nez p1, :cond_13
+
+    return-void
+
+    :cond_13
+    new-instance v0, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController$$ExternalSyntheticLambda25;
+
+    invoke-direct {v0, p0}, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController$$ExternalSyntheticLambda25;-><init>(Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;)V
+
+    invoke-virtual {p1, v0}, Landroid/view/View;->setOnClickListener(Landroid/view/View$OnClickListener;)V
+
+    return-void
+.end method
+
 .method private wireNightMode(Landroid/view/View;)V
     .registers 3
 
@@ -5642,7 +5704,7 @@
 
     move-result v0
 
-    if-eqz v0, :cond_37
+    if-eqz v0, :cond_42
 
     .line 273
     const-string v0, "qc_status_icons_horizontal"
@@ -5698,14 +5760,14 @@
 
     invoke-direct/range {v1 .. v7}, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->bindMainThreadPanel(Landroid/view/View;Ljava/lang/String;Ljava/lang/String;Landroid/view/View;Ljava/lang/String;Ljava/lang/String;)V
 
-    goto :goto_38
+    goto :goto_43
 
     .line 272
-    :cond_37
+    :cond_42
     move-object v2, p1
 
     .line 286
-    :goto_38
+    :goto_43
     invoke-direct {p0, v2}, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->wireUserProfile(Landroid/view/View;)V
 
     .line 287
@@ -5866,7 +5928,7 @@
 .end method
 
 .method protected applyVhalConnectedState()V
-    .registers 3
+    .registers 5
 
     .line 1347
     iget-object v0, p0, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->mHeaderVhalScrim:Landroid/view/View;
@@ -5874,6 +5936,24 @@
     const/4 v1, 0x0
 
     invoke-virtual {p0, v0, v1}, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->setScrimVisible(Landroid/view/View;Z)V
+
+    iget-object v0, p0, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->mVhalHelper:Lcom/android/systemui/car/wm/scalableui/panel/controller/vhal/CarVhalSubscriptionHelper;
+
+    iget-object v1, p0, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->mHvacCallback:Landroid/car/hardware/property/CarPropertyManager$CarPropertyEventCallback;
+
+    const v2, 0x15600503
+
+    const/4 v3, 0x0
+
+    invoke-virtual {v0, v2, v3, v1}, Lcom/android/systemui/car/wm/scalableui/panel/controller/vhal/CarVhalSubscriptionHelper;->subscribe(IILandroid/car/hardware/property/CarPropertyManager$CarPropertyEventCallback;)Z
+
+    iget-object v0, p0, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->mVhalHelper:Lcom/android/systemui/car/wm/scalableui/panel/controller/vhal/CarVhalSubscriptionHelper;
+
+    const v2, 0x1140050e
+
+    iget-object v1, p0, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->mHvacCallback:Landroid/car/hardware/property/CarPropertyManager$CarPropertyEventCallback;
+
+    invoke-virtual {v0, v2, v3, v1}, Lcom/android/systemui/car/wm/scalableui/panel/controller/vhal/CarVhalSubscriptionHelper;->subscribe(IILandroid/car/hardware/property/CarPropertyManager$CarPropertyEventCallback;)Z
 
     .line 1348
     invoke-direct {p0}, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->readInitialValues()V
@@ -5931,6 +6011,8 @@
 
     .line 208
     invoke-direct {p0, p1}, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->wireStatusPills(Landroid/view/View;)V
+
+    invoke-direct {p0, p1}, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->wireMapScrim(Landroid/view/View;)V
 
     .line 209
     return-void
@@ -6117,7 +6199,7 @@
 
     move-result v0
 
-    if-nez v0, :cond_46
+    if-nez v0, :cond_51
 
     iget-object v0, p0, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->mPanelId:Ljava/lang/String;
 
@@ -6130,7 +6212,7 @@
 
     if-eqz v0, :cond_15
 
-    goto :goto_46
+    goto :goto_51
 
     .line 184
     :cond_15
@@ -6196,13 +6278,26 @@
 
     .line 196
     :cond_43
+    iget-object v0, p0, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->mPanelId:Ljava/lang/String;
+
+    const-string v1, "launcher_map_scrim"
+
+    invoke-virtual {v1, v0}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_4e
+
+    return-object v1
+
+    :cond_4e
     const-string v0, "car_sysui_scalable_header"
 
     return-object v0
 
     .line 182
-    :cond_46
-    :goto_46
+    :cond_51
+    :goto_51
     return-object v1
 .end method
 
@@ -6582,6 +6677,14 @@
 
     invoke-virtual {v0, v2, v3, v1}, Lcom/android/systemui/car/wm/scalableui/panel/controller/vhal/CarVhalSubscriptionHelper;->subscribe(IILandroid/car/hardware/property/CarPropertyManager$CarPropertyEventCallback;)Z
 
+    iget-object v0, p0, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->mVhalHelper:Lcom/android/systemui/car/wm/scalableui/panel/controller/vhal/CarVhalSubscriptionHelper;
+
+    const v2, 0x1140050e
+
+    iget-object v1, p0, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->mHvacCallback:Landroid/car/hardware/property/CarPropertyManager$CarPropertyEventCallback;
+
+    invoke-virtual {v0, v2, v3, v1}, Lcom/android/systemui/car/wm/scalableui/panel/controller/vhal/CarVhalSubscriptionHelper;->subscribe(IILandroid/car/hardware/property/CarPropertyManager$CarPropertyEventCallback;)Z
+
     .line 1121
     iget-object v0, p0, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->mVhalHelper:Lcom/android/systemui/car/wm/scalableui/panel/controller/vhal/CarVhalSubscriptionHelper;
 
@@ -6642,6 +6745,12 @@
 
     invoke-virtual {v0, v1}, Lcom/android/systemui/car/wm/scalableui/panel/controller/vhal/CarVhalSubscriptionHelper;->unsubscribe(I)V
 
+    iget-object v0, p0, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->mVhalHelper:Lcom/android/systemui/car/wm/scalableui/panel/controller/vhal/CarVhalSubscriptionHelper;
+
+    const v1, 0x1140050e
+
+    invoke-virtual {v0, v1}, Lcom/android/systemui/car/wm/scalableui/panel/controller/vhal/CarVhalSubscriptionHelper;->unsubscribe(I)V
+
     .line 1132
     iget-object v0, p0, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->mVhalHelper:Lcom/android/systemui/car/wm/scalableui/panel/controller/vhal/CarVhalSubscriptionHelper;
 
@@ -6664,5 +6773,21 @@
     invoke-virtual {v0, v1}, Lcom/android/systemui/car/wm/scalableui/panel/controller/vhal/CarVhalSubscriptionHelper;->unsubscribe(I)V
 
     .line 1135
+    return-void
+.end method
+
+.method public onMapScrimClick(Landroid/view/View;)V
+    .registers 3
+
+    const-string p1, "CarSysuiHeaderCtrl"
+
+    const-string v0, "map scrim tap -> home"
+
+    invoke-static {p1, v0}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
+
+    const-string p1, "_System_OnHomeEvent"
+
+    invoke-direct {p0, p1}, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->dispatchScalableEvent(Ljava/lang/String;)V
+
     return-void
 .end method

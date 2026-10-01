@@ -45,13 +45,13 @@ public final class PanelOutsideHost {
         }
         int y = loc[1] + anchor.getHeight() + yOff;
         int margin = Math.round(16f * anchor.getResources().getDisplayMetrics().density);
-        View root = anchor.getRootView();
-        boolean localDecor = root.getWidth() > 0
-                && root.getWidth() < screen.x / 2
-                && loc[0] < screen.x / 2;
-        if (localDecor || x < 0 || x + popupWidth > screen.x) {
-            // The decor surface reports coordinates inside the pill, and that
-            // pill is narrower than the panel, so a clamp landed at x=0.
+        // The panel is wider than any pill, so it follows the side the anchor
+        // sits on: left-pill controls open on the left edge, the profile pill
+        // on the right edge. The 16dp margin matches the pill edge inset.
+        int anchorCenter = loc[0] + anchor.getWidth() / 2;
+        if (anchorCenter < screen.x / 2) {
+            x = margin;
+        } else {
             x = Math.max(0, screen.x - popupWidth - margin);
         }
         if (y < 0) {
