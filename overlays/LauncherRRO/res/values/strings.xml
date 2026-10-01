@@ -14,6 +14,7 @@
     <string name="launcher_wifi" translatable="false">Wi-Fi</string>
     <string name="launcher_bluetooth" translatable="false">Bluetooth</string>
     <string name="launcher_brightness" translatable="false">Brightness</string>
+    <string name="launcher_volume" translatable="false">Volume</string>
     <string name="launcher_user_profile" translatable="false">Profile</string>
 
     <!-- Dock. -->

@@ -24,8 +24,10 @@
     <dimen name="launcher_dock_divider_margin">10dp</dimen>
     <!-- Flat glyph slot in the header pills: 28dp glyph on a 48dp target. -->
     <dimen name="launcher_status_button_size">48dp</dimen>
-    <dimen name="launcher_status_button_gap">4dp</dimen>
-    <dimen name="launcher_status_pill_end_padding">10dp</dimen>
+    <!-- 12dp between 48dp slots puts 32dp of air between the 28dp glyphs. -->
+    <dimen name="launcher_status_button_gap">12dp</dimen>
+    <!-- With the slot inset the first glyph sits 24dp from the capsule end. -->
+    <dimen name="launcher_status_pill_end_padding">14dp</dimen>
     <!-- Temperature readout between the two circles. -->
     <dimen name="launcher_temp_text_width">72dp</dimen>
 
@@ -49,9 +51,9 @@
     <dimen name="launcher_pill_bottom">72dp</dimen>
     <!-- Screen-edge margin shared by every pill and the dock. -->
     <dimen name="launcher_pill_edge">16dp</dimen>
-    <!-- Left pill fits four 48dp slots, three 4dp gaps, and 10dp end padding:
-         16 + 224 = 240. -->
-    <dimen name="launcher_pill_left_right">240dp</dimen>
+    <!-- Left pill fits five 48dp slots, four 12dp gaps, and 14dp end padding:
+         16 + 240 + 48 + 28 = 332. -->
+    <dimen name="launcher_pill_left_right">332dp</dimen>
     <!-- Clock pill is 152dp wide, centered. Negative: left of / right of 50%. -->
     <dimen name="launcher_pill_center_half">-76dp</dimen>
     <!-- Profile pill is 248dp wide: two 40dp privacy chip slots, the avatar,
