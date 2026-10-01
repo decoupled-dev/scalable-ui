@@ -262,8 +262,8 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
     }
 
     /**
-     * Left pill opens the stock connectivity, Bluetooth, and display quick-control
-     * panels. The right pill opens the stock profile switcher and hosts the stock
+     * Left pill opens the stock connectivity, Bluetooth, display, and volume
+     * quick-control panels. The right pill opens the stock profile switcher and hosts the stock
      * camera and mic privacy chips. The top system bar stays disabled. Day/night
      * stays a local toggle via {@link #wireNightMode}. If a stock panel cannot be
      * created, that icon falls back to the matching Settings screen.
@@ -287,6 +287,9 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
             bindMainThreadPanel(root, "launcher_status_brightness_slot",
                     "launcher_status_brightness", stockBar, "qc_display_panel",
                     Settings.ACTION_DISPLAY_SETTINGS);
+            bindMainThreadPanel(root, "launcher_status_volume_slot",
+                    "launcher_status_volume", stockBar, "qc_volume_panel",
+                    Settings.ACTION_SOUND_SETTINGS);
         }
         wireUserProfile(root);
         wirePrivacyChips(root);
@@ -482,6 +485,13 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
 
     private static void assignUniqueIds(View view) {
         view.setId(View.generateViewId());
+        // PrivacyChip resolves its own children by id (setOnClickListener does
+        // requireViewById). Rewriting those ids makes the chip controller's
+        // onInit throw "ID does not reference a View inside this View", and the
+        // whole chip window is then torn down. Only the chip root gets a new id.
+        if (view.getClass().getName().endsWith("PrivacyChip")) {
+            return;
+        }
         if (view instanceof ViewGroup) {
             ViewGroup group = (ViewGroup) view;
             for (int i = 0; i < group.getChildCount(); i++) {
