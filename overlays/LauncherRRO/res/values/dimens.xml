@@ -4,27 +4,28 @@
          are the anchors; dp values are offsets from them. -->
 
     <!-- ===== Chrome geometry shared by the layouts ===== -->
-    <!-- Capsule radius. Larger than half of any pill height, so Skia clamps
-         it to a true semicircle on both the 64dp and 80dp pills. -->
-    <dimen name="launcher_bar_corner">40dp</dimen>
-    <!-- Header pills are 64dp tall; 32dp is their exact capsule radius. -->
-    <dimen name="launcher_pill_corner">32dp</dimen>
+    <!-- Capsule radius. At least half of any pill height, so both the 68dp
+         header pills and the 84dp bottom pills render as true capsules. -->
+    <dimen name="launcher_bar_corner">42dp</dimen>
+    <!-- Header pills are 68dp tall; 34dp is their exact capsule radius. -->
+    <dimen name="launcher_pill_corner">34dp</dimen>
     <!-- Light theme outline. values-night thins it to a hairline. -->
     <dimen name="launcher_stroke_width">1.5dp</dimen>
     <!-- Circular button in the dock and the temperature pills. -->
-    <dimen name="launcher_dock_button_size">56dp</dimen>
+    <dimen name="launcher_dock_button_size">60dp</dimen>
     <!-- Half the 12dp gap between neighbouring circles. -->
     <dimen name="launcher_dock_button_margin">6dp</dimen>
-    <!-- Glyph inset inside the 56dp circle: 28dp glyph. -->
-    <dimen name="launcher_dock_button_padding">14dp</dimen>
+    <!-- Glyph inset inside the 60dp circle: 30dp glyph. -->
+    <dimen name="launcher_dock_button_padding">15dp</dimen>
     <!-- Pill end padding: with the 6dp margin the first circle sits 18dp in. -->
     <dimen name="launcher_bar_end_padding">12dp</dimen>
     <dimen name="launcher_dock_divider_width">1dp</dimen>
-    <dimen name="launcher_dock_divider_height">28dp</dimen>
+    <dimen name="launcher_dock_divider_height">30dp</dimen>
     <dimen name="launcher_dock_divider_margin">10dp</dimen>
-    <!-- Flat glyph slot in the header pills: 28dp glyph on a 48dp target. -->
-    <dimen name="launcher_status_button_size">48dp</dimen>
-    <!-- 12dp between 48dp slots puts 32dp of air between the 28dp glyphs. -->
+    <!-- Flat glyph slot in the header pills: 30dp glyph on a 52dp target. -->
+    <dimen name="launcher_status_button_size">52dp</dimen>
+    <dimen name="launcher_status_button_padding">11dp</dimen>
+    <!-- 12dp between 52dp slots puts 34dp of air between the 30dp glyphs. -->
     <dimen name="launcher_status_button_gap">12dp</dimen>
     <!-- With the slot inset the first glyph sits 24dp from the capsule end. -->
     <dimen name="launcher_status_pill_end_padding">14dp</dimen>
@@ -35,53 +36,53 @@
     <!-- Bounds stay full-screen. Insets keep map chrome clear of the pills,
          the widget column, and the dock. -->
     <dimen name="launcher_map_inset_left">0dp</dimen>
-    <!-- Clears the three header pills (bottom edge 72dp). -->
-    <dimen name="launcher_map_inset_top">80dp</dimen>
+    <!-- Clears the three header pills (bottom edge 76dp). -->
+    <dimen name="launcher_map_inset_top">84dp</dimen>
     <!-- Clears the widget column and the zoom control beside it. -->
     <dimen name="launcher_map_inset_right">528dp</dimen>
-    <!-- Dock top sits 96dp above the bottom edge. 108dp clears it by 12dp. -->
-    <dimen name="launcher_map_inset_bottom">108dp</dimen>
+    <!-- Dock top sits 100dp above the bottom edge. 112dp clears it by 12dp. -->
+    <dimen name="launcher_map_inset_bottom">112dp</dimen>
     <!-- While the grid is open, widgets are gone. The right inset keeps map
          chrome in the uncovered left half. -->
     <dimen name="launcher_map_inset_left_apps">24dp</dimen>
     <dimen name="launcher_map_inset_right_apps">880dp</dimen>
 
-    <!-- ===== Header pills: 8dp from the top, 64dp tall ===== -->
+    <!-- ===== Header pills: 8dp from the top, 68dp tall ===== -->
     <dimen name="launcher_pill_top">8dp</dimen>
-    <dimen name="launcher_pill_bottom">72dp</dimen>
+    <dimen name="launcher_pill_bottom">76dp</dimen>
     <!-- Screen-edge margin shared by every pill and the dock. -->
     <dimen name="launcher_pill_edge">16dp</dimen>
-    <!-- Left pill fits five 48dp slots, four 12dp gaps, and 14dp end padding:
-         16 + 240 + 48 + 28 = 332. -->
-    <dimen name="launcher_pill_left_right">332dp</dimen>
+    <!-- Left pill fits five 52dp slots, four 12dp gaps, and 14dp end padding:
+         16 + 260 + 48 + 28 = 352. -->
+    <dimen name="launcher_pill_left_right">352dp</dimen>
     <!-- Clock pill is 152dp wide, centered. Negative: left of / right of 50%. -->
     <dimen name="launcher_pill_center_half">-76dp</dimen>
-    <!-- Profile pill is 248dp wide: two 40dp privacy chip slots, the avatar,
-         and a name up to 140dp. Negative so it sits in from the right edge. -->
-    <dimen name="launcher_pill_right_inset">-264dp</dimen>
-    <!-- Stock chip is 56dp with 24dp side padding, which clips the 30dp glyph. -->
-    <dimen name="privacy_chip_width">40dp</dimen>
+    <!-- Profile pill is 260dp wide: two 44dp privacy chip slots, the 32dp
+         avatar, and a name up to 140dp. Negative so it sits in from the right edge. -->
+    <dimen name="launcher_pill_right_inset">-276dp</dimen>
+    <!-- Stock chip is 56dp with 24dp side padding, which clips the glyph. -->
+    <dimen name="privacy_chip_width">44dp</dimen>
     <dimen name="privacy_chip_horizontal_padding">0dp</dimen>
     <dimen name="privacy_chip_vertical_padding">0dp</dimen>
 
-    <!-- ===== Bottom row: dock and temperature pills, 80dp tall ===== -->
+    <!-- ===== Bottom row: dock and temperature pills, 84dp tall ===== -->
     <dimen name="launcher_dock_bottom_margin">16dp</dimen>
-    <dimen name="launcher_dock_top_offset">-96dp</dimen>
-    <!-- Seven 56dp circles with 12dp gaps (464), one divider block (21),
-         and 12dp end padding on each side (24): 509dp. Rounded up to 510
+    <dimen name="launcher_dock_top_offset">-100dp</dimen>
+    <!-- Seven 60dp circles with 12dp gaps (492), one divider block (21),
+         and 12dp end padding on each side (24): 537dp. Rounded up to 538
          so the row centers on 50% with a 1dp of slack. Negative so left
          sits left of center and right sits right of center. -->
-    <dimen name="launcher_dock_half_width">-255dp</dimen>
-    <!-- Temperature pill: two 56dp circles, a 72dp readout, 12dp gaps and
-         12dp end padding: 232dp. Left pill spans 16..248; the right pill
+    <dimen name="launcher_dock_half_width">-269dp</dimen>
+    <!-- Temperature pill: two 60dp circles, a 72dp readout, 12dp gaps and
+         12dp end padding: 240dp. Left pill spans 16..256; the right pill
          mirrors it from the right edge. -->
-    <dimen name="launcher_temp_pill_left_right">248dp</dimen>
-    <dimen name="launcher_temp_pill_right_inset">-248dp</dimen>
+    <dimen name="launcher_temp_pill_left_right">256dp</dimen>
+    <dimen name="launcher_temp_pill_right_inset">-256dp</dimen>
 
     <!-- ===== App grid and launched apps ===== -->
     <!-- App grid is the right half, inset from the top, bottom, and edges. -->
-    <dimen name="launcher_app_grid_top">88dp</dimen>
-    <dimen name="launcher_app_grid_bottom_offset">120dp</dimen>
+    <dimen name="launcher_app_grid_top">92dp</dimen>
+    <dimen name="launcher_app_grid_bottom_offset">124dp</dimen>
     <dimen name="launcher_app_grid_edge">16dp</dimen>
     <dimen name="launcher_app_grid_corner">28dp</dimen>
     <!-- Launched apps fill the canvas. Side gaps match launcher_app_grid_edge. -->
@@ -100,7 +101,7 @@
          Inner edge is 480dp in; outer edge keeps a 16dp margin. -->
     <dimen name="launcher_widget_left">-480dp</dimen>
     <dimen name="launcher_widget_right">16dp</dimen>
-    <!-- Below the status pill (ends at 72dp) and above the 108dp bottom inset
+    <!-- Below the status pill (ends at 76dp) and above the 112dp bottom inset
          on the 1067dp canvas. Three equal cards, 12dp apart. -->
     <dimen name="launcher_widget_climate_top">80dp</dimen>
     <dimen name="launcher_widget_climate_bottom">364dp</dimen>

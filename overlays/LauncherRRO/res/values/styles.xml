@@ -4,7 +4,7 @@
   context, so these resolve inside the overlay without touching SystemUI.
 -->
 <resources>
-    <!-- 56dp filled circle with a white 24dp glyph. Dock and temperature pills. -->
+    <!-- 60dp filled circle with a 30dp glyph. Dock and temperature pills. -->
     <style name="LauncherDockButton">
         <item name="android:layout_width">@dimen/launcher_dock_button_size</item>
         <item name="android:layout_height">@dimen/launcher_dock_button_size</item>
@@ -24,12 +24,12 @@
         <item name="android:background">@color/launcher_stroke</item>
     </style>
 
-    <!-- 48dp flat status glyph in the header pills, tinted to the surface text. -->
+    <!-- 52dp flat status glyph in the header pills, tinted to the surface text. -->
     <style name="LauncherStatusButton">
         <item name="android:layout_width">@dimen/launcher_status_button_size</item>
         <item name="android:layout_height">@dimen/launcher_status_button_size</item>
         <item name="android:background">@drawable/launcher_status_icon_bg</item>
-        <item name="android:padding">10dp</item>
+        <item name="android:padding">@dimen/launcher_status_button_padding</item>
         <item name="android:scaleType">fitCenter</item>
         <item name="android:tint">@color/launcher_on_surface</item>
     </style>

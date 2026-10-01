@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Capsule surface for every pill. Radius exceeds half the height of the
-     64dp header pills and the 80dp bottom pills, so both render as true capsules. -->
+     68dp header pills and the 84dp bottom pills, so both render as true capsules. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <solid android:color="@color/launcher_surface" />
