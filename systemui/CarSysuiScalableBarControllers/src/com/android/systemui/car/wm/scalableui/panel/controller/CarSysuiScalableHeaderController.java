@@ -257,7 +257,8 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
                 }
             }
         }
-        button.setContentDescription(night ? "Light theme" : "Dark theme");
+        String label = resolveRroString(night ? "launcher_light_theme" : "launcher_dark_theme");
+        button.setContentDescription(label != null ? label : (night ? "Light theme" : "Dark theme"));
     }
 
     /**
@@ -691,7 +692,11 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
             return;
         }
         group.setTag("main-hosted");
-        group.addView(new View(mContext), chipLayoutParams(span));
+        // Reserves room in the pill for the chips. Collapsed while both chips
+        // are hidden so the avatar and name stay centered in the capsule.
+        final View spacer = new View(mContext);
+        spacer.setVisibility(View.GONE);
+        group.addView(spacer, chipLayoutParams(span));
         final int hostWidth = span;
         View.OnLayoutChangeListener layout = (v, l, t, r, b, ol, ot, or, ob) ->
                 placeMainThreadHost(group, host, hostWidth, group.getHeight(),
@@ -701,7 +706,53 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
             placeMainThreadHost(group, host, hostWidth, group.getHeight(),
                     null, null, false);
         }
+        // The chip controllers toggle visibility on the main thread, which
+        // relayouts the host window. Mirror that onto the shell-thread spacer.
+        host.getViewTreeObserver().addOnGlobalLayoutListener(
+                () -> syncPrivacySpacer(host, spacer));
         Log.i(TAG, "privacy chips hosted on main thread");
+    }
+
+    /**
+     * Shows the reserved chip slot only while at least one chip is drawn.
+     * While the slot is collapsed the chip window overlaps the avatar, so it
+     * is also made untouchable; otherwise it would swallow profile taps.
+     * Runs on the main thread (host window layout).
+     */
+    private void syncPrivacySpacer(ViewGroup host, View spacer) {
+        boolean anyShown = false;
+        for (int i = 0; i < host.getChildCount(); i++) {
+            View chip = host.getChildAt(i);
+            if (chip.getVisibility() == View.VISIBLE && chip.getAlpha() > 0.01f) {
+                anyShown = true;
+                break;
+            }
+        }
+        final int visibility = anyShown ? View.VISIBLE : View.GONE;
+        if (spacer.getVisibility() != visibility) {
+            spacer.post(() -> spacer.setVisibility(visibility));
+        }
+        ViewGroup.LayoutParams params = host.getLayoutParams();
+        if (!(params instanceof WindowManager.LayoutParams) || host.getParent() == null) {
+            return;
+        }
+        WindowManager.LayoutParams lp = (WindowManager.LayoutParams) params;
+        int flags = anyShown
+                ? lp.flags & ~WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                : lp.flags | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
+        if (flags == lp.flags) {
+            return;
+        }
+        lp.flags = flags;
+        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        if (wm == null) {
+            return;
+        }
+        try {
+            wm.updateViewLayout(host, lp);
+        } catch (Throwable t) {
+            Log.w(TAG, "privacy chip host touchability", t);
+        }
     }
 
     private View inflateSystemUiLayout(String layoutName) {
