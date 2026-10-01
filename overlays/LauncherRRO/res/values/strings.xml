@@ -5,7 +5,7 @@
     <!-- Catch-all launch root. Unmatched apps opened from the grid land here. -->
     <string name="launcher_app_role" translatable="false">DEFAULT</string>
     <string name="launcher_climate_component" translatable="false">com.test.design/.presentation.ivi.glanceables.ClimateHomePanelActivity</string>
-    <string name="launcher_media_component" translatable="false">com.android.car.mockwidgets/.MockMediaActivity</string>
+    <string name="launcher_media_component" translatable="false">com.test.design/.presentation.ivi.glanceables.MediaHomePanelActivity</string>
     <string name="launcher_stats_component" translatable="false">com.test.design/.presentation.ivi.glanceables.VehicleHomePanelActivity</string>
     <string name="launcher_dark_theme" translatable="false">Dark theme</string>
     <string name="launcher_light_theme" translatable="false">Light theme</string>

@@ -34,7 +34,7 @@
     <string-array name="config_default_activities" translatable="false">
         <item>map_panel;com.google.android.apps.maps/com.google.android.maps.MapsActivity</item>
         <item>launcher_climate;com.test.design/com.test.design.presentation.ivi.glanceables.ClimateHomePanelActivity</item>
-        <item>launcher_media;com.android.car.mockwidgets/com.android.car.mockwidgets.MockMediaActivity</item>
+        <item>launcher_media;com.test.design/com.test.design.presentation.ivi.glanceables.MediaHomePanelActivity</item>
         <item>launcher_stats;com.test.design/com.test.design.presentation.ivi.glanceables.VehicleHomePanelActivity</item>
     </string-array>
 </resources>
