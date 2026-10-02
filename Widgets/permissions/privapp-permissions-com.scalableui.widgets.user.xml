@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<permissions>
+    <privapp-permissions package="com.scalableui.widgets.user">
+        <permission name="android.car.permission.CAR_INFO" />
+    </privapp-permissions>
+</permissions>

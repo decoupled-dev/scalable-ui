@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<permissions>
+    <privapp-permissions package="com.scalableui.widgets.lights">
+        <permission name="android.car.permission.CONTROL_CAR_INTERIOR_LIGHTS" />
+        <permission name="android.car.permission.CONTROL_CAR_EXTERIOR_LIGHTS" />
+    </privapp-permissions>
+</permissions>
