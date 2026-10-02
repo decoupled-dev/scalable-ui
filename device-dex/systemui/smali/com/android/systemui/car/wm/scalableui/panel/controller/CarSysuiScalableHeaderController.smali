@@ -6722,6 +6722,8 @@
 
     invoke-static {v0}, Lcom/android/systemui/car/wm/scalableui/panel/controller/OrientationLayoutWatcher;->start(Landroid/content/Context;)V
 
+    invoke-static {v0}, Lcom/android/systemui/car/wm/scalableui/panel/controller/LayoutVariantWatcher;->start(Landroid/content/Context;)V
+
     .line 1126
     return-void
 .end method

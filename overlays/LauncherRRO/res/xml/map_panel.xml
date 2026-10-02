@@ -144,6 +144,22 @@
     </Variant>
     <Variant id="@+id/portrait_closed" parent="@id/closed"/>
     <Variant id="@+id/portrait_userswitch" parent="@id/portrait_closed"/>
+    <!-- Variant 1: left inset clears the dock rail, bottom inset clears the
+         status and temperature pills. Right still clears the widget column. -->
+    <Variant id="@+id/layout_v1" parent="@id/opened">
+        <SafeBounds
+            left="@dimen/launcher_v1_map_inset_left"
+            top="@dimen/launcher_v1_map_inset_top"
+            right="100%"
+            rightOffset="@dimen/launcher_map_inset_right"
+            bottom="100%"
+            bottomOffset="@dimen/launcher_v1_map_inset_bottom"/>
+        <Insets
+            left="@dimen/launcher_v1_map_inset_left"
+            top="@dimen/launcher_v1_map_inset_top"
+            right="@dimen/launcher_map_inset_right"
+            bottom="@dimen/launcher_v1_map_inset_bottom"/>
+    </Variant>
     <Transitions>
         <Transition onEvent="_System_EnterSuwEvent" toVariant="@id/suw"/>
         <Transition onEvent="_System_ExitSuwEvent" fromVariant="@id/suw" toVariant="@id/opened"/>
@@ -195,6 +211,9 @@
         <Transition onEvent="_System_UserSwitchComplete" fromVariant="@id/portrait" toVariant="@id/portrait"/>
         <Transition onEvent="orientation_portrait" fromVariant="@id/opened" toVariant="@id/portrait" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         <Transition onEvent="orientation_landscape" fromVariant="@id/portrait" toVariant="@id/opened" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="layout_variant_1" fromVariant="@id/opened" toVariant="@id/layout_v1" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="layout_variant_0" fromVariant="@id/layout_v1" toVariant="@id/opened" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="orientation_portrait" fromVariant="@id/layout_v1" toVariant="@id/portrait" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         <Transition onEvent="orientation_portrait" fromVariant="@id/app_open" toVariant="@id/portrait_app_open" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         <Transition onEvent="orientation_landscape" fromVariant="@id/portrait_app_open" toVariant="@id/app_open" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         <Transition onEvent="orientation_portrait" fromVariant="@id/apps_open" toVariant="@id/portrait_apps_open" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>

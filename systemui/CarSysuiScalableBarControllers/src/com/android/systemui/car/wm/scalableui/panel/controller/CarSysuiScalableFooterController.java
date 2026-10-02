@@ -369,6 +369,9 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
             Log.i(TAG, "oem_canvas dark backdrop applied");
             return;
         }
+        if ("oem_dock".equals(mPanelId)) {
+            LayoutVariantWatcher.attachDock(root);
+        }
         bindFooterNav(root);
         bindMediaControls(root);
         wireClickListeners();

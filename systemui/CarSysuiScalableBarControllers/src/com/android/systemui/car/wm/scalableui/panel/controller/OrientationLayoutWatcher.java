@@ -105,6 +105,9 @@ public final class OrientationLayoutWatcher implements DisplayManager.DisplayLis
         String event = portrait ? "orientation_portrait" : "orientation_landscape";
         Log.i(TAG, "rotation=" + rotation + " event=" + event);
         dispatch(event);
+        // Landscape lands on the default variant. Reapply the adb profile after
+        // that, and keep the dock icon stack in sync for both orientations.
+        LayoutVariantWatcher.onOrientationApplied(portrait);
     }
 
     private void dispatch(String eventId) {

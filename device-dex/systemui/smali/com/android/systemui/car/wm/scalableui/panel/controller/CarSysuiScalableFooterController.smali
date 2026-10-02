@@ -483,7 +483,7 @@
 .end method
 
 .method public bindViews(Landroid/view/View;)V
-    .registers 2
+    .registers 4
 
     .line 142
     invoke-virtual {p0, p1}, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableFooterController;->bindFooterNav(Landroid/view/View;)V
@@ -494,6 +494,19 @@
     .line 144
     invoke-virtual {p0}, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableFooterController;->wireClickListeners()V
 
+    const-string v0, "oem_dock"
+
+    iget-object v1, p0, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableBarControllerBase;->mPanelId:Ljava/lang/String;
+
+    invoke-virtual {v0, v1}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_dock_done
+
+    invoke-static {p1}, Lcom/android/systemui/car/wm/scalableui/panel/controller/LayoutVariantWatcher;->attachDock(Landroid/view/View;)V
+
+    :cond_dock_done
     return-void
 .end method
 

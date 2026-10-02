@@ -81,6 +81,29 @@
     <dimen name="launcher_temp_pill_left_right">256dp</dimen>
     <dimen name="launcher_temp_pill_right_inset">-256dp</dimen>
 
+    <!-- Layout variant 1, landscape only. The dock is a left rail. Status
+         pills and both temperature pills share the bottom band, side by side. -->
+    <!-- 16dp edge + 84dp rail. -->
+    <dimen name="launcher_v1_dock_right">100dp</dimen>
+    <!-- Driver temperature is 240dp, one margin past the rail: 116..356. -->
+    <dimen name="launcher_v1_temp_left">116dp</dimen>
+    <dimen name="launcher_v1_temp_left_right">356dp</dimen>
+    <!-- Left status pill is 368dp, one gap past the driver pill. -->
+    <dimen name="launcher_v1_pill_left_left">368dp</dimen>
+    <dimen name="launcher_v1_pill_left_right">736dp</dimen>
+    <!-- Profile pill is 260dp and ends 12dp before the passenger pill.
+         Passenger pill occupies 100%-256 .. 100%-16. -->
+    <dimen name="launcher_v1_pill_right_inset">-528dp</dimen>
+    <dimen name="launcher_v1_pill_right_edge">268dp</dimen>
+    <!-- 68dp status pill sitting 16dp off the bottom edge. -->
+    <dimen name="launcher_v1_pill_top_offset">-84dp</dimen>
+    <!-- Rail ends at 100dp; keep a 16dp gap. -->
+    <dimen name="launcher_v1_map_inset_left">116dp</dimen>
+    <!-- Nothing sits on the top edge in this set. -->
+    <dimen name="launcher_v1_map_inset_top">16dp</dimen>
+    <!-- Temperature pills are 100dp tall from the bottom edge. -->
+    <dimen name="launcher_v1_map_inset_bottom">112dp</dimen>
+
     <!-- ===== App grid and launched apps ===== -->
     <!-- App grid is the right half, inset from the top, bottom, and edges. -->
     <dimen name="launcher_app_grid_top">92dp</dimen>

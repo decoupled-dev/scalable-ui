@@ -1136,6 +1136,8 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
         // One watcher for every header instance. It posts orientation_portrait
         // or orientation_landscape so panel variants follow the display.
         OrientationLayoutWatcher.start(mContext);
+        // Posts layout_variant_N from Settings.Global scalable_ui_layout_variant.
+        LayoutVariantWatcher.start(mContext);
     }
 
     @Override

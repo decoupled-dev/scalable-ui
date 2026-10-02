@@ -196,6 +196,10 @@
 
     invoke-direct {p0, v1}, Lcom/android/systemui/car/wm/scalableui/panel/controller/OrientationLayoutWatcher;->dispatch(Ljava/lang/String;)V
 
+    iget-boolean v0, p0, Lcom/android/systemui/car/wm/scalableui/panel/controller/OrientationLayoutWatcher;->mPortrait:Z
+
+    invoke-static {v0}, Lcom/android/systemui/car/wm/scalableui/panel/controller/LayoutVariantWatcher;->onOrientationApplied(Z)V
+
     return-void
 .end method
 
