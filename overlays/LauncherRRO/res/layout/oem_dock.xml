@@ -15,19 +15,19 @@
 
     <ImageButton
         android:id="@+id/sysui_nav_home"
-        style="@style/LauncherDockButton"
+        style="@style/LauncherDockIcon"
         android:contentDescription="@string/launcher_dock_home"
         android:src="@drawable/ic_dock_home" />
 
     <ImageButton
         android:id="@+id/sysui_footer_fullscreen_toggle"
-        style="@style/LauncherDockButton"
+        style="@style/LauncherDockIcon"
         android:contentDescription="@string/launcher_dock_navigation"
         android:src="@drawable/ic_dock_nav" />
 
     <ImageButton
         android:id="@+id/sysui_nav_all_apps"
-        style="@style/LauncherDockButton"
+        style="@style/LauncherDockIcon"
         android:contentDescription="@string/launcher_dock_apps"
         android:src="@drawable/ic_dock_apps" />
 
@@ -37,25 +37,25 @@
 
     <ImageButton
         android:id="@+id/oem_launch_assistant"
-        style="@style/LauncherDockButton"
+        style="@style/LauncherDockIcon"
         android:contentDescription="@string/launcher_dock_assistant"
         android:src="@drawable/ic_dock_mic" />
 
     <ImageButton
         android:id="@+id/oem_launch_hvac"
-        style="@style/LauncherDockButton"
+        style="@style/LauncherDockIcon"
         android:contentDescription="@string/launcher_dock_climate"
         android:src="@drawable/ic_dock_climate" />
 
     <ImageButton
         android:id="@+id/oem_launch_vehicle"
-        style="@style/LauncherDockButton"
+        style="@style/LauncherDockIcon"
         android:contentDescription="@string/launcher_dock_vehicle"
         android:src="@drawable/ic_dock_vehicle" />
 
     <ImageButton
         android:id="@+id/oem_launch_car_settings"
-        style="@style/LauncherDockButton"
+        style="@style/LauncherDockIcon"
         android:contentDescription="@string/launcher_dock_settings"
         android:src="@drawable/ic_dock_settings" />
 </LinearLayout>

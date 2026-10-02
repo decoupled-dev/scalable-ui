@@ -6718,6 +6718,10 @@
     .line 1125
     invoke-direct {p0}, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->refreshAllDisplays()V
 
+    iget-object v0, p0, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->mContext:Landroid/content/Context;
+
+    invoke-static {v0}, Lcom/android/systemui/car/wm/scalableui/panel/controller/OrientationLayoutWatcher;->start(Landroid/content/Context;)V
+
     .line 1126
     return-void
 .end method

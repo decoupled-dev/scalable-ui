@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  CarLauncher is the HOME role. Switching back to a user starts it again.
+  With no panel of its own it paints the stock launcher over the map.
+  Host it off-screen so the return path stays the full map.
+-->
+<TaskPanel id="home_panel" defaultVariant="@id/closed"
+    role="@string/launcher_home_component" displayId="0">
+    <Variant id="@+id/closed">
+        <Layer layer="0"/>
+        <Visibility isVisible="false"/>
+        <Alpha alpha="0.0"/>
+        <Bounds left="-100%" top="0dp" right="0dp" bottom="100%"/>
+        <Focus onTransition="false"/>
+    </Variant>
+    <Transitions>
+        <Transition onEvent="_System_OnHomeEvent" toVariant="@id/closed" duration="0"/>
+        <Transition onEvent="_System_BeforeUserSwitch" toVariant="@id/closed"/>
+        <Transition onEvent="_System_UserSwitchComplete" toVariant="@id/closed"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=home_panel" toVariant="@id/closed" duration="0"/>
+    </Transitions>
+</TaskPanel>

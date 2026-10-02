@@ -15,6 +15,12 @@
         <item name="android:scaleType">fitCenter</item>
     </style>
 
+    <!-- Dock circles use a 20dp gap. Temperature pills keep the 12dp margin. -->
+    <style name="LauncherDockIcon" parent="LauncherDockButton">
+        <item name="android:layout_marginStart">@dimen/launcher_dock_icon_margin</item>
+        <item name="android:layout_marginEnd">@dimen/launcher_dock_icon_margin</item>
+    </style>
+
     <!-- Thin vertical rule between the system nav group and the shortcuts. -->
     <style name="LauncherDockDivider">
         <item name="android:layout_width">@dimen/launcher_dock_divider_width</item>

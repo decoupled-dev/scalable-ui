@@ -88,6 +88,62 @@
     <Variant id="@+id/suw" parent="@id/closed"/>
     <Variant id="@+id/userswitch" parent="@id/closed"/>
 
+    <Variant id="@+id/portrait" parent="@id/opened">
+        <Bounds left="0dp" top="0dp" right="@dimen/launcher_port_width" bottom="@dimen/launcher_port_height"/>
+        <SafeBounds
+            left="0dp"
+            top="@dimen/launcher_port_map_inset_top"
+            right="@dimen/launcher_port_width"
+            bottom="@dimen/launcher_port_height"
+            bottomOffset="@dimen/launcher_port_map_inset_bottom"/>
+        <Insets
+            left="0dp"
+            top="@dimen/launcher_port_map_inset_top"
+            right="0dp"
+            bottom="@dimen/launcher_port_map_inset_bottom"/>
+    </Variant>
+    <Variant id="@+id/portrait_app_open" parent="@id/app_open">
+        <Bounds left="0dp" top="0dp" right="@dimen/launcher_port_width" bottom="@dimen/launcher_port_height"/>
+        <SafeBounds
+            left="@dimen/launcher_port_app_left"
+            top="@dimen/launcher_port_app_top"
+            right="@dimen/launcher_port_app_right"
+            bottom="@dimen/launcher_port_app_bottom"/>
+        <Insets
+            left="@dimen/launcher_port_app_left"
+            top="@dimen/launcher_port_app_top"
+            right="@dimen/launcher_app_grid_edge"
+            bottom="@dimen/launcher_port_map_inset_bottom_nav"/>
+    </Variant>
+    <Variant id="@+id/portrait_apps_open" parent="@id/apps_open">
+        <Bounds left="0dp" top="0dp" right="@dimen/launcher_port_width" bottom="@dimen/launcher_port_height"/>
+        <SafeBounds
+            left="0dp"
+            top="@dimen/launcher_port_map_inset_top"
+            right="@dimen/launcher_port_width"
+            bottom="@dimen/launcher_port_app_top"/>
+        <Insets
+            left="0dp"
+            top="@dimen/launcher_port_map_inset_top"
+            right="0dp"
+            bottom="@dimen/launcher_port_map_inset_bottom"/>
+    </Variant>
+    <Variant id="@+id/portrait_nav" parent="@id/nav">
+        <Bounds left="0dp" top="0dp" right="@dimen/launcher_port_width" bottom="@dimen/launcher_port_height"/>
+        <SafeBounds
+            left="0dp"
+            top="@dimen/launcher_port_map_inset_top"
+            right="@dimen/launcher_port_width"
+            bottom="@dimen/launcher_port_height"
+            bottomOffset="@dimen/launcher_port_map_inset_bottom_nav"/>
+        <Insets
+            left="0dp"
+            top="@dimen/launcher_port_map_inset_top"
+            right="0dp"
+            bottom="@dimen/launcher_port_map_inset_bottom_nav"/>
+    </Variant>
+    <Variant id="@+id/portrait_closed" parent="@id/closed"/>
+    <Variant id="@+id/portrait_userswitch" parent="@id/portrait_closed"/>
     <Transitions>
         <Transition onEvent="_System_EnterSuwEvent" toVariant="@id/suw"/>
         <Transition onEvent="_System_ExitSuwEvent" fromVariant="@id/suw" toVariant="@id/opened"/>
@@ -99,7 +155,7 @@
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_app" fromVariant="@id/apps_open" toVariant="@id/app_open" duration="400" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/apps_open" toVariant="@id/opened" duration="450" interpolator="@android:anim/decelerate_interpolator"/>
         <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/app_open" toVariant="@id/opened" duration="450" interpolator="@android:anim/decelerate_interpolator"/>
-        <Transition onEvent="_System_TaskCloseEvent" onEventTokens="panelId=launcher_app" fromVariant="@id/app_open" toVariant="@id/opened" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskPanelEmptyEvent" onEventTokens="panelId=launcher_app" fromVariant="@id/app_open" toVariant="@id/opened" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=map_panel" fromVariant="@id/apps_open" toVariant="@id/opened" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=map_panel" fromVariant="@id/app_open" toVariant="@id/opened" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         <Transition onEvent="toggle_fullscreen" fromVariant="@id/opened" toVariant="@id/nav" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
@@ -108,8 +164,75 @@
         <Transition onEvent="toggle_fullscreen" fromVariant="@id/nav" toVariant="@id/opened" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=panel_app_grid" fromVariant="@id/nav" toVariant="@id/apps_open" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_app" fromVariant="@id/nav" toVariant="@id/app_open" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_climate_app" fromVariant="@id/opened" toVariant="@id/app_open" duration="400" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_climate_app" fromVariant="@id/apps_open" toVariant="@id/app_open" duration="400" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_climate_app" fromVariant="@id/nav" toVariant="@id/app_open" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_vehicle_app" fromVariant="@id/opened" toVariant="@id/app_open" duration="400" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_vehicle_app" fromVariant="@id/apps_open" toVariant="@id/app_open" duration="400" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_vehicle_app" fromVariant="@id/nav" toVariant="@id/app_open" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_settings_app" fromVariant="@id/opened" toVariant="@id/app_open" duration="400" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_settings_app" fromVariant="@id/apps_open" toVariant="@id/app_open" duration="400" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_settings_app" fromVariant="@id/nav" toVariant="@id/app_open" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskPanelEmptyEvent" onEventTokens="panelId=launcher_climate_app" fromVariant="@id/app_open" toVariant="@id/opened" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskPanelEmptyEvent" onEventTokens="panelId=launcher_vehicle_app" fromVariant="@id/app_open" toVariant="@id/opened" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskPanelEmptyEvent" onEventTokens="panelId=launcher_settings_app" fromVariant="@id/app_open" toVariant="@id/opened" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/nav" toVariant="@id/opened" duration="450" interpolator="@android:anim/decelerate_interpolator"/>
-        <Transition onEvent="_System_BeforeUserSwitch" toVariant="@id/userswitch"/>
+        <!-- Home is sent again when the user returns. The map is still in the
+             hidden userswitch variant then, so Home has to reopen it. -->
+        <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/userswitch" toVariant="@id/opened"/>
+        <Transition onEvent="_System_BeforeUserSwitch" fromVariant="@id/opened" toVariant="@id/userswitch"/>
+        <Transition onEvent="_System_BeforeUserSwitch" fromVariant="@id/app_open" toVariant="@id/userswitch"/>
+        <Transition onEvent="_System_BeforeUserSwitch" fromVariant="@id/apps_open" toVariant="@id/userswitch"/>
+        <Transition onEvent="_System_BeforeUserSwitch" fromVariant="@id/nav" toVariant="@id/userswitch"/>
+        <Transition onEvent="_System_BeforeUserSwitch" fromVariant="@id/closed" toVariant="@id/userswitch"/>
+        <Transition onEvent="_System_BeforeUserSwitch" fromVariant="@id/portrait" toVariant="@id/portrait_userswitch"/>
+        <Transition onEvent="_System_BeforeUserSwitch" fromVariant="@id/portrait_app_open" toVariant="@id/portrait_userswitch"/>
+        <Transition onEvent="_System_BeforeUserSwitch" fromVariant="@id/portrait_apps_open" toVariant="@id/portrait_userswitch"/>
+        <Transition onEvent="_System_BeforeUserSwitch" fromVariant="@id/portrait_nav" toVariant="@id/portrait_userswitch"/>
         <Transition onEvent="_System_UserSwitchComplete" fromVariant="@id/userswitch" toVariant="@id/opened"/>
+        <Transition onEvent="_System_UserSwitchComplete" fromVariant="@id/opened" toVariant="@id/opened"/>
+        <Transition onEvent="_System_UserSwitchComplete" fromVariant="@id/portrait_userswitch" toVariant="@id/portrait"/>
+        <Transition onEvent="_System_UserSwitchComplete" fromVariant="@id/portrait" toVariant="@id/portrait"/>
+        <Transition onEvent="orientation_portrait" fromVariant="@id/opened" toVariant="@id/portrait" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="orientation_landscape" fromVariant="@id/portrait" toVariant="@id/opened" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="orientation_portrait" fromVariant="@id/app_open" toVariant="@id/portrait_app_open" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="orientation_landscape" fromVariant="@id/portrait_app_open" toVariant="@id/app_open" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="orientation_portrait" fromVariant="@id/apps_open" toVariant="@id/portrait_apps_open" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="orientation_landscape" fromVariant="@id/portrait_apps_open" toVariant="@id/apps_open" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="orientation_portrait" fromVariant="@id/nav" toVariant="@id/portrait_nav" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="orientation_landscape" fromVariant="@id/portrait_nav" toVariant="@id/nav" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="orientation_portrait" fromVariant="@id/closed" toVariant="@id/portrait_closed" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="orientation_landscape" fromVariant="@id/portrait_closed" toVariant="@id/closed" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=panel_app_grid" fromVariant="@id/portrait" toVariant="@id/portrait_apps_open" duration="400" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=panel_app_grid" fromVariant="@id/portrait_app_open" toVariant="@id/portrait_apps_open" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=panel_app_grid" fromVariant="@id/portrait_nav" toVariant="@id/portrait_apps_open" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_app" fromVariant="@id/portrait" toVariant="@id/portrait_app_open" duration="400" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_app" fromVariant="@id/portrait_apps_open" toVariant="@id/portrait_app_open" duration="400" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_app" fromVariant="@id/portrait_nav" toVariant="@id/portrait_app_open" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/portrait_apps_open" toVariant="@id/portrait" duration="450" interpolator="@android:anim/decelerate_interpolator"/>
+        <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/portrait_app_open" toVariant="@id/portrait" duration="450" interpolator="@android:anim/decelerate_interpolator"/>
+        <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/portrait_nav" toVariant="@id/portrait" duration="450" interpolator="@android:anim/decelerate_interpolator"/>
+        <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/portrait_closed" toVariant="@id/portrait" duration="0"/>
+        <Transition onEvent="_System_OnHomeEvent" fromVariant="@id/portrait_userswitch" toVariant="@id/portrait" duration="0"/>
+        <Transition onEvent="_System_TaskPanelEmptyEvent" onEventTokens="panelId=launcher_app" fromVariant="@id/portrait_app_open" toVariant="@id/portrait" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=map_panel" fromVariant="@id/portrait_apps_open" toVariant="@id/portrait" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=map_panel" fromVariant="@id/portrait_app_open" toVariant="@id/portrait" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=map_panel" fromVariant="@id/portrait_closed" toVariant="@id/portrait" duration="0"/>
+        <Transition onEvent="toggle_fullscreen" fromVariant="@id/portrait" toVariant="@id/portrait_nav" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="toggle_fullscreen" fromVariant="@id/portrait_apps_open" toVariant="@id/portrait_nav" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="toggle_fullscreen" fromVariant="@id/portrait_app_open" toVariant="@id/portrait_nav" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="toggle_fullscreen" fromVariant="@id/portrait_nav" toVariant="@id/portrait" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskPanelEmptyEvent" onEventTokens="panelId=launcher_climate_app" fromVariant="@id/portrait_app_open" toVariant="@id/portrait" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskPanelEmptyEvent" onEventTokens="panelId=launcher_vehicle_app" fromVariant="@id/portrait_app_open" toVariant="@id/portrait" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskPanelEmptyEvent" onEventTokens="panelId=launcher_settings_app" fromVariant="@id/portrait_app_open" toVariant="@id/portrait" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_climate_app" fromVariant="@id/portrait" toVariant="@id/portrait_app_open" duration="400" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_climate_app" fromVariant="@id/portrait_apps_open" toVariant="@id/portrait_app_open" duration="400" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_climate_app" fromVariant="@id/portrait_nav" toVariant="@id/portrait_app_open" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_vehicle_app" fromVariant="@id/portrait" toVariant="@id/portrait_app_open" duration="400" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_vehicle_app" fromVariant="@id/portrait_apps_open" toVariant="@id/portrait_app_open" duration="400" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_vehicle_app" fromVariant="@id/portrait_nav" toVariant="@id/portrait_app_open" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_settings_app" fromVariant="@id/portrait" toVariant="@id/portrait_app_open" duration="400" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_settings_app" fromVariant="@id/portrait_apps_open" toVariant="@id/portrait_app_open" duration="400" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=launcher_settings_app" fromVariant="@id/portrait_nav" toVariant="@id/portrait_app_open" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
     </Transitions>
 </TaskPanel>

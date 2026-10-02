@@ -13,8 +13,10 @@
     <dimen name="launcher_stroke_width">1.5dp</dimen>
     <!-- Circular button in the dock and the temperature pills. -->
     <dimen name="launcher_dock_button_size">60dp</dimen>
-    <!-- Half the 12dp gap between neighbouring circles. -->
+    <!-- Half the 12dp gap between circles in the temperature pills. -->
     <dimen name="launcher_dock_button_margin">6dp</dimen>
+    <!-- Half the 20dp gap between circles in the dock. -->
+    <dimen name="launcher_dock_icon_margin">10dp</dimen>
     <!-- Glyph inset inside the 60dp circle: 30dp glyph. -->
     <dimen name="launcher_dock_button_padding">15dp</dimen>
     <!-- Pill end padding: with the 6dp margin the first circle sits 18dp in. -->
@@ -25,8 +27,8 @@
     <!-- Flat glyph slot in the header pills: 30dp glyph on a 52dp target. -->
     <dimen name="launcher_status_button_size">52dp</dimen>
     <dimen name="launcher_status_button_padding">11dp</dimen>
-    <!-- 12dp between 52dp slots puts 34dp of air between the 30dp glyphs. -->
-    <dimen name="launcher_status_button_gap">12dp</dimen>
+    <!-- 20dp between 52dp slots puts 42dp of air between the 30dp glyphs. -->
+    <dimen name="launcher_status_button_gap">20dp</dimen>
     <!-- With the slot inset the first glyph sits 24dp from the capsule end. -->
     <dimen name="launcher_status_pill_end_padding">14dp</dimen>
     <!-- Temperature readout between the two circles. -->
@@ -52,9 +54,9 @@
     <dimen name="launcher_pill_bottom">76dp</dimen>
     <!-- Screen-edge margin shared by every pill and the dock. -->
     <dimen name="launcher_pill_edge">16dp</dimen>
-    <!-- Left pill fits five 52dp slots, four 12dp gaps, and 14dp end padding:
-         16 + 260 + 48 + 28 = 352. -->
-    <dimen name="launcher_pill_left_right">352dp</dimen>
+    <!-- Left pill fits five 52dp slots, four 20dp gaps, and 14dp end padding:
+         16 + 260 + 80 + 28 = 384. -->
+    <dimen name="launcher_pill_left_right">384dp</dimen>
     <!-- Clock pill is 152dp wide, centered. Negative: left of / right of 50%. -->
     <dimen name="launcher_pill_center_half">-76dp</dimen>
     <!-- Profile pill is 260dp wide: two 44dp privacy chip slots, the 32dp
@@ -68,11 +70,11 @@
     <!-- ===== Bottom row: dock and temperature pills, 84dp tall ===== -->
     <dimen name="launcher_dock_bottom_margin">16dp</dimen>
     <dimen name="launcher_dock_top_offset">-100dp</dimen>
-    <!-- Seven 60dp circles with 12dp gaps (492), one divider block (21),
-         and 12dp end padding on each side (24): 537dp. Rounded up to 538
+    <!-- Seven 60dp circles with 20dp gaps (560), one divider block (21),
+         and 12dp end padding on each side (24): 605dp. Rounded up to 606
          so the row centers on 50% with a 1dp of slack. Negative so left
          sits left of center and right sits right of center. -->
-    <dimen name="launcher_dock_half_width">-269dp</dimen>
+    <dimen name="launcher_dock_half_width">-303dp</dimen>
     <!-- Temperature pill: two 60dp circles, a 72dp readout, 12dp gaps and
          12dp end padding: 240dp. Left pill spans 16..256; the right pill
          mirrors it from the right edge. -->
@@ -109,4 +111,52 @@
     <dimen name="launcher_widget_media_bottom">660dp</dimen>
     <dimen name="launcher_widget_stats_top">672dp</dimen>
     <dimen name="launcher_widget_stats_bottom">956dp</dimen>
+
+    <!-- Portrait canvas is 1600x2560 at 240 dpi (1067 x 1707 dp).
+         These are absolute positions. Percentages are resolved once against
+         the landscape 2560x1600 canvas, so a portrait variant must not use
+         100%. Rotation 0 and 180 are portrait on this panel; 90 and 270
+         stay on the landscape variants above. -->
+    <dimen name="launcher_port_width">1067dp</dimen>
+    <dimen name="launcher_port_height">1707dp</dimen>
+    <!-- Three header pills pulled into one group: 368 + 12 + 152 + 12 + 260. -->
+    <dimen name="launcher_port_pill_left_l">132dp</dimen>
+    <dimen name="launcher_port_pill_left_r">500dp</dimen>
+    <dimen name="launcher_port_pill_center_l">512dp</dimen>
+    <dimen name="launcher_port_pill_center_r">664dp</dimen>
+    <dimen name="launcher_port_pill_right_l">676dp</dimen>
+    <dimen name="launcher_port_pill_right_r">936dp</dimen>
+    <!-- Dock stays on the bottom edge, centered. 606dp wide, 84dp tall. -->
+    <dimen name="launcher_port_dock_left">230dp</dimen>
+    <dimen name="launcher_port_dock_right">836dp</dimen>
+    <dimen name="launcher_port_dock_top">1607dp</dimen>
+    <dimen name="launcher_port_dock_bottom">1691dp</dimen>
+    <!-- Temperature pills sit above the widget row. Each is 240dp wide. -->
+    <dimen name="launcher_port_temp_top">1279dp</dimen>
+    <dimen name="launcher_port_temp_bottom">1363dp</dimen>
+    <dimen name="launcher_port_temp_left_r">256dp</dimen>
+    <dimen name="launcher_port_temp_right_l">811dp</dimen>
+    <dimen name="launcher_port_temp_right_r">1051dp</dimen>
+    <!-- Three equal cards just above the dock. 337dp wide, 12dp apart. -->
+    <dimen name="launcher_port_widget_top">1375dp</dimen>
+    <dimen name="launcher_port_widget_bottom">1595dp</dimen>
+    <dimen name="launcher_port_w1_left">16dp</dimen>
+    <dimen name="launcher_port_w1_right">353dp</dimen>
+    <dimen name="launcher_port_w2_left">365dp</dimen>
+    <dimen name="launcher_port_w2_right">702dp</dimen>
+    <dimen name="launcher_port_w3_left">714dp</dimen>
+    <dimen name="launcher_port_w3_right">1051dp</dimen>
+    <dimen name="launcher_port_widget_off_top">1707dp</dimen>
+    <dimen name="launcher_port_widget_off_bottom">1927dp</dimen>
+    <!-- Apps slide up from below the screen and stop above the dock. -->
+    <dimen name="launcher_port_app_left">16dp</dimen>
+    <dimen name="launcher_port_app_top">92dp</dimen>
+    <dimen name="launcher_port_app_right">1051dp</dimen>
+    <dimen name="launcher_port_app_bottom">1595dp</dimen>
+    <dimen name="launcher_port_app_closed_top">1707dp</dimen>
+    <dimen name="launcher_port_app_closed_bottom">3210dp</dimen>
+    <!-- Map chrome clears the pills, and the widget row when it is showing. -->
+    <dimen name="launcher_port_map_inset_top">84dp</dimen>
+    <dimen name="launcher_port_map_inset_bottom">440dp</dimen>
+    <dimen name="launcher_port_map_inset_bottom_nav">112dp</dimen>
 </resources>

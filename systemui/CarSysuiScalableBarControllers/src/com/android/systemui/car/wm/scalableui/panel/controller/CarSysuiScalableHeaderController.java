@@ -1133,6 +1133,9 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
         mVhalHelper.subscribe(VehiclePropertyIds.HVAC_FAN_SPEED, 0, mHvacCallback);
         readInitialValues();
         refreshAllDisplays();
+        // One watcher for every header instance. It posts orientation_portrait
+        // or orientation_landscape so panel variants follow the display.
+        OrientationLayoutWatcher.start(mContext);
     }
 
     @Override

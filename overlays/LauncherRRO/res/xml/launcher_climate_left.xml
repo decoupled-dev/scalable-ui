@@ -21,8 +21,19 @@
     <Variant id="@+id/hidden" parent="@id/base">
         <Visibility isVisible="false"/>
     </Variant>
+    <Variant id="@+id/portrait" parent="@id/base">
+        <Visibility isVisible="true"/>
+        <Bounds
+            left="@dimen/launcher_pill_edge"
+            top="@dimen/launcher_port_temp_top"
+            right="@dimen/launcher_port_temp_left_r"
+            bottom="@dimen/launcher_port_temp_bottom"/>
+    </Variant>
     <Transitions>
         <Transition onEvent="_System_EnterSuwEvent" toVariant="@id/hidden"/>
         <Transition onEvent="_System_ExitSuwEvent" fromVariant="@id/hidden" toVariant="@id/visible"/>
+        <Transition onEvent="orientation_portrait" fromVariant="@id/visible" toVariant="@id/portrait" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="orientation_landscape" fromVariant="@id/portrait" toVariant="@id/visible" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_EnterSuwEvent" fromVariant="@id/portrait" toVariant="@id/hidden"/>
     </Transitions>
 </DecorPanel>
