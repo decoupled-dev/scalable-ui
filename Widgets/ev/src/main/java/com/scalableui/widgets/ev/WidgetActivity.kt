@@ -10,12 +10,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import com.scalableui.widgets.carprop.CarProps
-import com.scalableui.widgets.ui.ChipRow
-import com.scalableui.widgets.ui.HeroStat
-import com.scalableui.widgets.ui.Muted
-import com.scalableui.widgets.ui.SoftChip
+import com.scalableui.widgets.ui.IconTile
+import com.scalableui.widgets.ui.StatPair
+import com.scalableui.widgets.ui.StatusPill
+import com.scalableui.widgets.ui.WidgetIcons
+import com.scalableui.widgets.ui.WidgetPalettes
 import com.scalableui.widgets.ui.WidgetScreen
 
 open class WidgetActivity : ComponentActivity() {
@@ -62,15 +71,45 @@ private fun EvScreen() {
         onDispose { props.close() }
     }
 
-    WidgetScreen("EV") {
-        HeroStat(percent(levelWh, capacityWh), "Range ${rangeKm(rangeM)}")
-        Muted("Port ${yesNo(connected)}")
-        ChipRow {
-            SoftChip("Port open", portOpen == true) {
+    val battery = batteryStat(levelWh, capacityWh)
+    val range = rangeStat(rangeM)
+    WidgetScreen("EV", WidgetPalettes.Ev, WidgetIcons.Battery) {
+        StatPair(
+            battery.value,
+            battery.caption,
+            range.value,
+            range.caption,
+            Modifier.weight(1f),
+        )
+        StatusPill(
+            chargeStatus(connected, charging),
+            Modifier.padding(bottom = 10.dp),
+        )
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .height(76.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            IconTile(
+                WidgetIcons.Port,
+                "Port",
+                portOpen == true,
+                Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
+            ) {
                 props.setBoolean(VehiclePropertyIds.EV_CHARGE_PORT_OPEN, 0, portOpen != true)
                 read()
             }
-            SoftChip("Charge", charging == true) {
+            IconTile(
+                WidgetIcons.Bolt,
+                "Charge",
+                charging == true,
+                Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
+            ) {
                 props.setBoolean(VehiclePropertyIds.EV_CHARGE_SWITCH, 0, charging != true)
                 read()
             }
@@ -78,17 +117,27 @@ private fun EvScreen() {
     }
 }
 
-private fun percent(levelWh: Float?, capacityWh: Float?): String {
-    if (levelWh == null) return "—"
-    if (capacityWh == null || capacityWh == 0f) return "${levelWh.toInt()} Wh"
-    return "${(levelWh / capacityWh * 100f).toInt()}%"
+private data class Stat(val value: String, val caption: String)
+
+private fun batteryStat(levelWh: Float?, capacityWh: Float?): Stat {
+    if (levelWh == null) return Stat("—", "percent")
+    if (capacityWh == null || capacityWh == 0f) return Stat("${levelWh.toInt()}", "Wh")
+    return Stat("${(levelWh / capacityWh * 100f).toInt()}", "percent")
 }
 
-private fun rangeKm(meters: Float?): String =
-    if (meters == null) "—" else "${(meters / 1000f).toInt()} km"
+private fun rangeStat(meters: Float?): Stat =
+    if (meters == null) Stat("—", "km range") else Stat("${(meters / 1000f).toInt()}", "km range")
 
-private fun yesNo(value: Boolean?): String = when (value) {
-    true -> "yes"
-    false -> "no"
-    null -> "—"
+private fun chargeStatus(connected: Boolean?, charging: Boolean?): String {
+    val charge = when (charging) {
+        true -> "Charging"
+        false -> "Not charging"
+        null -> "Charge —"
+    }
+    val port = when (connected) {
+        true -> "Plugged in"
+        false -> "Unplugged"
+        null -> "Port —"
+    }
+    return "$charge  ·  $port"
 }

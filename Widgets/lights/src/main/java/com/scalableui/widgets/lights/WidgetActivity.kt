@@ -10,10 +10,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import com.scalableui.widgets.carprop.CarProps
-import com.scalableui.widgets.ui.ChipRow
-import com.scalableui.widgets.ui.SoftChip
+import com.scalableui.widgets.ui.IconTile
+import com.scalableui.widgets.ui.WidgetIcons
+import com.scalableui.widgets.ui.WidgetPalettes
 import com.scalableui.widgets.ui.WidgetScreen
 
 private const val Off = 0
@@ -57,34 +67,64 @@ private fun LightsScreen() {
         onDispose { props.close() }
     }
 
-    WidgetScreen("Lights") {
-        ChipRow {
-            Lamp("Cabin", cabin) {
-                props.setInt(VehiclePropertyIds.CABIN_LIGHTS_SWITCH, 0, it)
-                read()
+    WidgetScreen("Lights", WidgetPalettes.Lights, WidgetIcons.Cabin) {
+        Column(
+            Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Row(
+                Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Lamp(WidgetIcons.Cabin, "Cabin", cabin, Modifier.weight(1f).fillMaxHeight()) {
+                    props.setInt(VehiclePropertyIds.CABIN_LIGHTS_SWITCH, 0, it)
+                    read()
+                }
+                Lamp(WidgetIcons.Headlight, "Headlights", head, Modifier.weight(1f).fillMaxHeight()) {
+                    props.setInt(VehiclePropertyIds.HEADLIGHTS_SWITCH, 0, it)
+                    read()
+                }
             }
-            Lamp("Headlights", head) {
-                props.setInt(VehiclePropertyIds.HEADLIGHTS_SWITCH, 0, it)
-                read()
-            }
-        }
-        ChipRow {
-            Lamp("High beam", high) {
-                props.setInt(VehiclePropertyIds.HIGH_BEAM_LIGHTS_SWITCH, 0, it)
-                read()
-            }
-            Lamp("Hazards", hazard) {
-                props.setInt(VehiclePropertyIds.HAZARD_LIGHTS_SWITCH, 0, it)
-                read()
+            Row(
+                Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Lamp(WidgetIcons.HighBeam, "High beam", high, Modifier.weight(1f).fillMaxHeight()) {
+                    props.setInt(VehiclePropertyIds.HIGH_BEAM_LIGHTS_SWITCH, 0, it)
+                    read()
+                }
+                Lamp(
+                    WidgetIcons.Hazard,
+                    "Hazards",
+                    hazard,
+                    Modifier.weight(1f).fillMaxHeight(),
+                    Color(0xFFFF8A80),
+                ) {
+                    props.setInt(VehiclePropertyIds.HAZARD_LIGHTS_SWITCH, 0, it)
+                    read()
+                }
             }
         }
     }
 }
 
 @Composable
-private fun Lamp(label: String, value: Int?, write: (Int) -> Unit) {
+private fun Lamp(
+    icon: ImageVector,
+    label: String,
+    value: Int?,
+    modifier: Modifier,
+    selectedTint: Color? = null,
+    write: (Int) -> Unit,
+) {
     val on = value == On
-    SoftChip(label, on) {
+    IconTile(icon, label, on, modifier, selectedTint) {
         write(if (on) Off else On)
     }
 }

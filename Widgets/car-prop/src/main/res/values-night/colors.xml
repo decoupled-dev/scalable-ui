@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="widget_card">#FF10141C</color>
+    <color name="widget_card">#FF141C24</color>
     <color name="widget_text">#FFFFFFFF</color>
-    <color name="widget_muted">#FFB7BCC4</color>
+    <color name="widget_muted">#B3FFFFFF</color>
     <color name="widget_control">#14FFFFFF</color>
-    <color name="widget_accent">#FF7EB6FF</color>
-    <color name="widget_chip_on">#2E7EB6FF</color>
+    <color name="widget_accent">#FF7EC8FF</color>
+    <color name="widget_chip_on">#337EC8FF</color>
 </resources>

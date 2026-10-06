@@ -6,6 +6,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.util.TypedValue;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -13,13 +15,17 @@ import java.util.Collections;
 import java.util.List;
 
 public class WidgetActivity extends Activity {
+    private static final int SHOWN = 6;
+
     private LinearLayout list;
+    private TextView empty;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.widget);
         list = findViewById(R.id.list);
+        empty = findViewById(R.id.empty);
     }
 
     @Override
@@ -31,31 +37,51 @@ public class WidgetActivity extends Activity {
     private void bind() {
         list.removeAllViews();
         Intent launcher = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER);
-        List<ResolveInfo> apps = getPackageManager().queryIntentActivities(launcher, PackageManager.MATCH_ALL);
-        Collections.sort(apps, (left, right) -> String.valueOf(left.loadLabel(getPackageManager()))
-                .compareToIgnoreCase(String.valueOf(right.loadLabel(getPackageManager()))));
+        PackageManager packages = getPackageManager();
+        List<ResolveInfo> apps = packages.queryIntentActivities(launcher, PackageManager.MATCH_ALL);
+        Collections.sort(apps, (left, right) -> String.valueOf(left.loadLabel(packages))
+                .compareToIgnoreCase(String.valueOf(right.loadLabel(packages))));
         if (apps.isEmpty()) {
-            list.addView(label("No launcher apps"));
+            empty.setVisibility(View.VISIBLE);
+            list.setVisibility(View.GONE);
             return;
         }
+        empty.setVisibility(View.GONE);
+        list.setVisibility(View.VISIBLE);
+        int gap = dp(6);
+        LinearLayout row = null;
         int shown = 0;
         for (ResolveInfo info : apps) {
-            if (shown == 12) {
+            if (shown == SHOWN) {
                 break;
             }
-            list.addView(label(String.valueOf(info.loadLabel(getPackageManager()))));
+            if (shown % 2 == 0) {
+                row = new LinearLayout(this);
+                row.setOrientation(LinearLayout.HORIZONTAL);
+                list.addView(row, new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT));
+            }
+            View cell = getLayoutInflater().inflate(R.layout.app_cell, row, false);
+            ImageView icon = cell.findViewById(R.id.icon);
+            TextView label = cell.findViewById(R.id.label);
+            CharSequence name = info.loadLabel(packages);
+            icon.setImageDrawable(info.loadIcon(packages));
+            label.setText(name);
+            cell.setContentDescription(name);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, dp(56), 1f);
+            params.setMargins(gap, gap, gap, gap);
+            row.addView(cell, params);
             shown++;
+        }
+        if (shown % 2 == 1 && row != null) {
+            View spacer = new View(this);
+            row.addView(spacer, new LinearLayout.LayoutParams(0, dp(56), 1f));
         }
     }
 
-    private TextView label(String text) {
-        TextView view = new TextView(this);
-        view.setText(text);
-        view.setTextAppearance(com.scalableui.widgets.carprop.R.style.Widget_Label);
-        view.setTextColor(getColor(com.scalableui.widgets.carprop.R.color.widget_text));
-        view.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-        int pad = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
-        view.setPadding(0, 0, 0, pad);
-        return view;
+    private int dp(int value) {
+        return (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, value, getResources().getDisplayMetrics());
     }
 }

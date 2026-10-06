@@ -695,6 +695,7 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
         View camera = inflateSystemUiLayout("camera_privacy_chip");
         View mic = inflateSystemUiLayout("mic_privacy_chip");
         int chipWidth = privacyChipWidth();
+        int chipGap = privacyChipGap();
         android.widget.LinearLayout host = new android.widget.LinearLayout(mContext);
         host.setOrientation(android.widget.LinearLayout.HORIZONTAL);
         host.setGravity(Gravity.CENTER_VERTICAL);
@@ -704,7 +705,12 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
             span += chipWidth;
         }
         if (mic != null) {
-            host.addView(mic, chipLayoutParams(chipWidth));
+            android.widget.LinearLayout.LayoutParams micParams = chipLayoutParams(chipWidth);
+            if (span > 0) {
+                micParams.setMarginStart(chipGap);
+                span += chipGap;
+            }
+            host.addView(mic, micParams);
             span += chipWidth;
         }
         if (span == 0) {
@@ -799,6 +805,13 @@ public class CarSysuiScalableHeaderController extends CarSysuiScalableBarControl
         }
         return (int) android.util.TypedValue.applyDimension(
                 android.util.TypedValue.COMPLEX_UNIT_DIP, 56,
+                mContext.getResources().getDisplayMetrics());
+    }
+
+    /** Space between the camera and mic chips when both are showing. */
+    private int privacyChipGap() {
+        return (int) android.util.TypedValue.applyDimension(
+                android.util.TypedValue.COMPLEX_UNIT_DIP, 12,
                 mContext.getResources().getDisplayMetrics());
     }
 

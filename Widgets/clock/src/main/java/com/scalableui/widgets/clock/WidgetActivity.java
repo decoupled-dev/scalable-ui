@@ -57,7 +57,7 @@ public class WidgetActivity extends Activity {
             }
             Boolean mode = props.getBoolean(VehiclePropertyIds.NIGHT_MODE);
             night.setSelected(Boolean.TRUE.equals(mode));
-            night.setText(mode == null ? "Night —" : (mode ? "Night on" : "Night off"));
+            night.setText(mode == null ? "Night —" : (mode ? "Night" : "Day"));
         });
     }
 

@@ -8,16 +8,23 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.scalableui.widgets.ui.Body
+import com.scalableui.widgets.ui.CallLine
 import com.scalableui.widgets.ui.Muted
+import com.scalableui.widgets.ui.WidgetIcons
+import com.scalableui.widgets.ui.WidgetPalettes
 import com.scalableui.widgets.ui.WidgetScreen
 import java.text.DateFormat
 import java.util.Date
@@ -45,14 +52,23 @@ private fun PhoneScreen() {
             PackageManager.PERMISSION_GRANTED
         if (granted) rows = loadCalls(context) else request.launch(Manifest.permission.READ_CALL_LOG)
     }
-    WidgetScreen("Phone") {
+    WidgetScreen("Phone", WidgetPalettes.Phone, WidgetIcons.Phone) {
         if (rows.isEmpty()) {
-            Muted("No recent calls")
+            Box(
+                Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center,
+            ) {
+                Muted("No recent calls")
+            }
         } else {
-            rows.forEach { row ->
-                Column {
-                    Body(row.title)
-                    Muted(row.whenText)
+            Column(
+                Modifier.weight(1f),
+                verticalArrangement = Arrangement.SpaceEvenly,
+            ) {
+                rows.take(4).forEach { row ->
+                    CallLine(row.title, row.whenText)
                 }
             }
         }

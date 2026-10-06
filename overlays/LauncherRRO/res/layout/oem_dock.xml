@@ -2,7 +2,8 @@
 <!--
   Floating dock. FooterController selects this name when the panel id is oem_dock.
   System navigation on the left, app shortcuts on the right, a hairline between.
-  Width is sized to the content in launcher_dock_half_width.
+  Width grows with pinned apps. launcher_dock_half_width is the recent slot
+  and no pins; dock_pins_1..4 widen the capsule.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -58,4 +59,17 @@
         style="@style/LauncherDockIcon"
         android:contentDescription="@string/launcher_dock_settings"
         android:src="@drawable/ic_dock_settings" />
+
+    <View
+        style="@style/LauncherDockDivider"
+        android:importantForAccessibility="no" />
+
+    <!-- Last app that came to the front. Pin broadcasts append icons after it. -->
+    <ImageButton
+        android:id="@+id/oem_dock_recent"
+        style="@style/LauncherDockIcon"
+        android:alpha="0.45"
+        android:contentDescription="@string/launcher_dock_recent"
+        android:padding="14dp"
+        android:src="@drawable/ic_dock_recent" />
 </LinearLayout>

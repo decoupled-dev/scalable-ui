@@ -5565,6 +5565,33 @@
 
     move-result-object p1
 
+    if-eqz v5, :cond_mic_gap
+
+    iget-object v6, p0, Lcom/android/systemui/car/wm/scalableui/panel/controller/CarSysuiScalableHeaderController;->mContext:Landroid/content/Context;
+
+    invoke-virtual {v6}, Landroid/content/Context;->getResources()Landroid/content/res/Resources;
+
+    move-result-object v6
+
+    invoke-virtual {v6}, Landroid/content/res/Resources;->getDisplayMetrics()Landroid/util/DisplayMetrics;
+
+    move-result-object v6
+
+    const/4 v7, 0x1
+
+    const/high16 v8, 0x41400000    # 12.0f
+
+    invoke-static {v7, v8, v6}, Landroid/util/TypedValue;->applyDimension(IFLandroid/util/DisplayMetrics;)F
+
+    move-result v6
+
+    float-to-int v6, v6
+
+    invoke-virtual {p1, v6}, Landroid/view/ViewGroup$MarginLayoutParams;->setMarginStart(I)V
+
+    add-int/2addr v5, v6
+
+    :cond_mic_gap
     invoke-virtual {v3, v1, p1}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
 
     .line 723

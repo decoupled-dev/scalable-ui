@@ -14,4 +14,7 @@
     <item target="dimen/privacy_chip_width" value="@dimen/privacy_chip_width"/>
     <item target="dimen/privacy_chip_horizontal_padding" value="@dimen/privacy_chip_horizontal_padding"/>
     <item target="dimen/privacy_chip_vertical_padding" value="@dimen/privacy_chip_vertical_padding"/>
+    <!-- Stock glyphs follow the car dark-theme on-surface gray. Match the pill text. -->
+    <item target="color/privacy_chip_dark_icon_color" value="@color/launcher_on_surface"/>
+    <item target="color/privacy_chip_light_icon_color" value="@color/launcher_on_surface"/>
 </overlay>

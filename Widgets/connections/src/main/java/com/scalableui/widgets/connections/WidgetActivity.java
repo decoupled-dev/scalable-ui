@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 public class WidgetActivity extends Activity {
@@ -23,8 +24,10 @@ public class WidgetActivity extends Activity {
 
     private WifiManager wifiManager;
     private BluetoothAdapter bluetooth;
-    private TextView wifi;
-    private TextView bluetoothSwitch;
+    private View wifiTile;
+    private View bluetoothTile;
+    private TextView wifiState;
+    private TextView bluetoothState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,10 +36,12 @@ public class WidgetActivity extends Activity {
         wifiManager = getSystemService(WifiManager.class);
         BluetoothManager manager = getSystemService(BluetoothManager.class);
         bluetooth = manager == null ? null : manager.getAdapter();
-        wifi = findViewById(R.id.wifi);
-        bluetoothSwitch = findViewById(R.id.bluetooth);
-        wifi.setOnClickListener(v -> setWifi(!wifi.isSelected()));
-        bluetoothSwitch.setOnClickListener(v -> setBluetooth(!bluetoothSwitch.isSelected()));
+        wifiTile = findViewById(R.id.wifi);
+        bluetoothTile = findViewById(R.id.bluetooth);
+        wifiState = findViewById(R.id.wifi_state);
+        bluetoothState = findViewById(R.id.bluetooth_state);
+        wifiTile.setOnClickListener(v -> setWifi(!wifiTile.isSelected()));
+        bluetoothTile.setOnClickListener(v -> setBluetooth(!bluetoothTile.isSelected()));
     }
 
     @Override
@@ -66,8 +71,8 @@ public class WidgetActivity extends Activity {
 
     private void bind() {
         boolean wifiOn = wifiManager != null && wifiManager.isWifiEnabled();
-        wifi.setSelected(wifiOn);
-        wifi.setText(wifiOn ? "Wi-Fi on" : "Wi-Fi off");
+        wifiTile.setSelected(wifiOn);
+        wifiState.setText(wifiOn ? "On" : "Off");
         boolean btOn = false;
         if (bluetooth != null
                 && checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
@@ -76,8 +81,8 @@ public class WidgetActivity extends Activity {
             } catch (SecurityException ignored) {
             }
         }
-        bluetoothSwitch.setSelected(btOn);
-        bluetoothSwitch.setText(btOn ? "Bluetooth on" : "Bluetooth off");
+        bluetoothTile.setSelected(btOn);
+        bluetoothState.setText(btOn ? "On" : "Off");
     }
 
     @SuppressWarnings("deprecation")

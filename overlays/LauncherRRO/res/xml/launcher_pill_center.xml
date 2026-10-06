@@ -42,6 +42,12 @@
             bottom="100%"
             bottomOffset="@dimen/launcher_dock_bottom_margin"/>
     </Variant>
+
+    <!-- T-Rex keeps this pill where config 0 puts it, with a 16dp corner. -->
+    <Variant id="@+id/layout_v3" parent="@id/base">
+        <Visibility isVisible="true"/>
+        <Corner radius="@dimen/launcher_v3_pill_corner"/>
+    </Variant>
     <Transitions>
         <Transition onEvent="_System_EnterSuwEvent" toVariant="@id/hidden"/>
         <Transition onEvent="_System_ExitSuwEvent" fromVariant="@id/hidden" toVariant="@id/visible"/>
@@ -50,7 +56,15 @@
         <Transition onEvent="_System_EnterSuwEvent" fromVariant="@id/portrait" toVariant="@id/hidden"/>
         <Transition onEvent="layout_variant_1" fromVariant="@id/visible" toVariant="@id/layout_v1" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         <Transition onEvent="layout_variant_0" fromVariant="@id/layout_v1" toVariant="@id/visible" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="layout_variant_2" fromVariant="@id/layout_v1" toVariant="@id/visible" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         <Transition onEvent="orientation_portrait" fromVariant="@id/layout_v1" toVariant="@id/portrait" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         <Transition onEvent="_System_EnterSuwEvent" fromVariant="@id/layout_v1" toVariant="@id/hidden"/>
+        <Transition onEvent="layout_variant_3" fromVariant="@id/visible" toVariant="@id/layout_v3" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="layout_variant_3" fromVariant="@id/layout_v1" toVariant="@id/layout_v3" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="layout_variant_3" fromVariant="@id/hidden" toVariant="@id/layout_v3" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="layout_variant_0" fromVariant="@id/layout_v3" toVariant="@id/visible" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="layout_variant_1" fromVariant="@id/layout_v3" toVariant="@id/layout_v1" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="layout_variant_2" fromVariant="@id/layout_v3" toVariant="@id/visible" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="orientation_portrait" fromVariant="@id/layout_v3" toVariant="@id/portrait" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
     </Transitions>
 </DecorPanel>

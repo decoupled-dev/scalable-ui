@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="widget_card">#FFFFFFFF</color>
+    <!-- Cards sit on the map and use the same dark washes as climate, media, and vehicle. -->
+    <color name="widget_card">#FF141C24</color>
     <color name="widget_panel">@color/widget_card</color>
-    <color name="widget_text">#FF1A1C1E</color>
-    <color name="widget_muted">#FF3E4752</color>
-    <color name="widget_control">#FFF1F3F6</color>
-    <color name="widget_accent">#FF1565C0</color>
-    <color name="widget_chip_on">#381565C0</color>
+    <color name="widget_text">#FFFFFFFF</color>
+    <color name="widget_muted">#B3FFFFFF</color>
+    <color name="widget_control">#14FFFFFF</color>
+    <color name="widget_accent">#FF7EC8FF</color>
+    <color name="widget_chip_on">#337EC8FF</color>
+    <color name="widget_accent_mint">#FF8EE6C5</color>
+    <color name="widget_accent_gold">#FFE8B86D</color>
+    <color name="widget_accent_green">#FF7DCEA0</color>
+    <color name="widget_accent_blue">#FF7EC8FF</color>
+    <color name="widget_hairline">#33FFFFFF</color>
 </resources>

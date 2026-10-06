@@ -16,6 +16,15 @@
     <string name="launcher_climate_component" translatable="false">com.test.design/.presentation.ivi.glanceables.ClimateHomePanelActivity</string>
     <string name="launcher_media_component" translatable="false">com.test.design/.presentation.ivi.glanceables.MediaHomePanelActivity</string>
     <string name="launcher_stats_component" translatable="false">com.test.design/.presentation.ivi.glanceables.VehicleHomePanelActivity</string>
+    <!-- Eight hosted widgets. Variant 2 pages them through the right column, three at a time. -->
+    <string name="launcher_w_ev_component" translatable="false">com.scalableui.widgets.ev/.WidgetActivity</string>
+    <string name="launcher_w_lights_component" translatable="false">com.scalableui.widgets.lights/.WidgetActivity</string>
+    <string name="launcher_w_phone_component" translatable="false">com.scalableui.widgets.phone/.WidgetActivity</string>
+    <string name="launcher_w_seats_component" translatable="false">com.scalableui.widgets.seats/.WidgetActivity</string>
+    <string name="launcher_w_user_component" translatable="false">com.scalableui.widgets.user/.WidgetActivity</string>
+    <string name="launcher_w_clock_component" translatable="false">com.scalableui.widgets.clock/.WidgetActivity</string>
+    <string name="launcher_w_apps_component" translatable="false">com.scalableui.widgets.apps/.WidgetActivity</string>
+    <string name="launcher_w_connections_component" translatable="false">com.scalableui.widgets.connections/.WidgetActivity</string>
 
     <!-- Header pills. -->
     <string name="launcher_dark_theme" translatable="false">Dark theme</string>
@@ -34,6 +43,7 @@
     <string name="launcher_dock_climate" translatable="false">Climate</string>
     <string name="launcher_dock_vehicle" translatable="false">Vehicle</string>
     <string name="launcher_dock_settings" translatable="false">Car settings</string>
+    <string name="launcher_dock_recent" translatable="false">Recent app</string>
 
     <!-- Temperature pills. The controller replaces the placeholder once VHAL reports. -->
     <string name="launcher_temp_down" translatable="false">Decrease temperature</string>

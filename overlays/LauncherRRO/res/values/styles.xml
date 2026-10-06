@@ -15,10 +15,13 @@
         <item name="android:scaleType">fitCenter</item>
     </style>
 
-    <!-- Dock circles use a 20dp gap. Temperature pills keep the 12dp margin. -->
+    <!-- Dock glyphs are full-color. No filled circle behind them.
+         Temperature pills keep LauncherDockButton and its filled disc. -->
     <style name="LauncherDockIcon" parent="LauncherDockButton">
         <item name="android:layout_marginStart">@dimen/launcher_dock_icon_margin</item>
         <item name="android:layout_marginEnd">@dimen/launcher_dock_icon_margin</item>
+        <item name="android:background">@drawable/launcher_dock_icon_ripple</item>
+        <item name="android:padding">@dimen/launcher_dock_icon_padding</item>
     </style>
 
     <!-- Thin vertical rule between the system nav group and the shortcuts. -->

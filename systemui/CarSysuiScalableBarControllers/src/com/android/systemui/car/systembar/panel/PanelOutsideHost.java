@@ -43,7 +43,8 @@ public final class PanelOutsideHost {
         if ((abs & Gravity.HORIZONTAL_GRAVITY_MASK) == Gravity.RIGHT) {
             x = loc[0] + anchor.getWidth() - popupWidth + xOff;
         }
-        int y = loc[1] + anchor.getHeight() + yOff;
+        int anchorTop = loc[1];
+        int y = anchorTop + anchor.getHeight() + yOff;
         int margin = Math.round(16f * anchor.getResources().getDisplayMetrics().density);
         // The panel is wider than any pill, so it follows the side the anchor
         // sits on: left-pill controls open on the left edge, the profile pill
@@ -54,6 +55,15 @@ public final class PanelOutsideHost {
         } else {
             x = Math.max(0, screen.x - popupWidth - margin);
         }
+        // Variant 1 parks the status pills on the bottom edge. Opening under
+        // that dock puts the panel off-screen. Gravity.BOTTOM offsets from the
+        // screen bottom, so the panel's lower edge sits just above the icon
+        // without needing the popup's height.
+        int showGravity = Gravity.TOP | Gravity.LEFT;
+        if (anchorTop > screen.y / 2) {
+            showGravity = Gravity.BOTTOM | Gravity.LEFT;
+            y = screen.y - anchorTop + margin;
+        }
         if (y < 0) {
             y = 0;
         }
@@ -61,7 +71,7 @@ public final class PanelOutsideHost {
         Log.i("CarSysuiHeaderCtrl", "privacy panel at " + x + "," + y
                 + " size " + popupWidth + " screen " + screen.x
                 + " anchor " + loc[0] + "," + loc[1]);
-        popup.showAtLocation(host, Gravity.TOP | Gravity.LEFT, x, y);
+        popup.showAtLocation(host, showGravity, x, y);
     }
 
     private static View ensureHost(Context context) {

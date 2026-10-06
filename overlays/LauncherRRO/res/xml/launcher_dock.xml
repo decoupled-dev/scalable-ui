@@ -41,6 +41,79 @@
             bottom="100%"
             bottomOffset="@dimen/launcher_dock_bottom_margin"/>
     </Variant>
+    <!-- Wider capsules as apps are pinned. pins_0 is the visible variant. -->
+    <Variant id="@+id/pins_1" parent="@id/visible">
+        <Bounds
+            left="50%"
+            leftOffset="@dimen/launcher_dock_half_1"
+            top="100%"
+            topOffset="@dimen/launcher_dock_top_offset"
+            right="50%"
+            rightOffset="@dimen/launcher_dock_half_1"
+            bottom="100%"
+            bottomOffset="@dimen/launcher_dock_bottom_margin"/>
+    </Variant>
+    <Variant id="@+id/pins_2" parent="@id/visible">
+        <Bounds
+            left="50%"
+            leftOffset="@dimen/launcher_dock_half_2"
+            top="100%"
+            topOffset="@dimen/launcher_dock_top_offset"
+            right="50%"
+            rightOffset="@dimen/launcher_dock_half_2"
+            bottom="100%"
+            bottomOffset="@dimen/launcher_dock_bottom_margin"/>
+    </Variant>
+    <Variant id="@+id/pins_3" parent="@id/visible">
+        <Bounds
+            left="50%"
+            leftOffset="@dimen/launcher_dock_half_3"
+            top="100%"
+            topOffset="@dimen/launcher_dock_top_offset"
+            right="50%"
+            rightOffset="@dimen/launcher_dock_half_3"
+            bottom="100%"
+            bottomOffset="@dimen/launcher_dock_bottom_margin"/>
+    </Variant>
+    <Variant id="@+id/pins_4" parent="@id/visible">
+        <Bounds
+            left="50%"
+            leftOffset="@dimen/launcher_dock_half_4"
+            top="100%"
+            topOffset="@dimen/launcher_dock_top_offset"
+            right="50%"
+            rightOffset="@dimen/launcher_dock_half_4"
+            bottom="100%"
+            bottomOffset="@dimen/launcher_dock_bottom_margin"/>
+    </Variant>
+    <Variant id="@+id/pins_port_1" parent="@id/portrait">
+        <Bounds
+            left="@dimen/launcher_port_dock_left_1"
+            top="@dimen/launcher_port_dock_top"
+            right="@dimen/launcher_port_dock_right_1"
+            bottom="@dimen/launcher_port_dock_bottom"/>
+    </Variant>
+    <Variant id="@+id/pins_port_2" parent="@id/portrait">
+        <Bounds
+            left="@dimen/launcher_port_dock_left_2"
+            top="@dimen/launcher_port_dock_top"
+            right="@dimen/launcher_port_dock_right_2"
+            bottom="@dimen/launcher_port_dock_bottom"/>
+    </Variant>
+    <Variant id="@+id/pins_port_3" parent="@id/portrait">
+        <Bounds
+            left="@dimen/launcher_port_dock_left_3"
+            top="@dimen/launcher_port_dock_top"
+            right="@dimen/launcher_port_dock_right_3"
+            bottom="@dimen/launcher_port_dock_bottom"/>
+    </Variant>
+    <Variant id="@+id/pins_port_4" parent="@id/portrait">
+        <Bounds
+            left="@dimen/launcher_port_dock_left_4"
+            top="@dimen/launcher_port_dock_top"
+            right="@dimen/launcher_port_dock_right_4"
+            bottom="@dimen/launcher_port_dock_bottom"/>
+    </Variant>
     <Transitions>
         <Transition onEvent="_System_EnterSuwEvent" toVariant="@id/hidden"/>
         <Transition onEvent="_System_ExitSuwEvent" fromVariant="@id/hidden" toVariant="@id/visible"/>
@@ -49,7 +122,40 @@
         <Transition onEvent="_System_EnterSuwEvent" fromVariant="@id/portrait" toVariant="@id/hidden"/>
         <Transition onEvent="layout_variant_1" fromVariant="@id/visible" toVariant="@id/layout_v1" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         <Transition onEvent="layout_variant_0" fromVariant="@id/layout_v1" toVariant="@id/visible" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="layout_variant_2" fromVariant="@id/layout_v1" toVariant="@id/visible" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         <Transition onEvent="orientation_portrait" fromVariant="@id/layout_v1" toVariant="@id/portrait" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         <Transition onEvent="_System_EnterSuwEvent" fromVariant="@id/layout_v1" toVariant="@id/hidden"/>
+        <Transition onEvent="layout_variant_3" fromVariant="@id/visible" toVariant="@id/visible" duration="0"/>
+        <Transition onEvent="layout_variant_3" fromVariant="@id/layout_v1" toVariant="@id/visible" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="dock_pins_0" toVariant="@id/visible" duration="200" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="dock_pins_1" toVariant="@id/pins_1" duration="200" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="dock_pins_2" toVariant="@id/pins_2" duration="200" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="dock_pins_3" toVariant="@id/pins_3" duration="200" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="dock_pins_4" toVariant="@id/pins_4" duration="200" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="dock_pins_port_0" toVariant="@id/portrait" duration="200" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="dock_pins_port_1" toVariant="@id/pins_port_1" duration="200" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="dock_pins_port_2" toVariant="@id/pins_port_2" duration="200" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="dock_pins_port_3" toVariant="@id/pins_port_3" duration="200" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="dock_pins_port_4" toVariant="@id/pins_port_4" duration="200" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="orientation_portrait" fromVariant="@id/pins_1" toVariant="@id/portrait" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="orientation_portrait" fromVariant="@id/pins_2" toVariant="@id/portrait" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="orientation_portrait" fromVariant="@id/pins_3" toVariant="@id/portrait" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="orientation_portrait" fromVariant="@id/pins_4" toVariant="@id/portrait" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="orientation_landscape" fromVariant="@id/pins_port_1" toVariant="@id/visible" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="orientation_landscape" fromVariant="@id/pins_port_2" toVariant="@id/visible" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="orientation_landscape" fromVariant="@id/pins_port_3" toVariant="@id/visible" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="orientation_landscape" fromVariant="@id/pins_port_4" toVariant="@id/visible" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="layout_variant_1" fromVariant="@id/pins_1" toVariant="@id/layout_v1" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="layout_variant_1" fromVariant="@id/pins_2" toVariant="@id/layout_v1" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="layout_variant_1" fromVariant="@id/pins_3" toVariant="@id/layout_v1" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="layout_variant_1" fromVariant="@id/pins_4" toVariant="@id/layout_v1" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_EnterSuwEvent" fromVariant="@id/pins_1" toVariant="@id/hidden"/>
+        <Transition onEvent="_System_EnterSuwEvent" fromVariant="@id/pins_2" toVariant="@id/hidden"/>
+        <Transition onEvent="_System_EnterSuwEvent" fromVariant="@id/pins_3" toVariant="@id/hidden"/>
+        <Transition onEvent="_System_EnterSuwEvent" fromVariant="@id/pins_4" toVariant="@id/hidden"/>
+        <Transition onEvent="_System_EnterSuwEvent" fromVariant="@id/pins_port_1" toVariant="@id/hidden"/>
+        <Transition onEvent="_System_EnterSuwEvent" fromVariant="@id/pins_port_2" toVariant="@id/hidden"/>
+        <Transition onEvent="_System_EnterSuwEvent" fromVariant="@id/pins_port_3" toVariant="@id/hidden"/>
+        <Transition onEvent="_System_EnterSuwEvent" fromVariant="@id/pins_port_4" toVariant="@id/hidden"/>
     </Transitions>
 </DecorPanel>

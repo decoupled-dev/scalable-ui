@@ -1,39 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/widget_card"
-    android:fillViewport="true">
+    android:background="@drawable/widget_bg_night"
+    android:orientation="vertical"
+    android:paddingStart="16dp"
+    android:paddingTop="14dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="16dp">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingLeft="20dp"
-        android:paddingTop="16dp"
-        android:paddingRight="20dp"
-        android:paddingBottom="16dp">
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_widget_clock"
+            android:tint="@color/widget_accent_gold" />
+
         <TextView
-            style="@style/Widget.Title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="8dp"
-            android:text="Clock" />
-        <TextView
-            android:id="@+id/time"
-            style="@style/Widget.Hero"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/date"
-            style="@style/Widget.Label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="2dp" />
-        <TextView
-            android:id="@+id/night"
-            style="@style/Widget.Chip"
+            style="@style/Widget.Header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp" />
+            android:layout_marginStart="8dp"
+            android:text="Clock"
+            android:textColor="@color/widget_accent_gold" />
     </LinearLayout>
-</ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/time"
+            style="@style/Widget.Time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="--:--" />
+
+        <TextView
+            android:id="@+id/date"
+            style="@style/Widget.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/night"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/widget_pill"
+        android:drawableStart="@drawable/ic_widget_moon"
+        android:drawablePadding="8dp"
+        android:drawableTint="@color/widget_accent_gold"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:paddingStart="14dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="14dp"
+        android:paddingBottom="8dp"
+        android:text="Night"
+        android:textColor="@color/widget_accent_gold"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+</LinearLayout>

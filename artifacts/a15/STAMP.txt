@@ -1,0 +1,4 @@
+platform=android-15 (API 35)
+build_tools=36.0.0
+source_branch=a15
+built=2026-10-05T18:35:13+09:00

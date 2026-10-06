@@ -376,6 +376,9 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
         bindMediaControls(root);
         wireClickListeners();
         wireOptionalLaunches(root);
+        if ("oem_dock".equals(mPanelId)) {
+            DockPins.attach(root);
+        }
     }
 
     private void bindFooterNav(View root) {
@@ -1481,6 +1484,10 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
             Log.w(TAG, "launchHome blocked — fully UX restricted");
             return;
         }
+        if (LayoutVariantWatcher.isTrex(mContext)) {
+            launchTrexHome();
+            return;
+        }
         Log.i(TAG, "launchHome user=" + ActivityManager.getCurrentUser()
                 + " panel=" + mPanelId
                 + " mapFs=" + isMapPanelFullscreen());
@@ -1688,8 +1695,32 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
         if (mFullyRestricted) {
             return;
         }
+        if (LayoutVariantWatcher.isTrex(mContext)) {
+            Log.i(TAG, "trex_nav");
+            mMapFullscreen = true;
+            LayoutVariantWatcher.selectTrexMode(LayoutVariantWatcher.TREX_NAV);
+            removeOverlayTasks();
+            restoreTrexModeLater();
+            return;
+        }
         Log.i(TAG, "toggle_fullscreen");
         dispatchScalableEvent("toggle_fullscreen");
+    }
+
+    /** Wallpaper plus the three home cards. Vehicle, settings, and launched apps close. */
+    private void launchTrexHome() {
+        Log.i(TAG, "trex_home");
+        mMapFullscreen = false;
+        LayoutVariantWatcher.selectTrexMode(LayoutVariantWatcher.TREX_HOME);
+        removeOverlayTasks();
+        restoreTrexModeLater();
+    }
+
+    /** Empty events from the tasks just removed can land mid-transition. */
+    private void restoreTrexModeLater() {
+        if (mView != null) {
+            mView.postDelayed(LayoutVariantWatcher::restoreTrexMode, 500);
+        }
     }
 
     /** Expected OEM map_panel opened bounds (matches OemDemoRRO map_panel.xml). */
@@ -2323,11 +2354,17 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
     /** Opens the Car Settings homepage in the app panel. */
     private void launchCarSettings() {
         Log.i(TAG, "launchCarSettings");
+        if (LayoutVariantWatcher.isTrex(mContext)) {
+            LayoutVariantWatcher.selectTrexMode(LayoutVariantWatcher.TREX_SPLIT);
+        }
         startComponent(
                 "com.android.car.settings/.common.CarSettingActivities$HomepageActivity");
     }
 
     private void launchCarStatus() {
+        if (LayoutVariantWatcher.isTrex(mContext)) {
+            LayoutVariantWatcher.selectTrexMode(LayoutVariantWatcher.TREX_VEHICLE);
+        }
         // Design Vehicle panel — explicit component avoids shared-action chooser.
         if (startDesignPanel(DESIGN_ACTION_OPEN_VEHICLE, DESIGN_VEHICLE_COMPONENT)) {
             Log.i(TAG, "launchCarStatus → Design VehiclePanelActivity");

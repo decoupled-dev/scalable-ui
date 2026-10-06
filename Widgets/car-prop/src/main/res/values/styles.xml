@@ -1,27 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Widget.Title" parent="@android:style/TextAppearance">
-        <item name="android:textSize">22sp</item>
-        <item name="android:textColor">@color/widget_text</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
+    <style name="Widget" parent="@android:style/TextAppearance" />
+
+    <style name="Widget.Header">
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.12</item>
+        <item name="android:includeFontPadding">false</item>
     </style>
-    <style name="Widget.Hero" parent="@android:style/TextAppearance">
+
+    <style name="Widget.Hero">
+        <item name="android:textColor">@color/widget_text</item>
         <item name="android:textSize">40sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="Widget.Time">
         <item name="android:textColor">@color/widget_text</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">48sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:includeFontPadding">false</item>
     </style>
-    <style name="Widget.Label" parent="@android:style/TextAppearance">
-        <item name="android:textSize">14sp</item>
+
+    <style name="Widget.Stat">
+        <item name="android:textColor">@color/widget_text</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="Widget.Caption">
         <item name="android:textColor">@color/widget_muted</item>
+        <item name="android:textSize">13sp</item>
     </style>
-    <style name="Widget.Chip" parent="@android:style/TextAppearance">
-        <item name="android:background">@drawable/widget_chip_bg</item>
-        <item name="android:paddingLeft">12dp</item>
-        <item name="android:paddingRight">12dp</item>
-        <item name="android:paddingTop">6dp</item>
-        <item name="android:paddingBottom">6dp</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@color/widget_chip_text</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
+
+    <style name="Widget.Label">
+        <item name="android:textColor">@color/widget_text</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Widget.TileTitle">
+        <item name="android:textColor">@color/widget_text</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:includeFontPadding">false</item>
     </style>
 </resources>

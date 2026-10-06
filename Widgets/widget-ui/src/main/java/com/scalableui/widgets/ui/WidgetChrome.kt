@@ -1,140 +1,287 @@
 package com.scalableui.widgets.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.geometry.Offset
 
-/** Same surfaces as the design demo home cards. */
-data class WidgetColors(
-    val light: Boolean,
-    val title: Color,
-    val label: Color,
-    val card: Color,
-    val control: Color,
-    val track: Color,
+/**
+ * Dark diagonal washes matching the climate, media, and vehicle cards.
+ * The panel clips the window, so the fill is full-bleed.
+ */
+data class WidgetPalette(
     val accent: Color,
+    val gradientTop: Color,
+    val gradientBottom: Color,
 )
 
-private val Dark = WidgetColors(
-    light = false,
-    title = Color.White,
-    label = Color(0xFFB7BCC4),
-    card = Color(0xFF10141C),
-    control = Color.White.copy(alpha = 0.08f),
-    track = Color.White.copy(alpha = 0.14f),
-    accent = Color(0xFF7EB6FF),
-)
+object WidgetPalettes {
+    val Ev = WidgetPalette(Color(0xFF8EE6C5), Color(0xFF22303C), Color(0xFF141C24))
+    val Lights = WidgetPalette(Color(0xFFE8B86D), Color(0xFF483428), Color(0xFF2A1E18))
+    val Phone = WidgetPalette(Color(0xFF7DCEA0), Color(0xFF1E3A2C), Color(0xFF12241C))
+    val Seats = WidgetPalette(Color(0xFF7EC8FF), Color(0xFF1E3348), Color(0xFF142230))
+}
 
-private val Light = WidgetColors(
-    light = true,
-    title = Color(0xFF1A1C1E),
-    label = Color(0xFF3E4752),
-    card = Color.White,
-    control = Color(0xFFF1F3F6),
-    track = Color(0xFFE3E6EB),
-    accent = Color(0xFF1565C0),
-)
+private val On = Color.White
+private val MutedColor = Color(0xB3FFFFFF)
+private val Hairline = Color(0x33FFFFFF)
+private val TileFill = Color(0x14FFFFFF)
+private val LocalPalette = staticCompositionLocalOf { WidgetPalettes.Ev }
 
-private val LocalWidgetColors = staticCompositionLocalOf { Dark }
+private val TileShape = RoundedCornerShape(20.dp)
 
 @Composable
-fun widgetColors(): WidgetColors = if (isSystemInDarkTheme()) Dark else Light
+fun widgetAccent(): Color = LocalPalette.current.accent
 
 @Composable
 fun WidgetScreen(
     title: String,
+    palette: WidgetPalette,
+    icon: ImageVector,
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    val colors = widgetColors()
-    CompositionLocalProvider(LocalWidgetColors provides colors) {
+    CompositionLocalProvider(LocalPalette provides palette) {
         Column(
             modifier
                 .fillMaxSize()
-                .background(colors.card)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp, vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+                .cardGradient(palette)
+                .padding(start = 16.dp, end = 16.dp, top = 14.dp, bottom = 16.dp),
         ) {
-            Text(
-                text = title,
-                color = colors.title,
-                fontSize = 22.sp,
-                fontWeight = FontWeight.SemiBold,
-            )
+            WidgetHeader(title, icon)
+            Spacer(Modifier.height(10.dp))
             content()
         }
     }
 }
 
 @Composable
-fun HeroStat(value: String, caption: String) {
-    val colors = LocalWidgetColors.current
-    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        Text(value, color = colors.title, fontSize = 40.sp, fontWeight = FontWeight.SemiBold)
-        Text(caption, color = colors.label, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+private fun WidgetHeader(title: String, icon: ImageVector) {
+    val accent = LocalPalette.current.accent
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = accent,
+            modifier = Modifier.size(18.dp),
+        )
+        Text(
+            text = title.uppercase(),
+            color = accent,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = 0.12.em,
+            modifier = Modifier.padding(start = 8.dp),
+        )
     }
 }
 
 @Composable
-fun Muted(text: String) {
-    Text(text, color = LocalWidgetColors.current.label, fontSize = 14.sp, fontWeight = FontWeight.Medium)
-}
-
-@Composable
-fun Body(text: String) {
-    Text(text, color = LocalWidgetColors.current.title, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
-}
-
-@Composable
-fun ChipRow(content: @Composable () -> Unit) {
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        content()
-    }
-}
-
-@Composable
-fun SoftChip(
-    text: String,
-    selected: Boolean,
+fun StatPair(
+    leftValue: String,
+    leftCaption: String,
+    rightValue: String,
+    rightCaption: String,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit,
 ) {
-    val colors = LocalWidgetColors.current
-    val tint = colors.accent
-    val label = if (selected && colors.light) lerp(tint, colors.title, 0.45f) else tint
+    Row(
+        modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        GlanceStat(leftValue, leftCaption, Modifier.weight(1f))
+        Box(
+            Modifier
+                .width(1.dp)
+                .height(40.dp)
+                .background(Hairline),
+        )
+        GlanceStat(rightValue, rightCaption, Modifier.weight(1f))
+    }
+}
+
+@Composable
+fun GlanceStat(value: String, caption: String, modifier: Modifier = Modifier) {
+    Column(
+        modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = value,
+            color = On,
+            fontSize = 36.sp,
+            fontWeight = FontWeight.Bold,
+            lineHeight = 40.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Text(
+            text = caption,
+            color = MutedColor,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.padding(top = 2.dp),
+        )
+    }
+}
+
+@Composable
+fun StatusPill(text: String, modifier: Modifier = Modifier) {
     Text(
         text = text,
-        color = if (selected) label else colors.title,
-        fontSize = 16.sp,
-        fontWeight = FontWeight.SemiBold,
+        color = LocalPalette.current.accent,
+        fontSize = 13.sp,
+        fontWeight = FontWeight.Bold,
+        textAlign = TextAlign.Center,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
         modifier = modifier
-            .clip(RoundedCornerShape(10.dp))
-            .background(if (selected) tint.copy(alpha = if (colors.light) 0.22f else 0.18f) else colors.control)
-            .clickable(onClick = onClick)
-            .padding(horizontal = 12.dp, vertical = 6.dp),
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(14.dp))
+            .background(Color(0x28FFFFFF))
+            .padding(horizontal = 12.dp, vertical = 8.dp),
     )
 }
 
 @Composable
-fun sliderColors(): WidgetColors = LocalWidgetColors.current
+fun IconTile(
+    icon: ImageVector,
+    label: String,
+    selected: Boolean,
+    modifier: Modifier = Modifier,
+    selectedTint: Color? = null,
+    onClick: () -> Unit,
+) {
+    val tint = if (selected) selectedTint ?: LocalPalette.current.accent else On
+    val fill = if (selected) tint.copy(alpha = 0.22f) else TileFill
+    val stroke = if (selected) tint.copy(alpha = 0.55f) else Color(0x28FFFFFF)
+    Column(
+        modifier
+            .clip(TileShape)
+            .background(fill)
+            .border(1.dp, stroke, TileShape)
+            .clickable(role = Role.Switch, onClick = onClick)
+            .semantics {
+                role = Role.Switch
+                this.selected = selected
+            }
+            .padding(horizontal = 8.dp, vertical = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = tint,
+            modifier = Modifier.size(28.dp),
+        )
+        Text(
+            text = label,
+            color = tint,
+            fontSize = 13.sp,
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(top = 6.dp),
+        )
+    }
+}
+
+@Composable
+fun CallLine(name: String, whenText: String) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .height(48.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(
+            Modifier
+                .size(36.dp)
+                .clip(CircleShape)
+                .background(Color(0x24FFFFFF)),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                imageVector = WidgetIcons.Phone,
+                contentDescription = null,
+                tint = LocalPalette.current.accent,
+                modifier = Modifier.size(18.dp),
+            )
+        }
+        Text(
+            text = name,
+            color = On,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 12.dp),
+        )
+        Text(
+            text = whenText,
+            color = MutedColor,
+            fontSize = 13.sp,
+            fontWeight = FontWeight.Medium,
+        )
+    }
+}
+
+@Composable
+fun Muted(text: String, modifier: Modifier = Modifier) {
+    Text(
+        text = text,
+        modifier = modifier,
+        color = MutedColor,
+        fontSize = 15.sp,
+        fontWeight = FontWeight.Medium,
+        textAlign = TextAlign.Center,
+    )
+}
+
+private fun Modifier.cardGradient(palette: WidgetPalette): Modifier = drawBehind {
+    drawRect(
+        brush = Brush.linearGradient(
+            colors = listOf(palette.gradientTop, palette.gradientBottom),
+            start = Offset(size.width, size.height),
+            end = Offset.Zero,
+        ),
+    )
+}

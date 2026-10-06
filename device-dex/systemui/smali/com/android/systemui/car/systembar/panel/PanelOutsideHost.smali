@@ -348,6 +348,31 @@
 
     .line 57
     :goto_side
+    # Status pills on the bottom (layout variant 1): open the panel above the dock.
+    const/4 v1, 0x1
+
+    aget v1, v2, v1
+
+    iget v7, v6, Landroid/graphics/Point;->y:I
+
+    div-int/lit8 v7, v7, 0x2
+
+    if-le v1, v7, :cond_below
+
+    iget p4, v6, Landroid/graphics/Point;->y:I
+
+    sub-int/2addr p4, v1
+
+    add-int/2addr p4, p3
+
+    const/16 v7, 0x53
+
+    goto :goto_vertical
+
+    :cond_below
+    const/16 v7, 0x33
+
+    :goto_vertical
     if-gez p4, :cond_9d
 
     .line 58
@@ -435,9 +460,7 @@
     invoke-static {p2, p1}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
 
     .line 66
-    const/16 p1, 0x33
-
-    invoke-virtual {p0, v0, p1, v4, p4}, Landroid/widget/PopupWindow;->showAtLocation(Landroid/view/View;III)V
+    invoke-virtual {p0, v0, v7, v4, p4}, Landroid/widget/PopupWindow;->showAtLocation(Landroid/view/View;III)V
 
     .line 67
     return-void
