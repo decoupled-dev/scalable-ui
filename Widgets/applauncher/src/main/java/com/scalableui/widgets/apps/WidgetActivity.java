@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class WidgetActivity extends Activity {
-    private static final int SHOWN = 6;
+    private static final int SHOWN = 4;
 
     private LinearLayout list;
     private TextView empty;
@@ -60,7 +60,8 @@ public class WidgetActivity extends Activity {
                 row.setOrientation(LinearLayout.HORIZONTAL);
                 list.addView(row, new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT));
+                        0,
+                        1f));
             }
             View cell = getLayoutInflater().inflate(R.layout.app_cell, row, false);
             ImageView icon = cell.findViewById(R.id.icon);
@@ -69,14 +70,16 @@ public class WidgetActivity extends Activity {
             icon.setImageDrawable(info.loadIcon(packages));
             label.setText(name);
             cell.setContentDescription(name);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, dp(56), 1f);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    0, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
             params.setMargins(gap, gap, gap, gap);
             row.addView(cell, params);
             shown++;
         }
         if (shown % 2 == 1 && row != null) {
             View spacer = new View(this);
-            row.addView(spacer, new LinearLayout.LayoutParams(0, dp(56), 1f));
+            row.addView(spacer, new LinearLayout.LayoutParams(
+                    0, LinearLayout.LayoutParams.MATCH_PARENT, 1f));
         }
     }
 

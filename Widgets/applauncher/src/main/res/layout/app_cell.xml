@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="56dp"
+    android:layout_height="72dp"
     android:background="@drawable/widget_tile"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:paddingStart="10dp"
-    android:paddingEnd="10dp">
+    android:paddingStart="14dp"
+    android:paddingEnd="14dp">
 
     <ImageView
         android:id="@+id/icon"
-        android:layout_width="28dp"
-        android:layout_height="28dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:importantForAccessibility="no"
         android:scaleType="fitCenter" />
 
@@ -24,6 +24,6 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:textColor="@color/widget_text"
-        android:textSize="14sp"
+        android:textSize="18sp"
         android:textStyle="bold" />
 </LinearLayout>

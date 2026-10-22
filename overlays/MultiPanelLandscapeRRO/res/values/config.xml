@@ -37,7 +37,7 @@
 
     <!-- Auto-launch activities into panels at startup -->
     <string-array name="config_default_activities" translatable="false" replace="true">
-        <item>home_panel;com.android.car.carlauncher/.CarLauncher</item>
+        <item>home_panel;com.android.car.stub.launcher/.StubHome</item>
         <item>media_panel;com.android.car.carlauncher/.ControlBarActivity</item>
         <item>map_panel;com.android.car.mapsplaceholder/com.android.car.mapsplaceholder.MapsPlaceholderActivity</item>
         <item>hvac_left_panel;com.android.car.mockwidgets/com.android.car.mockwidgets.ClimateActivity</item>

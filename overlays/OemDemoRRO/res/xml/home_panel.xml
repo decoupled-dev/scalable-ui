@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Full-screen CarLauncher home stays closed so it does not duplicate the media card. -->
-<TaskPanel id="home_panel" defaultVariant="@id/closed" displayId="0">
+<!--
+  StubHome is the HOME visibility barrier. Keep it closed so it does not
+  cover the map or duplicate the media card. User switch starts HOME again.
+-->
+<TaskPanel id="home_panel" defaultVariant="@id/closed"
+    role="@string/launcher_home_component" displayId="0">
     <Variant id="@+id/opened">
         <Layer layer="0"/>
         <Visibility isVisible="true"/>
@@ -17,5 +21,8 @@
     </Variant>
     <Transitions>
         <Transition onEvent="_System_OnHomeEvent" toVariant="@id/closed" duration="0"/>
+        <Transition onEvent="_System_BeforeUserSwitch" toVariant="@id/closed"/>
+        <Transition onEvent="_System_UserSwitchComplete" toVariant="@id/closed"/>
+        <Transition onEvent="_System_TaskOpenEvent" onEventTokens="panelId=home_panel" toVariant="@id/closed" duration="0"/>
     </Transitions>
 </TaskPanel>

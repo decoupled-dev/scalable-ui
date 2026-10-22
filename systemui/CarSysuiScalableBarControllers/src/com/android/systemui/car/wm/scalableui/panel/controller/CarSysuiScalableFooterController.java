@@ -17,6 +17,7 @@
 package com.android.systemui.car.wm.scalableui.panel.controller;
 
 import android.app.ActivityManager;
+import android.app.role.RoleManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.car.VehicleAreaSeat;
@@ -26,14 +27,20 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.database.ContentObserver;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaMetadata;
 import android.media.session.MediaController;
 import android.media.session.MediaSessionManager;
 import android.media.session.PlaybackState;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.os.UserHandle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -149,6 +156,23 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
         @Override
         public void onReceive(Context context, Intent intent) {
             runOnViewThread(() -> refreshBluetoothSubtitle());
+        }
+    };
+
+    /** Dock assistant slot. Icon tracks the selected assistant, not the static mic. */
+    private ImageView mAssistantButton;
+    private boolean mAssistantWatching;
+    private ContentObserver mAssistantObserver;
+    private final RoleManager.OnRoleHoldersChangedListener mAssistantRoleListener =
+            (roleName, user) -> {
+                if (RoleManager.ROLE_ASSISTANT.equals(roleName)) {
+                    runOnViewThread(this::refreshAssistantIcon);
+                }
+            };
+    private final BroadcastReceiver mAssistantUserReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            runOnViewThread(CarSysuiScalableFooterController.this::refreshAssistantIcon);
         }
     };
 
@@ -570,8 +594,10 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
     private void wireOptionalLaunches(View root) {
         wireLaunch(root, "oem_launch_phone", this::launchPhone);
         wireLaunch(root, "oem_launch_dialpad", this::launchDialpad);
-        // Same intent as the stock CarSystemUI assistant button.
+        // Same intent as the stock CarSystemUI assistant button. Icon follows the
+        // selected assistant (role / voice-interaction service), with the mic as fallback.
         wireLaunch(root, "oem_launch_assistant", this::launchDefaultAssistant);
+        bindAssistantIcon(root);
         // Center CLIMATE column + fan icon → Design ClimatePanel.
         wireLaunch(root, "oem_launch_hvac", this::launchClimate);
         wireLaunch(root, "oem_launch_hvac_panel", this::launchClimate);
@@ -925,6 +951,7 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
             mView.removeCallbacks(mBtPollRunnable);
         }
         unregisterBluetoothListeners();
+        unwatchAssistantSelection();
         unbindMediaController();
         if (mMediaSessionManager != null) {
             try {
@@ -2026,6 +2053,224 @@ public class CarSysuiScalableFooterController extends CarSysuiScalableBarControl
     /** Dialpad always opens Dialer regardless of BT pairing state. */
     private void launchDialpad() {
         startComponentInAppPanel(DIALER_COMPONENT);
+    }
+
+    /**
+     * Point {@code oem_launch_assistant} at the selected assistant's icon.
+     * The layout mic stays in place until a selection is known, and comes back
+     * if the role is cleared.
+     */
+    private void bindAssistantIcon(View root) {
+        View button = findClickable(root, "oem_launch_assistant");
+        if (!(button instanceof ImageView)) {
+            return;
+        }
+        mAssistantButton = (ImageView) button;
+        refreshAssistantIcon();
+        watchAssistantSelection();
+    }
+
+    private void watchAssistantSelection() {
+        if (mAssistantWatching || mAssistantButton == null) {
+            return;
+        }
+        mAssistantWatching = true;
+        mAssistantObserver = new ContentObserver(new Handler(Looper.getMainLooper())) {
+            @Override
+            public void onChange(boolean selfChange) {
+                runOnViewThread(CarSysuiScalableFooterController.this::refreshAssistantIcon);
+            }
+        };
+        try {
+            android.content.ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(
+                    Settings.Secure.getUriFor(Settings.Secure.VOICE_INTERACTION_SERVICE),
+                    false, mAssistantObserver, UserHandle.USER_ALL);
+            resolver.registerContentObserver(
+                    Settings.Secure.getUriFor(Settings.Secure.ASSISTANT),
+                    false, mAssistantObserver, UserHandle.USER_ALL);
+        } catch (Throwable t) {
+            Log.w(TAG, "assistant settings watch failed", t);
+        }
+        try {
+            RoleManager roles = mContext.getSystemService(RoleManager.class);
+            if (roles != null) {
+                roles.addOnRoleHoldersChangedListenerAsUser(
+                        mContext.getMainExecutor(), mAssistantRoleListener, UserHandle.ALL);
+            }
+        } catch (Throwable t) {
+            Log.w(TAG, "assistant role watch failed", t);
+        }
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_USER_SWITCHED);
+        filter.addAction(Intent.ACTION_USER_UNLOCKED);
+        try {
+            mContext.registerReceiver(mAssistantUserReceiver, filter, Context.RECEIVER_EXPORTED);
+        } catch (Throwable t) {
+            try {
+                mContext.registerReceiver(mAssistantUserReceiver, filter);
+            } catch (Throwable t2) {
+                Log.w(TAG, "assistant user watch failed", t2);
+            }
+        }
+    }
+
+    private void unwatchAssistantSelection() {
+        if (!mAssistantWatching) {
+            return;
+        }
+        mAssistantWatching = false;
+        if (mAssistantObserver != null) {
+            try {
+                mContext.getContentResolver().unregisterContentObserver(mAssistantObserver);
+            } catch (Throwable ignored) {
+            }
+            mAssistantObserver = null;
+        }
+        try {
+            RoleManager roles = mContext.getSystemService(RoleManager.class);
+            if (roles != null) {
+                roles.removeOnRoleHoldersChangedListenerAsUser(
+                        mAssistantRoleListener, UserHandle.ALL);
+            }
+        } catch (Throwable ignored) {
+        }
+        try {
+            mContext.unregisterReceiver(mAssistantUserReceiver);
+        } catch (Throwable ignored) {
+        }
+    }
+
+    private void refreshAssistantIcon() {
+        ImageView button = mAssistantButton;
+        if (button == null) {
+            return;
+        }
+        int userId = ActivityManager.getCurrentUser();
+        Drawable icon = loadAssistantIcon(userId);
+        if (icon != null) {
+            button.setImageTintList(null);
+            button.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            int pad = Math.round(4f * button.getResources().getDisplayMetrics().density);
+            button.setPadding(pad, pad, pad, pad);
+            button.setImageDrawable(icon.mutate());
+            markAssistantAppIcon(button, true);
+        } else {
+            markAssistantAppIcon(button, false);
+            int mic = resolveRroDrawable("ic_dock_mic");
+            if (mic != 0 && mRroContext != null) {
+                button.setImageDrawable(mRroContext.getDrawable(mic));
+            }
+            Log.i(TAG, "assistant icon fallback mic user=" + userId);
+        }
+        if (button instanceof android.widget.ImageButton) {
+            LayoutVariantWatcher.applyAssistantGlyphTint((android.widget.ImageButton) button);
+        } else {
+            button.clearColorFilter();
+        }
+    }
+
+    /**
+     * Launcher icon of the selected assistant. Voice-interaction service first,
+     * then the assist activity, then the {@code ROLE_ASSISTANT} holder.
+     */
+    private Drawable loadAssistantIcon(int userId) {
+        String pkg = null;
+        ComponentName component = selectedAssistantComponent(userId);
+        if (component != null) {
+            pkg = component.getPackageName();
+        }
+        if (pkg == null) {
+            pkg = assistantRolePackage(userId);
+        }
+        if (pkg == null) {
+            return null;
+        }
+        Drawable icon = launcherIcon(pkg, userId);
+        if (icon != null) {
+            Log.i(TAG, "assistant icon from " + pkg);
+        }
+        return icon;
+    }
+
+    private Drawable launcherIcon(String pkg, int userId) {
+        UserHandle user = UserHandle.of(userId);
+        try {
+            android.content.pm.LauncherApps apps =
+                    mContext.getSystemService(android.content.pm.LauncherApps.class);
+            if (apps != null) {
+                java.util.List<android.content.pm.LauncherActivityInfo> list =
+                        apps.getActivityList(pkg, user);
+                if (list != null && !list.isEmpty()) {
+                    int density = mContext.getResources().getDisplayMetrics().densityDpi;
+                    return list.get(0).getIcon(density);
+                }
+            }
+        } catch (Throwable t) {
+            Log.w(TAG, "assistant launcher icon failed for " + pkg, t);
+        }
+        try {
+            return packageManagerForUser(userId).getApplicationIcon(pkg);
+        } catch (Throwable t) {
+            Log.w(TAG, "assistant icon missing for " + pkg, t);
+            return null;
+        }
+    }
+
+    private PackageManager packageManagerForUser(int userId) {
+        try {
+            return mContext.createContextAsUser(UserHandle.of(userId), 0).getPackageManager();
+        } catch (Throwable t) {
+            return mContext.getPackageManager();
+        }
+    }
+
+    private ComponentName selectedAssistantComponent(int userId) {
+        android.content.ContentResolver resolver = mContext.getContentResolver();
+        ComponentName vis = unflattenComponent(Settings.Secure.getStringForUser(
+                resolver, Settings.Secure.VOICE_INTERACTION_SERVICE, userId));
+        if (vis != null) {
+            return vis;
+        }
+        return unflattenComponent(Settings.Secure.getStringForUser(
+                resolver, Settings.Secure.ASSISTANT, userId));
+    }
+
+    private String assistantRolePackage(int userId) {
+        try {
+            RoleManager roles = mContext.getSystemService(RoleManager.class);
+            if (roles == null) {
+                return null;
+            }
+            java.util.List<String> holders = roles.getRoleHoldersAsUser(
+                    RoleManager.ROLE_ASSISTANT, UserHandle.of(userId));
+            if (holders == null || holders.isEmpty()) {
+                return null;
+            }
+            return holders.get(0);
+        } catch (Throwable t) {
+            Log.w(TAG, "assistant role lookup failed", t);
+            return null;
+        }
+    }
+
+    /** Keyed tag so T-Rex chrome can tell a brand icon from the mic glyph. */
+    private static void markAssistantAppIcon(View button, boolean appIcon) {
+        int id = button.getId();
+        if (id == View.NO_ID || (id >>> 24) < 2) {
+            return;
+        }
+        try {
+            button.setTag(id, appIcon ? Boolean.TRUE : null);
+        } catch (IllegalArgumentException ignored) {
+        }
+    }
+
+    private static ComponentName unflattenComponent(String flat) {
+        if (flat == null || flat.isEmpty()) {
+            return null;
+        }
+        return ComponentName.unflattenFromString(flat);
     }
 
     /**

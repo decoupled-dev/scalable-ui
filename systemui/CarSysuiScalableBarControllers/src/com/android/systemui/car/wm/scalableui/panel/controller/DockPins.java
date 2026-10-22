@@ -29,6 +29,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.UserHandle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
@@ -48,8 +49,10 @@ import java.util.List;
  * <p>The app grid's Pin action broadcasts {@code com.android.car.docklib.events.PIN}
  * with a {@code ComponentName} in {@code EXTRA_COMPONENT}. Pinned icons sit in
  * their own group after a divider, past the recent slot. A long-press drags an
- * icon within its own group. The recent slot stays put and shows the last app
- * that moved to the front.
+ * icon within its own group. The recent slot stays put and shows the last
+ * launchable app. Home, permission dialogs, and the other dock chrome do not
+ * replace it. The choice is kept across reboot, so the first paint after boot
+ * is still the app from the previous cycle.
  */
 public final class DockPins {
     private static final String TAG = "DockPins";
@@ -140,10 +143,17 @@ public final class DockPins {
                 @Override
                 public void run() {
                     try {
+                        // Home and system dialogs are not a recent app. Keep the
+                        // last launchable app, including the one saved last boot.
                         if (top != null) {
                             showRecent(top);
-                        } else if (mRecentComponent != null && ignored(mRecentComponent)) {
-                            clearRecent();
+                        } else if (mRecentComponent != null && !isUserApp(mRecentComponent)) {
+                            ComponentName fallback = topActivity();
+                            if (fallback != null) {
+                                showRecent(fallback);
+                            } else {
+                                clearRecent();
+                            }
                         }
                         if (orientation != mOrientation) {
                             mOrientation = orientation;
@@ -802,7 +812,13 @@ public final class DockPins {
         String flat = prefs().getString(PREF_RECENT, null);
         ComponentName component = flat == null
                 ? null : ComponentName.unflattenFromString(flat);
-        if (component != null && !ignored(component)) {
+        // A permission sheet or other chrome may have been saved earlier.
+        // Prefer that only when it is a real app; otherwise take the newest
+        // launchable task still in the stack from the previous cycle.
+        if (!isUserApp(component)) {
+            component = topActivity();
+        }
+        if (component != null) {
             showRecent(component);
         } else {
             clearRecent();
@@ -864,7 +880,7 @@ public final class DockPins {
     }
 
     private void showRecent(ComponentName component) {
-        if (component == null || ignored(component)) {
+        if (!isUserApp(component)) {
             return;
         }
         mRecentComponent = component;
@@ -873,9 +889,11 @@ public final class DockPins {
             return;
         }
         Drawable icon = loadIcon(component);
-        if (icon != null) {
-            mRecent.setImageDrawable(icon);
+        if (icon == null) {
+            Log.w(TAG, "no recent icon for " + component);
+            return;
         }
+        mRecent.setImageDrawable(icon);
         mRecent.setPadding(dp(4), dp(4), dp(4), dp(4));
         mRecent.setContentDescription(loadLabel(component));
         mRecent.setAlpha(1f);
@@ -898,7 +916,7 @@ public final class DockPins {
 
     private ComponentName topActivity() {
         for (ComponentName component : taskComponents()) {
-            if (!ignored(component)) {
+            if (isUserApp(component)) {
                 return component;
             }
         }
@@ -994,7 +1012,13 @@ public final class DockPins {
                 || "android".equals(pkg)
                 || "com.android.car.settings".equals(pkg)
                 || "com.android.car.hvac".equals(pkg)
-                || "com.google.android.carassistant".equals(pkg)) {
+                || "com.google.android.carassistant".equals(pkg)
+                || pkg.equals(assistantPackage())
+                || "com.android.permissioncontroller".equals(pkg)
+                || "com.google.android.permissioncontroller".equals(pkg)
+                || "com.android.packageinstaller".equals(pkg)
+                || "com.google.android.packageinstaller".equals(pkg)
+                || "com.android.intentresolver".equals(pkg)) {
             return true;
         }
         String[] pinned = mPinnedPackages;
@@ -1004,6 +1028,56 @@ public final class DockPins {
             }
         }
         return false;
+    }
+
+    /** Selected assistant, so its icon stays on the assistant button only. */
+    private String assistantPackage() {
+        int userId = currentUserId();
+        String flat = secureSetting("voice_interaction_service", userId);
+        if (flat == null || flat.length() == 0) {
+            flat = secureSetting("assistant", userId);
+        }
+        if (flat == null || flat.length() == 0) {
+            return "";
+        }
+        ComponentName component = ComponentName.unflattenFromString(flat);
+        return component == null ? "" : component.getPackageName();
+    }
+
+    private String secureSetting(String key, int userId) {
+        try {
+            Method get = Settings.Secure.class.getMethod(
+                    "getStringForUser",
+                    android.content.ContentResolver.class, String.class, int.class);
+            Object value = get.invoke(null, application().getContentResolver(), key,
+                    Integer.valueOf(userId));
+            if (value instanceof String) {
+                return (String) value;
+            }
+        } catch (Throwable ignored) {
+        }
+        return Settings.Secure.getString(application().getContentResolver(), key);
+    }
+
+    /** An app the user can launch, not a dialog or another dock button. */
+    private boolean isUserApp(ComponentName component) {
+        if (component == null || ignored(component)) {
+            return false;
+        }
+        String pkg = component.getPackageName();
+        try {
+            android.content.pm.LauncherApps apps =
+                    application().getSystemService(android.content.pm.LauncherApps.class);
+            if (apps == null) {
+                return true;
+            }
+            java.util.List<android.content.pm.LauncherActivityInfo> list =
+                    apps.getActivityList(pkg, userHandle(currentUserId()));
+            return list != null && !list.isEmpty();
+        } catch (Throwable t) {
+            Log.w(TAG, "launcher check failed for " + pkg, t);
+            return false;
+        }
     }
 
     private void publishPins() {

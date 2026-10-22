@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- StubHome visibility barrier. Off-screen so it does not cover the map. -->
 <Panel id="home_panel" defaultVariant="home_variant">
     <Variant id="home_variant">
-        <Bounds left="0" top="0" right="100%" bottom="100%" />
-        <Visibility isVisible="true" />
-        <Alpha alpha="1.0" />
+        <Bounds left="-100%" top="0" right="0" bottom="100%" />
+        <Visibility isVisible="false" />
+        <Alpha alpha="0.0" />
         <Layer layer="0" />
         <Corner radius="0dp" />
     </Variant>

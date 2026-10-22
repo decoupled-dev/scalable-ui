@@ -67,7 +67,7 @@ private fun PhoneScreen() {
                 Modifier.weight(1f),
                 verticalArrangement = Arrangement.SpaceEvenly,
             ) {
-                rows.take(4).forEach { row ->
+                rows.take(3).forEach { row ->
                     CallLine(row.title, row.whenText)
                 }
             }

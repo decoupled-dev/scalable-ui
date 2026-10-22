@@ -578,6 +578,12 @@ public final class LayoutVariantWatcher extends ContentObserver
                 return;
             }
             ImageButton button = (ImageButton) view;
+            // Selected-assistant art is full color. A SRC_IN tint would flatten
+            // every assistant to the same pink glyph.
+            if (isAssistantAppIcon(button)) {
+                button.clearColorFilter();
+                return;
+            }
             CharSequence desc = button.getContentDescription();
             int color = trexIconColor(desc == null ? null : desc.toString());
             if (color == 0) {
@@ -634,6 +640,45 @@ public final class LayoutVariantWatcher extends ContentObserver
             }
         }
         return null;
+    }
+
+    /** Dock button is showing the selected assistant's own icon, not the mic glyph. */
+    static boolean isAssistantAppIcon(View button) {
+        if (button == null) {
+            return false;
+        }
+        int id = button.getId();
+        if (id == View.NO_ID || (id >>> 24) < 2) {
+            return false;
+        }
+        try {
+            return Boolean.TRUE.equals(button.getTag(id));
+        } catch (IllegalArgumentException ignored) {
+            return false;
+        }
+    }
+
+    /**
+     * T-Rex tints the mic. A real assistant icon stays full color so a different
+     * selection is visible.
+     */
+    static void applyAssistantGlyphTint(ImageButton button) {
+        if (button == null) {
+            return;
+        }
+        if (isAssistantAppIcon(button)) {
+            button.clearColorFilter();
+            return;
+        }
+        Context context = sInstance != null ? sInstance.mContext : button.getContext();
+        if (isTrex(context)) {
+            int color = trexIconColor("Assistant");
+            if (color != 0) {
+                button.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            }
+        } else {
+            button.clearColorFilter();
+        }
     }
 
     private static int trexIconColor(String desc) {

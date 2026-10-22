@@ -79,13 +79,13 @@ private fun SeatsScreen() {
             Modifier.weight(1f),
             verticalArrangement = Arrangement.SpaceEvenly,
         ) {
-            Axis("Fore-aft", fore, foreRange, { fore = it }) {
+            Axis("Slide", fore, foreRange, "Back", "Forward", { fore = it }) {
                 props.setInt(VehiclePropertyIds.SEAT_FORE_AFT_POS, Driver, fore.toInt())
             }
-            Axis("Height", height, heightRange, { height = it }) {
+            Axis("Height", height, heightRange, "Low", "High", { height = it }) {
                 props.setInt(VehiclePropertyIds.SEAT_HEIGHT_POS, Driver, height.toInt())
             }
-            Axis("Backrest", back, backRange, { back = it }) {
+            Axis("Recline", back, backRange, "Upright", "Reclined", { back = it }) {
                 props.setInt(VehiclePropertyIds.SEAT_BACKREST_ANGLE_1_POS, Driver, back.toInt())
             }
         }
@@ -97,6 +97,8 @@ private fun Axis(
     label: String,
     value: Float,
     range: ClosedFloatingPointRange<Float>,
+    low: String,
+    high: String,
     onChange: (Float) -> Unit,
     onFinish: () -> Unit,
 ) {
@@ -107,8 +109,13 @@ private fun Axis(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(label, color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
-            Text("${value.toInt()}", color = accent, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Text(label, color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
+            Text(
+                stance(value, range, low, high),
+                color = accent,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+            )
         }
         Slider(
             value = value.coerceIn(range),
@@ -122,6 +129,22 @@ private fun Axis(
                 inactiveTrackColor = Color.White.copy(alpha = 0.18f),
             ),
         )
+    }
+}
+
+private fun stance(
+    value: Float,
+    range: ClosedFloatingPointRange<Float>,
+    low: String,
+    high: String,
+): String {
+    val span = range.endInclusive - range.start
+    if (span <= 0f) return "Mid"
+    val t = ((value - range.start) / span).coerceIn(0f, 1f)
+    return when {
+        t < 0.34f -> low
+        t > 0.66f -> high
+        else -> "Mid"
     }
 }
 

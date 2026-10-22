@@ -54,7 +54,7 @@
     </array>
 
     <string-array name="config_default_activities" translatable="false" replace="true">
-        <item>home_panel;com.android.car.carlauncher/.CarLauncher</item>
+        <item>home_panel;com.android.car.stub.launcher/.StubHome</item>
         <item>media_panel;com.android.car.carlauncher/.ControlBarActivity</item>
         <item>map_panel;com.google.android.apps.maps/com.google.android.maps.MapsActivity</item>
         <item>hvac_left_panel;com.android.car.mockwidgets/.ClimateActivity</item>
@@ -95,6 +95,7 @@
     </array>
 
     <string-array name="config_default_activities_pleos" translatable="false" replace="true">
+        <item>home_panel;com.android.car.stub.launcher/.StubHome</item>
         <item>oem_canvas;@layout/oem_canvas</item>
         <item>map_panel;com.google.android.apps.maps/com.google.android.maps.MapsActivity</item>
         <item>oem_phone_card;com.android.car.dialer/.ui.TelecomActivity</item>

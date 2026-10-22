@@ -64,7 +64,7 @@ private val Hairline = Color(0x33FFFFFF)
 private val TileFill = Color(0x14FFFFFF)
 private val LocalPalette = staticCompositionLocalOf { WidgetPalettes.Ev }
 
-private val TileShape = RoundedCornerShape(20.dp)
+private val TileShape = RoundedCornerShape(22.dp)
 
 @Composable
 fun widgetAccent(): Color = LocalPalette.current.accent
@@ -82,10 +82,10 @@ fun WidgetScreen(
             modifier
                 .fillMaxSize()
                 .cardGradient(palette)
-                .padding(start = 16.dp, end = 16.dp, top = 14.dp, bottom = 16.dp),
+                .padding(start = 18.dp, end = 18.dp, top = 16.dp, bottom = 16.dp),
         ) {
             WidgetHeader(title, icon)
-            Spacer(Modifier.height(10.dp))
+            Spacer(Modifier.height(8.dp))
             content()
         }
     }
@@ -99,15 +99,15 @@ private fun WidgetHeader(title: String, icon: ImageVector) {
             imageVector = icon,
             contentDescription = null,
             tint = accent,
-            modifier = Modifier.size(18.dp),
+            modifier = Modifier.size(26.dp),
         )
         Text(
             text = title.uppercase(),
             color = accent,
-            fontSize = 12.sp,
+            fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
-            letterSpacing = 0.12.em,
-            modifier = Modifier.padding(start = 8.dp),
+            letterSpacing = 0.08.em,
+            modifier = Modifier.padding(start = 10.dp),
         )
     }
 }
@@ -128,7 +128,7 @@ fun StatPair(
         Box(
             Modifier
                 .width(1.dp)
-                .height(40.dp)
+                .height(52.dp)
                 .background(Hairline),
         )
         GlanceStat(rightValue, rightCaption, Modifier.weight(1f))
@@ -144,18 +144,18 @@ fun GlanceStat(value: String, caption: String, modifier: Modifier = Modifier) {
         Text(
             text = value,
             color = On,
-            fontSize = 36.sp,
+            fontSize = 48.sp,
             fontWeight = FontWeight.Bold,
-            lineHeight = 40.sp,
+            lineHeight = 52.sp,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
         Text(
             text = caption,
             color = MutedColor,
-            fontSize = 12.sp,
+            fontSize = 16.sp,
             fontWeight = FontWeight.Medium,
-            modifier = Modifier.padding(top = 2.dp),
+            modifier = Modifier.padding(top = 4.dp),
         )
     }
 }
@@ -165,16 +165,16 @@ fun StatusPill(text: String, modifier: Modifier = Modifier) {
     Text(
         text = text,
         color = LocalPalette.current.accent,
-        fontSize = 13.sp,
+        fontSize = 16.sp,
         fontWeight = FontWeight.Bold,
         textAlign = TextAlign.Center,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(14.dp))
+            .clip(RoundedCornerShape(16.dp))
             .background(Color(0x28FFFFFF))
-            .padding(horizontal = 12.dp, vertical = 8.dp),
+            .padding(horizontal = 14.dp, vertical = 10.dp),
     )
 }
 
@@ -200,7 +200,7 @@ fun IconTile(
                 role = Role.Switch
                 this.selected = selected
             }
-            .padding(horizontal = 8.dp, vertical = 8.dp),
+            .padding(horizontal = 10.dp, vertical = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -208,16 +208,16 @@ fun IconTile(
             imageVector = icon,
             contentDescription = null,
             tint = tint,
-            modifier = Modifier.size(28.dp),
+            modifier = Modifier.size(42.dp),
         )
         Text(
             text = label,
             color = tint,
-            fontSize = 13.sp,
+            fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.padding(top = 6.dp),
+            modifier = Modifier.padding(top = 8.dp),
         )
     }
 }
@@ -227,12 +227,12 @@ fun CallLine(name: String, whenText: String) {
     Row(
         Modifier
             .fillMaxWidth()
-            .height(48.dp),
+            .height(56.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
             Modifier
-                .size(36.dp)
+                .size(44.dp)
                 .clip(CircleShape)
                 .background(Color(0x24FFFFFF)),
             contentAlignment = Alignment.Center,
@@ -241,24 +241,24 @@ fun CallLine(name: String, whenText: String) {
                 imageVector = WidgetIcons.Phone,
                 contentDescription = null,
                 tint = LocalPalette.current.accent,
-                modifier = Modifier.size(18.dp),
+                modifier = Modifier.size(24.dp),
             )
         }
         Text(
             text = name,
             color = On,
-            fontSize = 16.sp,
+            fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = 12.dp),
+                .padding(horizontal = 14.dp),
         )
         Text(
             text = whenText,
             color = MutedColor,
-            fontSize = 13.sp,
+            fontSize = 16.sp,
             fontWeight = FontWeight.Medium,
         )
     }
@@ -270,7 +270,7 @@ fun Muted(text: String, modifier: Modifier = Modifier) {
         text = text,
         modifier = modifier,
         color = MutedColor,
-        fontSize = 15.sp,
+        fontSize = 18.sp,
         fontWeight = FontWeight.Medium,
         textAlign = TextAlign.Center,
     )

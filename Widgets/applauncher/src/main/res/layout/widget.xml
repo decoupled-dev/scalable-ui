@@ -16,8 +16,8 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:layout_width="18dp"
-            android:layout_height="18dp"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
             android:importantForAccessibility="no"
             android:src="@drawable/ic_widget_apps"
             android:tint="@color/widget_accent_gold" />
@@ -26,7 +26,7 @@
             style="@style/Widget.Header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="10dp"
             android:text="Apps"
             android:textColor="@color/widget_accent_gold" />
     </LinearLayout>

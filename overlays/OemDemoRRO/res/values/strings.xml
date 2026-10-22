@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- HOME visibility barrier. Stock CarLauncher is not the home activity. -->
+    <string name="launcher_home_component" translatable="false">com.android.car.stub.launcher/.StubHome</string>
+
     <!-- Panel role: Media card (ControlBarActivity in left column) -->
     <string name="media_componentName" translatable="false">com.android.car.carlauncher/.ControlBarActivity</string>
 

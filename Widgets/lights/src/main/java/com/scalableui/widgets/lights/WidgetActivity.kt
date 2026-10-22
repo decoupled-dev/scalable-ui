@@ -72,13 +72,13 @@ private fun LightsScreen() {
             Modifier
                 .weight(1f)
                 .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             Row(
                 Modifier
                     .weight(1f)
                     .fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
             ) {
                 Lamp(WidgetIcons.Cabin, "Cabin", cabin, Modifier.weight(1f).fillMaxHeight()) {
                     props.setInt(VehiclePropertyIds.CABIN_LIGHTS_SWITCH, 0, it)
@@ -93,7 +93,7 @@ private fun LightsScreen() {
                 Modifier
                     .weight(1f)
                     .fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
             ) {
                 Lamp(WidgetIcons.HighBeam, "High beam", high, Modifier.weight(1f).fillMaxHeight()) {
                     props.setInt(VehiclePropertyIds.HIGH_BEAM_LIGHTS_SWITCH, 0, it)

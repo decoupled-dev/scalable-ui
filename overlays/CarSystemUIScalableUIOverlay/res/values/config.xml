@@ -301,6 +301,7 @@
         Used when scalableUi feature is enabled.
     -->
     <string-array name="config_untrimmable_activities" translatable="false">
+        <item>com.android.car.stub.launcher/.StubHome</item>
         <item>com.android.car.carlauncher/.CarLauncher</item>
         <item>com.android.car.settings/.Settings_Launcher_Homepage</item>
         <item>com.android.car.media/.MediaDispatcherActivity</item>
@@ -318,7 +319,7 @@
            for that panel.
     -->
     <string-array name="config_default_activities" translatable="false">
-        <item>home_panel;com.android.car.carlauncher/.CarLauncher</item>
+        <item>home_panel;com.android.car.stub.launcher/.StubHome</item>
         <item>map_panel;com.android.car.mapsplaceholder/com.android.car.mapsplaceholder.MapsPlaceholderActivity</item>
         <item>media_panel;com.android.car.radio/.RadioActivity</item>
         <item>climate_panel;com.android.car.mockwidgets/.ClimateActivity</item>

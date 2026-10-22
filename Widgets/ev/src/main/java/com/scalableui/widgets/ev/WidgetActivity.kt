@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import com.scalableui.widgets.carprop.CarProps
 import com.scalableui.widgets.ui.IconTile
 import com.scalableui.widgets.ui.StatPair
-import com.scalableui.widgets.ui.StatusPill
 import com.scalableui.widgets.ui.WidgetIcons
 import com.scalableui.widgets.ui.WidgetPalettes
 import com.scalableui.widgets.ui.WidgetScreen
@@ -40,7 +39,6 @@ private val Watched = intArrayOf(
     VehiclePropertyIds.EV_BATTERY_LEVEL,
     VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY,
     VehiclePropertyIds.RANGE_REMAINING,
-    VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED,
     VehiclePropertyIds.EV_CHARGE_PORT_OPEN,
     VehiclePropertyIds.EV_CHARGE_SWITCH,
 )
@@ -52,7 +50,6 @@ private fun EvScreen() {
     var levelWh by remember { mutableStateOf<Float?>(null) }
     var capacityWh by remember { mutableStateOf<Float?>(null) }
     var rangeM by remember { mutableStateOf<Float?>(null) }
-    var connected by remember { mutableStateOf<Boolean?>(null) }
     var portOpen by remember { mutableStateOf<Boolean?>(null) }
     var charging by remember { mutableStateOf<Boolean?>(null) }
 
@@ -60,7 +57,6 @@ private fun EvScreen() {
         levelWh = props.getFloat(VehiclePropertyIds.EV_BATTERY_LEVEL)
         capacityWh = props.getFloat(VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY)
         rangeM = props.getFloat(VehiclePropertyIds.RANGE_REMAINING)
-        connected = props.getBoolean(VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED)
         portOpen = props.getBoolean(VehiclePropertyIds.EV_CHARGE_PORT_OPEN)
         charging = props.getBoolean(VehiclePropertyIds.EV_CHARGE_SWITCH)
     }
@@ -81,15 +77,12 @@ private fun EvScreen() {
             range.caption,
             Modifier.weight(1f),
         )
-        StatusPill(
-            chargeStatus(connected, charging),
-            Modifier.padding(bottom = 10.dp),
-        )
         Row(
             Modifier
                 .fillMaxWidth()
-                .height(76.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                .height(108.dp)
+                .padding(top = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             IconTile(
                 WidgetIcons.Port,
@@ -120,24 +113,10 @@ private fun EvScreen() {
 private data class Stat(val value: String, val caption: String)
 
 private fun batteryStat(levelWh: Float?, capacityWh: Float?): Stat {
-    if (levelWh == null) return Stat("—", "percent")
+    if (levelWh == null) return Stat("—", "Battery")
     if (capacityWh == null || capacityWh == 0f) return Stat("${levelWh.toInt()}", "Wh")
-    return Stat("${(levelWh / capacityWh * 100f).toInt()}", "percent")
+    return Stat("${(levelWh / capacityWh * 100f).toInt()}%", "Battery")
 }
 
 private fun rangeStat(meters: Float?): Stat =
-    if (meters == null) Stat("—", "km range") else Stat("${(meters / 1000f).toInt()}", "km range")
-
-private fun chargeStatus(connected: Boolean?, charging: Boolean?): String {
-    val charge = when (charging) {
-        true -> "Charging"
-        false -> "Not charging"
-        null -> "Charge —"
-    }
-    val port = when (connected) {
-        true -> "Plugged in"
-        false -> "Unplugged"
-        null -> "Port —"
-    }
-    return "$charge  ·  $port"
-}
+    if (meters == null) Stat("—", "Range") else Stat("${(meters / 1000f).toInt()}", "km left")
