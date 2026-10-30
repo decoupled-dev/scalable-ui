@@ -54,6 +54,18 @@ public final class AssistantDockIcon {
     private static final Handler sMain = new Handler(Looper.getMainLooper());
     private static final long POLL_MS = 1500L;
 
+    /**
+     * Comma-separated packages whose panel task survives {@link #prepare(Context)}.
+     * Defaults to the car Media Center: removing its task kills the process that holds
+     * the last binding to the active media app's browser service, and a paused source
+     * such as Spotify then stops and destroys its media session about a second later,
+     * which the home media widget renders as "Nothing playing".
+     * Override for testing:
+     *   adb shell settings put global scalable_ui_assistant_keep_packages com.android.car.media
+     */
+    private static final String KEEP_PACKAGES_SETTING = "scalable_ui_assistant_keep_packages";
+    private static final String DEFAULT_KEEP_PACKAGES = "com.android.car.media";
+
     private static ImageView sButton;
     private static View sRoot;
     private static Context sContext;
@@ -127,6 +139,11 @@ public final class AssistantDockIcon {
                 }
                 int taskId = intField(info, "taskId");
                 if (taskId <= 0 || taskId == panel) {
+                    continue;
+                }
+                ComponentName kept = taskTop(info);
+                if (kept != null && keepsAlive(context, kept.getPackageName())) {
+                    Log.i(TAG, "assistant prepare keeps " + kept.getPackageName());
                     continue;
                 }
                 if (removeTask(taskId)) {
@@ -480,6 +497,27 @@ public final class AssistantDockIcon {
         } finally {
             sContext = previous;
         }
+    }
+
+    /** True when {@code pkg} is listed in {@link #KEEP_PACKAGES_SETTING} or its default. */
+    private static boolean keepsAlive(Context context, String pkg) {
+        if (pkg == null) {
+            return false;
+        }
+        String list = null;
+        try {
+            list = Settings.Global.getString(context.getContentResolver(), KEEP_PACKAGES_SETTING);
+        } catch (Throwable ignored) {
+        }
+        if (list == null || list.trim().isEmpty()) {
+            list = DEFAULT_KEEP_PACKAGES;
+        }
+        for (String entry : list.split(",")) {
+            if (pkg.equals(entry.trim())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean isChrome(String pkg) {

@@ -15,7 +15,7 @@ Layer 30. Capsule corner `launcher_bar_corner` (42 dp). Default pose `visible`. 
 | `sysui_nav_home` | Home | Sets 0–2: post `_System_OnHomeEvent`, then repair the map task bounds. T-Rex: `selectTrexMode("trex_home")`. |
 | `sysui_footer_fullscreen_toggle` | Map | Sets 0–2: post `toggle_fullscreen`. T-Rex: `selectTrexMode("trex_nav")`. |
 | `sysui_nav_all_apps` | All apps | Post TaskOpen for `panel_app_grid`, then start `AppGridActivity`. |
-| `oem_launch_assistant` | Assistant | Start the default assistant. No panel event. |
+| `oem_launch_assistant` | Assistant | Start the default assistant. No panel event. The installed build first runs `AssistantDockIcon.prepare`, which removes the other tasks from the app card so the last app is not left behind the assistant overlay. Tasks whose package is in `Settings.Global` `scalable_ui_assistant_keep_packages` (default `com.android.car.media`) are kept, because removing Media Center kills the process holding the media app's browser-service binding and a paused source then drops its session. |
 | `oem_launch_hvac` | Climate | Start `ClimatePanelActivity`, which the role places in `launcher_climate_app`. |
 | `oem_launch_vehicle` | Vehicle | Start `VehiclePanelActivity` into `launcher_vehicle_app`. T-Rex also posts `trex_vehicle`. |
 | `oem_launch_car_settings` | Settings | Start Car Settings homepage into `launcher_settings_app`. T-Rex also posts `trex_split`. |
