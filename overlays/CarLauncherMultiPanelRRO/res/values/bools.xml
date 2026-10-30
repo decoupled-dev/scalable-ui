@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <bool name="use_vertical_app_grid">false</bool>
-    <bool name="use_defined_app_grid_dimensions">false</bool>
-    <bool name="car_app_show_recent_apps">false</bool>
-    <bool name="config_useDewdLauncher">false</bool>
-</resources>

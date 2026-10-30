@@ -1,9 +1,0 @@
-android_app {
-    name: "HideNavRRO",
-    srcs: [],
-    resource_dirs: ["res"],
-    certificate: "platform",
-    aaptflags: ["--no-resource-removal"],
-    product_specific: true,
-    sdk_version: "current",
-}

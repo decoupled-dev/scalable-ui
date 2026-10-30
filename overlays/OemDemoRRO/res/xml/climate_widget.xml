@@ -1,9 +1,0 @@
-<TaskPanel id="climate_widget" defaultVariant="@id/base" role="@string/mockwidgets_climate_activity_componentName" displayId="0">
-    <Variant id="@+id/base">
-        <Layer layer="9"/>
-        <Visibility isVisible="false"/>
-        <Alpha alpha="0.0"/>
-        <Bounds left="1944dp" top="84dp" right="2328dp" bottom="896dp"/>
-        <Focus onTransition="false"/>
-    </Variant>
-</TaskPanel>

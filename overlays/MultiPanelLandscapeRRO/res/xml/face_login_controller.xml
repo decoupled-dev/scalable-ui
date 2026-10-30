@@ -1,7 +1,0 @@
-<Controller id="face_login_controller">
-    <ControllerName>com.android.systemui.car.wm.scalableui.panel.controller.FaceLoginViewController</ControllerName>
-    <RroPackage>com.android.systemui.rro.scalableUI.multiPanelLandscape</RroPackage>
-    <!-- Demo auto-match is configured via the RRO bool face_login_demo_match_success
-         (read in FaceLoginViewController.loadDemoConfig). A DemoAutoMatch tag here
-         would fail parsing: it is not registered in CoreParserModule. -->
-</Controller>

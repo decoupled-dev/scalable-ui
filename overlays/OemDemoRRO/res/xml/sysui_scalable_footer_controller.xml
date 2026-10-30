@@ -1,9 +1,0 @@
-<Controller id="sysui_scalable_footer_controller">
-    <ControllerName>com.android.systemui.car.wm.scalableui.panel.controller.CarSysuiScalableFooterController</ControllerName>
-    <RroPackage>com.android.systemui.rro.scalableUI.oemDemo</RroPackage>
-    <!-- Literal component: generic controller configs are not resource-resolved
-         (BaseValueParser.parseString returns raw text), and the target package
-         defines no such string for an RRO to overlay. -->
-    <PrimaryMediaComponent>com.android.car.media/com.android.car.media.MediaDispatcherActivity</PrimaryMediaComponent>
-    <MediaPanelId>sysui_footer_media_panel</MediaPanelId>
-</Controller>

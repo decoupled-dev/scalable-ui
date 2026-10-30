@@ -61,12 +61,4 @@ public abstract class CarSysuiScalableBarControllerModule {
         return new CarSysuiScalableFooterController.Factory(
                 context, hvacPanelOverlayViewController::toggle);
     }
-
-    /** Provides the face login decor panel controller factory. */
-    @Provides
-    @IntoMap
-    @ClassKey(FaceLoginViewController.class)
-    static DecorPanelController.Factory<?> provideFaceLoginControllerFactory(Context context) {
-        return new FaceLoginViewController.Factory(context);
-    }
 }

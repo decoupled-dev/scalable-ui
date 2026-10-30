@@ -1,80 +1,147 @@
-# Scalable UI (Fluidic Precision)
+# Scalable UI Launcher
 
-The **Scalable UI** (codenamed "Fluidic Precision") is an advanced, custom dashboard interface built on top of the Android Automotive OS (AAOS). 
+A multi-panel home screen for Android Automotive OS (Android 15 / API 35), built on CarSystemUI's Scalable UI orchestrator. The reference target is the Pixel Tablet (`tangorpro`, 2560×1600 at 240 dpi).
 
-Instead of a static grid, the Scalable UI transforms the vehicle dashboard into a dynamic, multi-panel window environment. It features "glassmorphism" aesthetics (translucent backgrounds, rounded corners) and allows users to seamlessly drag and drop modular widgets (like Climate, Media, Navigation, and Agenda) across different panel zones on the screen.
+What it draws:
 
-## Key Features
-*   **System Window Orchestration:** A custom layer in AAOS (`TaskPanelTransitionCoordinator`) that handles the math, animations, and lifecycle of dragging an app from a side panel into the main view.
-*   **Runtime Resource Overlays (RRO):** Instead of permanently modifying the base Android source code, the project uses an overlay (`MultiPanelLandscapeRRO`). This overlay dynamically injects new dimensions, colors, and layout structures into the system at runtime.
-*   **Privileged System Widgets:** A custom package called `MockWidgets` that provides the actual interactive tiles (Climate controls, Smart Home toggles, etc.).
+- A full-screen map behind everything.
+- Three status pills along the top (connectivity and display, clock, user profile).
+- A bottom dock that replaces the navigation bar (home, all apps, map toggle, climate, vehicle, settings, assistant, pinned and recent apps).
+- Driver and passenger temperature pills.
+- A right-hand column of widget cards (climate, media, driving stats, and eight widget apps).
+- Four landscape layout sets selected over adb, plus portrait variants that follow display rotation.
 
----
+## Repository layout
 
-## 1. Prerequisites (What to Prepare)
-To develop or deploy the Scalable UI, you need the following environment:
-1.  **AOSP Automotive Environment:** A full Android Open Source Project (AOSP) source tree synced to an Automotive branch (e.g., `trunk_staging`).
-2.  **Cuttlefish Emulator:** The primary target for this project is `aosp_cf_x86_64_auto-userdebug`. You will need a Linux host capable of hardware virtualization to run it.
-3.  **The Scalable UI Repository:** This repository (`vendor/aospstack/ScalableUI`), containing the overlays, widget applications, and deployment scripts.
+| Path | What it is |
+| --- | --- |
+| `overlays/LauncherRRO/` | The SystemUI overlay that defines every panel, pose and transition (`com.android.systemui.rro.scalableUI.launcher`). |
+| `overlays/CarLauncherThemeRRO/` | Light theme for the CarLauncher app grid (`com.android.car.carlauncher.rro.launcherTheme`). |
+| `systemui/CarSysuiScalableBarControllers/` | Java linked into CarSystemUI: dock, pills, HVAC, layout sets, rotation, dock pins. |
+| `integration/` | The Android.bp change and Dagger module that register the controllers in CarSystemUI. |
+| `Widgets/` | Gradle project with the eight privileged widget apps and their allowlists. |
+| `docs/launcher/` | How the panels work: `GUIDE.md`, one file per panel and per dock/pill. |
+| `docs/DYNAMIC_RRO_BINDING.md` | Why the controllers resolve views by name against the overlay package. |
+| `scripts/` | Standalone RRO build, SDK installer, device deploy. |
+| `scalableui_packages.mk` | Product makefile hook. |
 
----
+Read `docs/launcher/GUIDE.md` before changing any panel XML.
 
-## 2. Environment Setup (Step-by-Step)
+## How it fits together
 
-If you are setting this up from scratch or onboarding a new developer, here is exactly what needs to be prepared in the codebase:
+The screen is a list of windows declared in `overlays/LauncherRRO/res/values/config.xml` (`window_states`), one XML file per window in `res/xml/`.
 
-### A. Prepare the Build Configuration
-1. Open your AOSP tree and navigate to `packages/apps/Car/SystemUI/samples/systemui_sample_rros.mk`. 
-2. You **must remove `DewdDynamicAospRRO`**. If you don't do this, Android's default overlays will conflict with ours, resulting in distorted UI panels.
-3. Ensure that `MockWidgets` and `MultiPanelLandscapeRRO` are included in your `make` targets for the build.
+- **TaskPanel**: hosts an activity. The map, the widget cards, the app grid and launched apps are TaskPanels.
+- **DecorPanel**: no activity; a SystemUI controller inflates a layout into it. The dock, the pills, the temperature pills and the plates under the cards are DecorPanels.
+- **Variant / Transition**: each panel has named poses and moves between them when an event is posted.
 
-### B. Prepare the Privileged Permissions (Crucial Step)
-The `MockWidgets` app interacts directly with the Vehicle Hardware Abstraction Layer (VHAL) to change things like the AC temperature. This requires deep system permissions (`android.car.permission.CONTROL_CAR_CLIMATE`).
-1. Android requires privileged apps to be explicitly allowlisted. 
-2. Ensure `MockWidgets/Android.bp` is configured to package `privapp-permissions-mockwidgets.xml` into `/system_ext/etc/permissions/` using the `required: ["privapp-permissions-mockwidgets.xml"]` directive.
-> **Warning**: If you skip this, Android will instantly crash and boot-loop the emulator for security reasons.
+Where a change goes:
 
-### C. Prepare the Dynamic RRO
-1. In the `AndroidManifest.xml` of your `MultiPanelLandscapeRRO`, ensure `isStatic="false"` is set.
-2. This makes the Scalable UI an "opt-in" experience. The emulator will boot with the standard Android UI initially, ensuring standard compatibility tests pass. 
+- **Overlay XML only**: moving or resizing panels on an existing event, adding a panel, binding a different activity, dock/pill visuals.
+- **SystemUI Java**: a new event, a tap that launches an app or writes to the vehicle, watching a setting or rotation. Controllers post events through `ScalableUIEventDispatcher.executeEvent`.
+- **Widget app**: what is drawn inside a card.
 
----
+## Build
 
-## 3. Build and Deployment
+### In an AOSP tree
 
-### Tip demo (recommended — prebuilt-safe)
+1. Place this repo at `vendor/<oem>/ScalableUI`.
+2. Link the controllers into CarSystemUI as described in `integration/car_systemui_android.bp.snippet` and `integration/dagger/CarSysuiScalableBarControllerModule.java`.
+3. Add to your product:
+   ```make
+   $(call inherit-product, vendor/<oem>/ScalableUI/scalableui_packages.mk)
+   ```
+4. Build:
+   ```bash
+   source build/envsetup.sh
+   lunch aosp_tangorpro_car-trunk_staging-userdebug
+   m CarSystemUI CarLauncher StubCarLauncher CarSysuiScalableBarControllers LauncherRRO CarLauncherThemeRRO
+   ```
+
+### Overlays without an AOSP tree
+
 ```bash
-./scripts/deploy_ui.sh --mode tip
-```
-Enables glanceable map + 3 floating pills via `MultiPanelLandscapeRRO`.
-
-Face login DecorPanel (oval + blue/orange glow) is registered in tip MPL.
-See [docs/FACE_LOGIN_SCALABLE_UI.md](docs/FACE_LOGIN_SCALABLE_UI.md).
-
-### OEM package / Pleos
-```bash
-./scripts/deploy_ui.sh --mode oem    # OemDemoRRO with tip panels
-./scripts/deploy_ui.sh --mode pleos  # needs CarSystemUI + Controllers rebuild
-```
-
-See [docs/DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md) for manual push paths and overlay package names.
-
-### AOSP build targets
-```bash
-m MockWidgets CarSystemUI CarLauncher MultiPanelLandscapeRRO \
-  CarLauncherMultiPanelRRO CarSystemUIScalableUIOverlay OemDemoRRO
-```
-
-Manual overlay enable (tip):
-```bash
-adb shell cmd overlay enable --user 10 com.android.systemui.rro.scalableUI.multiPanelLandscape
-adb shell cmd overlay enable --user 10 com.android.car.carlauncher.rro.scalableUI.multiPanelLandscape
+./scripts/install_android_sdk.sh          # once; writes ~/.android_sdk_env
+./scripts/build_rro.sh                    # -> out/rro/LauncherRRO.apk, out/rro/CarLauncherThemeRRO.apk
 ```
 
----
+These are signed with a generated debug key. They install into `/product/overlay` on a userdebug build but are not platform-signed.
 
-## 4. Community Showroom (Web Deployment)
-If you're looking to showcase this to external users over the web, you must also prepare the **Community Showroom Orchestrator**:
-- **Orchestrator Backend:** A Node.js and Redis stack that provisions ephemeral Cuttlefish emulators on-demand and manages session tokens (`aosp:share:<token>`).
-- **Web Frontend:** A Next.js web application that connects users to the running Cuttlefish instances via WebRTC for a smooth, browser-based demo.
-- [Floating Decor Panel Architecture & Updates](docs/FLOATING_DECOR_PANEL.md)
+### Widget apps
+
+```bash
+cd Widgets
+./scripts/build-all.sh                    # ./gradlew assembleDebug
+./scripts/deploy-all.sh                   # pushes to /system/priv-app + allowlists, reboots
+```
+
+Each app is privileged and needs its allowlist from `Widgets/permissions/` in `/system/etc/permissions/`, or the device boot-loops. See `Widgets/README.md`.
+
+## Deploy to a device
+
+```bash
+./scripts/deploy.sh                       # build overlays, push, enable, 240 dpi, layout set 0
+./scripts/deploy.sh --serial <SERIAL> --user 10 --variant 0
+```
+
+The script uses `$OUT/product/overlay` when `$OUT` is set, otherwise `out/rro/`.
+
+Enable or disable by hand. SystemUI parses panels as user 0, so set both users:
+
+```bash
+adb shell cmd overlay enable --user 0  com.android.systemui.rro.scalableUI.launcher
+adb shell cmd overlay enable --user 10 com.android.systemui.rro.scalableUI.launcher
+adb shell stop && sleep 2 && adb shell start
+```
+
+## Layout sets (adb)
+
+```bash
+adb shell settings put global scalable_ui_layout_variant <0-3>
+```
+
+| Value | Layout |
+| --- | --- |
+| 0 | Dock bottom centre, pills top, three cards right (default) |
+| 1 | Dock as a left vertical rail, pills along the bottom |
+| 2 | Paged right column: all eleven cards, three per page, drag the rail to page |
+| 3 | T-Rex: dock buttons switch between home, full-screen map, full-screen vehicle, and map + settings split |
+
+Portrait ignores the value and uses the portrait variants.
+
+## Runtime dependencies
+
+These are referenced by the overlay but not built from this repo:
+
+| Component | Used for | Configured in |
+| --- | --- | --- |
+| `com.android.car.stub.launcher/.StubHome` (AOSP `StubCarLauncher`) | HOME visibility barrier, parked off-screen | `config.xml`, `home_panel.xml` |
+| `com.google.android.apps.maps/com.google.android.maps.MapsActivity` | Full-screen map | `strings.xml` `map_componentName` |
+| `com.android.car.carlauncher/.AppGridActivity` | All-apps grid | `strings.xml` `appgrid_componentName` |
+| `com.android.car.settings` | Settings panel | `strings.xml` |
+| `com.test.design/.presentation.ivi.glanceables.*` | Climate, media, and stats cards; climate and vehicle full-screen apps | `strings.xml`, `config.xml` `config_default_activities`; `CarSysuiScalableBarControllerBase.DESIGN_*` |
+
+Replace `com.test.design` with your own card app by changing those strings and constants. Any activity works if it is resizable and `singleTask`.
+
+## Device setup notes
+
+- **Density is per user.** The overlay dimensions target 240 dpi. Set `display_density_forced` to 240 for user 0 and for the driver user, or SystemUI lays out at the hardware density until its next restart.
+- **Only one `window_states` owner.** Do not enable another Scalable UI overlay that defines `window_states` at the same time.
+- **DEWD overlays.** If the stock navigation bar draws over the dock, disable the DEWD overlays for users 0 and the driver user (`pm disable-user com.android.systemui.rro.dewd.aosp.dynamic`, `com.android.car.resources.dewd`), or remove `DewdDynamicAospRRO` from `samples/systemui_sample_rros.mk`.
+- **Hidden is not finished.** `isVisible="false"` stops the hosted activity but keeps its task.
+
+## Debugging
+
+```bash
+adb shell dumpsys overlay
+adb shell dumpsys window windows | grep -E 'Embedded|TaskPanel'
+adb logcat -s ScalableUI StateManager CarSysuiScalableFooterController LayoutVariantWatcher
+```
+
+## Known differences from the demo device
+
+The demo tablet runs a CarSystemUI image patched at the dex level. Building from this source gives the same panels and controllers with these differences:
+
+- **Assistant button.** The demo image routes the dock assistant button through an additional launcher class that is not part of this source. The source shows the system default voice assistant through `VoiceInteractionManagerService`.
+- **Night mode.** The demo image toggles night mode through a separate helper class. In the source, night mode is handled inside `CarSysuiScalableHeaderController`.
+- **Layout set switching.** The source resets the dock orientation for every set. On the demo image, switching straight from set 1 to set 2 or 3 could leave the dock icons stacked; the source does not have that problem.

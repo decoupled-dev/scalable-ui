@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <color name="sysui_bar_icon_tint">#FFFFFFFF</color>
-    <color name="sysui_ux_restriction_scrim">#99000000</color>
-    <string name="sysui_media_not_playing">Not Playing</string>
-    <string name="sysui_content_desc_hvac_up">Increase temperature</string>
-    <string name="sysui_content_desc_hvac_down">Decrease temperature</string>
-</resources>

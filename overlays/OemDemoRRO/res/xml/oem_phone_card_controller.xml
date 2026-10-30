@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Controller id="oem_phone_card_controller">
-    <ControllerName>com.android.systemui.car.wm.scalableui.view.PanelOverlayController</ControllerName>
-    <View>com.android.systemui.car.wm.scalableui.view.PanelOverlay</View>
-    <BackgroundColor>#F21B2836</BackgroundColor>
-</Controller>
