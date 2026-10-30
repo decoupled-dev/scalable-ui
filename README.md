@@ -21,6 +21,8 @@ What it draws:
 | `integration/` | The Android.bp change and Dagger module that register the controllers in CarSystemUI. |
 | `Widgets/` | Gradle project with the eight privileged widget apps and their allowlists. |
 | `docs/launcher/` | How the panels work: `GUIDE.md`, one file per panel and per dock/pill. |
+| `docs/xml/` | One section per XML file: what it is and what it does on screen. |
+| `docs/systemui/` | Every SystemUI class: why it is needed and what it does. |
 | `docs/DYNAMIC_RRO_BINDING.md` | Why the controllers resolve views by name against the overlay package. |
 | `scripts/` | Standalone RRO build, SDK installer, device deploy. |
 | `scalableui_packages.mk` | Product makefile hook. |
