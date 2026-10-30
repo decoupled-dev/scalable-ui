@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Light system theme. Fully opaque widget / chrome surfaces. -->
+    <color name="launcher_surface">#FFF4F6F8</color>
+    <color name="launcher_on_surface">#FF1A1C1E</color>
+    <!-- Light grey disc for the climate pill minus and plus. Darker than
+         the pill surface, lighter than the old charcoal. -->
+    <color name="launcher_dock_icon_fill">#FFC9D0D8</color>
+    <color name="launcher_temp_glyph">#FF1A1C1E</color>
+    <!-- Soft grey outline on the pale dock, pills, and widget cards. -->
+    <color name="launcher_stroke">#FFA8B0BA</color>
+    <!-- Press feedback: ink over the light temperature discs and the pale pill. -->
+    <color name="launcher_ripple_on_fill">#241A1C1E</color>
+    <color name="launcher_ripple_on_surface">#241A1C1E</color>
+</resources>

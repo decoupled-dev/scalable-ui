@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Right status pill: camera and mic privacy chips, then the current user.
+  Content is centered so the pill stays balanced whether or not the chips
+  are showing. The chip slots are reserved by the controller at runtime.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/launcher_user_profile"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/launcher_dock_bg"
+    android:clickable="true"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:focusable="true"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/launcher_pill_edge"
+    android:paddingEnd="@dimen/launcher_pill_edge">
+
+    <!-- Stock MicPrivacyChip and CameraPrivacyChip are added here at runtime. -->
+    <LinearLayout
+        android:id="@+id/launcher_privacy_chips"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" />
+
+    <!-- Avatar and name stay visible. The stock profile button is laid over
+         this frame at runtime so a tap opens qc_profile_switcher. -->
+    <FrameLayout
+        android:id="@+id/launcher_user_anchor"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginStart="8dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:contentDescription="@string/launcher_user_profile"
+                android:src="@drawable/ic_status_profile"
+                android:tint="@color/launcher_on_surface" />
+
+            <TextView
+                android:id="@+id/launcher_user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif-medium"
+                android:maxLines="1"
+                android:maxWidth="140dp"
+                android:text="@string/launcher_user_profile"
+                android:textColor="@color/launcher_on_surface"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </FrameLayout>
+</LinearLayout>

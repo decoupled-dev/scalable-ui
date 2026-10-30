@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Floating dock. FooterController selects this name when the panel id is oem_dock.
+  System navigation on the left, app shortcuts on the right, a hairline between.
+  Width grows with pinned apps. launcher_dock_half_width is the recent slot
+  and no pins; dock_pins_1..4 widen the capsule.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/launcher_dock_bg"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/launcher_bar_end_padding"
+    android:paddingEnd="@dimen/launcher_bar_end_padding">
+
+    <ImageButton
+        android:id="@+id/sysui_nav_home"
+        style="@style/LauncherDockIcon"
+        android:contentDescription="@string/launcher_dock_home"
+        android:src="@drawable/ic_dock_home" />
+
+    <ImageButton
+        android:id="@+id/sysui_footer_fullscreen_toggle"
+        style="@style/LauncherDockIcon"
+        android:contentDescription="@string/launcher_dock_navigation"
+        android:src="@drawable/ic_dock_nav" />
+
+    <ImageButton
+        android:id="@+id/sysui_nav_all_apps"
+        style="@style/LauncherDockIcon"
+        android:contentDescription="@string/launcher_dock_apps"
+        android:src="@drawable/ic_dock_apps" />
+
+    <View
+        style="@style/LauncherDockDivider"
+        android:importantForAccessibility="no" />
+
+    <ImageButton
+        android:id="@+id/oem_launch_assistant"
+        style="@style/LauncherDockIcon"
+        android:contentDescription="@string/launcher_dock_assistant"
+        android:src="@drawable/ic_dock_mic" />
+
+    <ImageButton
+        android:id="@+id/oem_launch_hvac"
+        style="@style/LauncherDockIcon"
+        android:contentDescription="@string/launcher_dock_climate"
+        android:src="@drawable/ic_dock_climate" />
+
+    <ImageButton
+        android:id="@+id/oem_launch_vehicle"
+        style="@style/LauncherDockIcon"
+        android:contentDescription="@string/launcher_dock_vehicle"
+        android:src="@drawable/ic_dock_vehicle" />
+
+    <ImageButton
+        android:id="@+id/oem_launch_car_settings"
+        style="@style/LauncherDockIcon"
+        android:contentDescription="@string/launcher_dock_settings"
+        android:src="@drawable/ic_dock_settings" />
+
+    <View
+        style="@style/LauncherDockDivider"
+        android:importantForAccessibility="no" />
+
+    <!-- Last app that came to the front. Pin broadcasts append icons after it. -->
+    <ImageButton
+        android:id="@+id/oem_dock_recent"
+        style="@style/LauncherDockIcon"
+        android:alpha="0.45"
+        android:contentDescription="@string/launcher_dock_recent"
+        android:padding="14dp"
+        android:src="@drawable/ic_dock_recent" />
+</LinearLayout>

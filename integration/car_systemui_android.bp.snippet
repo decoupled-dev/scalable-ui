@@ -1,0 +1,25 @@
+// Integration checklist for packages/apps/Car/SystemUI.
+//
+// 1. Android.bp — add the controllers library to the core (and test) static_libs:
+//
+// java_defaults {
+//     name: "CarSystemUI-core-defaults",
+//     static_libs: [
+//         ...
+//         "car-scalable-ui-lib",
+//         "CarSysuiScalableBarControllers",
+//         ...
+//     ],
+// }
+//
+// 2. Copy dagger/CarSysuiScalableBarControllerModule.java next to
+//    PanelControllerModule.java (same package) and add it to the includes:
+//
+// @Module(includes = { MinimizedControlsPanelModule.class,
+//         CarSysuiScalableBarControllerModule.class })
+// public abstract class PanelControllerModule { ... }
+//
+// 3. Rebuild CarSystemUI, then enable LauncherRRO (see README.md).
+//
+// Vendor path:
+//   vendor/<oem>/ScalableUI/systemui/CarSysuiScalableBarControllers

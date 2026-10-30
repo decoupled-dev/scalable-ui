@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="map_componentName" translatable="false">com.google.android.apps.maps/com.google.android.maps.MapsActivity</string>
+    <string name="launcher_home_component" translatable="false">com.android.car.stub.launcher/.StubHome</string>
+    <string name="appgrid_componentName" translatable="false">com.android.car.carlauncher/.AppGridActivity</string>
+    <!-- Catch-all launch root. Unmatched apps opened from the grid land here. -->
+    <string name="launcher_app_role" translatable="false">DEFAULT</string>
+    <!-- Dock climate / vehicle / settings each have their own panel so a
+         switch does not tile two tasks inside launcher_app. -->
+    <string name="launcher_climate_app_role" translatable="false">com.test.design/.presentation.ivi.glanceables.ClimatePanelActivity</string>
+    <string name="launcher_vehicle_app_role" translatable="false">com.test.design/.presentation.ivi.glanceables.VehiclePanelActivity</string>
+    <string-array name="launcher_settings_app_role" translatable="false">
+        <item>com.android.car.settings/.common.CarSettingActivities$HomepageActivity</item>
+        <item>com.android.car.settings/.Settings_Launcher_Homepage</item>
+    </string-array>
+    <string name="launcher_climate_component" translatable="false">com.test.design/.presentation.ivi.glanceables.ClimateHomePanelActivity</string>
+    <string name="launcher_media_component" translatable="false">com.test.design/.presentation.ivi.glanceables.MediaHomePanelActivity</string>
+    <string name="launcher_stats_component" translatable="false">com.test.design/.presentation.ivi.glanceables.VehicleHomePanelActivity</string>
+    <!-- Eight hosted widgets. Variant 2 pages them through the right column, three at a time. -->
+    <string name="launcher_w_ev_component" translatable="false">com.scalableui.widgets.ev/.WidgetActivity</string>
+    <string name="launcher_w_lights_component" translatable="false">com.scalableui.widgets.lights/.WidgetActivity</string>
+    <string name="launcher_w_phone_component" translatable="false">com.scalableui.widgets.phone/.WidgetActivity</string>
+    <string name="launcher_w_seats_component" translatable="false">com.scalableui.widgets.seats/.WidgetActivity</string>
+    <string name="launcher_w_user_component" translatable="false">com.scalableui.widgets.user/.WidgetActivity</string>
+    <string name="launcher_w_clock_component" translatable="false">com.scalableui.widgets.clock/.WidgetActivity</string>
+    <string name="launcher_w_apps_component" translatable="false">com.scalableui.widgets.apps/.WidgetActivity</string>
+    <string name="launcher_w_connections_component" translatable="false">com.scalableui.widgets.connections/.WidgetActivity</string>
+
+    <!-- Header pills. -->
+    <string name="launcher_dark_theme" translatable="false">Dark theme</string>
+    <string name="launcher_light_theme" translatable="false">Light theme</string>
+    <string name="launcher_wifi" translatable="false">Wi-Fi</string>
+    <string name="launcher_bluetooth" translatable="false">Bluetooth</string>
+    <string name="launcher_brightness" translatable="false">Brightness</string>
+    <string name="launcher_volume" translatable="false">Volume</string>
+    <string name="launcher_user_profile" translatable="false">Profile</string>
+
+    <!-- Dock. -->
+    <string name="launcher_dock_home" translatable="false">Home</string>
+    <string name="launcher_dock_navigation" translatable="false">Map fullscreen</string>
+    <string name="launcher_dock_apps" translatable="false">All apps</string>
+    <string name="launcher_dock_assistant" translatable="false">Assistant</string>
+    <string name="launcher_dock_climate" translatable="false">Climate</string>
+    <string name="launcher_dock_vehicle" translatable="false">Vehicle</string>
+    <string name="launcher_dock_settings" translatable="false">Car settings</string>
+    <string name="launcher_dock_recent" translatable="false">Recent app</string>
+
+    <!-- Temperature pills. The controller replaces the placeholder once VHAL reports. -->
+    <string name="launcher_temp_down" translatable="false">Decrease temperature</string>
+    <string name="launcher_temp_up" translatable="false">Increase temperature</string>
+    <string name="launcher_temp_placeholder" translatable="false">--°</string>
+</resources>

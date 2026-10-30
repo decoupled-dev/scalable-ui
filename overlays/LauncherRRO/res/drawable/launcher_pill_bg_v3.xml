@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- T-Rex pill surface. 16dp corners, shared by the header and temperature pills. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/launcher_surface" />
+    <corners android:radius="@dimen/launcher_v3_pill_corner" />
+    <stroke
+        android:width="@dimen/launcher_stroke_width"
+        android:color="@color/launcher_stroke" />
+</shape>

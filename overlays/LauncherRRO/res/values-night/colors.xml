@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark system theme. Fully opaque widget / chrome surfaces. -->
+    <color name="launcher_surface">#FF1C1F24</color>
+    <color name="launcher_on_surface">#FFFFFFFF</color>
+    <!-- One step above the pill surface (#1C1F24) so circles read as buttons. -->
+    <color name="launcher_dock_icon_fill">#FF3A414A</color>
+    <color name="launcher_temp_glyph">#FFFFFFFF</color>
+    <color name="launcher_stroke">#FF3C434C</color>
+    <color name="launcher_ripple_on_fill">#40FFFFFF</color>
+    <color name="launcher_ripple_on_surface">#33FFFFFF</color>
+</resources>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Right header pill, user profile. -->
+<DecorPanel id="launcher_pill_right" defaultVariant="@id/visible"
+    controller="@xml/launcher_status_controller" displayId="0">
+    <Variant id="@+id/base">
+        <Layer layer="30"/>
+        <Alpha alpha="1.0"/>
+        <Corner radius="@dimen/launcher_pill_corner"/>
+        <Bounds
+            left="100%"
+            leftOffset="@dimen/launcher_pill_right_inset"
+            top="@dimen/launcher_pill_top"
+            right="100%"
+            rightOffset="@dimen/launcher_pill_edge"
+            bottom="@dimen/launcher_pill_bottom"/>
+        <Focus onTransition="true"/>
+    </Variant>
+    <Variant id="@+id/visible" parent="@id/base">
+        <Visibility isVisible="true"/>
+    </Variant>
+    <Variant id="@+id/hidden" parent="@id/base">
+        <Visibility isVisible="false"/>
+    </Variant>
+    <Variant id="@+id/portrait" parent="@id/base">
+        <Visibility isVisible="true"/>
+        <Bounds
+            left="@dimen/launcher_port_pill_right_l"
+            top="@dimen/launcher_pill_top"
+            right="@dimen/launcher_port_pill_right_r"
+            bottom="@dimen/launcher_pill_bottom"/>
+    </Variant>
+    <!-- Variant 1: profile pill on the bottom, still on the right. -->
+    <Variant id="@+id/layout_v1" parent="@id/base">
+        <Visibility isVisible="true"/>
+        <Bounds
+            left="100%"
+            leftOffset="@dimen/launcher_v1_pill_right_inset"
+            top="100%"
+            topOffset="@dimen/launcher_v1_pill_top_offset"
+            right="100%"
+            rightOffset="@dimen/launcher_v1_pill_right_edge"
+            bottom="100%"
+            bottomOffset="@dimen/launcher_dock_bottom_margin"/>
+    </Variant>
+
+    <!-- T-Rex keeps this pill where config 0 puts it, with a 16dp corner. -->
+    <Variant id="@+id/layout_v3" parent="@id/base">
+        <Visibility isVisible="true"/>
+        <Corner radius="@dimen/launcher_v3_pill_corner"/>
+    </Variant>
+    <Transitions>
+        <Transition onEvent="_System_EnterSuwEvent" toVariant="@id/hidden"/>
+        <Transition onEvent="_System_ExitSuwEvent" fromVariant="@id/hidden" toVariant="@id/visible"/>
+        <Transition onEvent="orientation_portrait" fromVariant="@id/visible" toVariant="@id/portrait" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="orientation_landscape" fromVariant="@id/portrait" toVariant="@id/visible" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_EnterSuwEvent" fromVariant="@id/portrait" toVariant="@id/hidden"/>
+        <Transition onEvent="layout_variant_1" fromVariant="@id/visible" toVariant="@id/layout_v1" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="layout_variant_0" fromVariant="@id/layout_v1" toVariant="@id/visible" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="layout_variant_2" fromVariant="@id/layout_v1" toVariant="@id/visible" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="orientation_portrait" fromVariant="@id/layout_v1" toVariant="@id/portrait" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="_System_EnterSuwEvent" fromVariant="@id/layout_v1" toVariant="@id/hidden"/>
+        <Transition onEvent="layout_variant_3" fromVariant="@id/visible" toVariant="@id/layout_v3" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="layout_variant_3" fromVariant="@id/layout_v1" toVariant="@id/layout_v3" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="layout_variant_3" fromVariant="@id/hidden" toVariant="@id/layout_v3" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="layout_variant_0" fromVariant="@id/layout_v3" toVariant="@id/visible" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="layout_variant_1" fromVariant="@id/layout_v3" toVariant="@id/layout_v1" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="layout_variant_2" fromVariant="@id/layout_v3" toVariant="@id/visible" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        <Transition onEvent="orientation_portrait" fromVariant="@id/layout_v3" toVariant="@id/portrait" duration="350" interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+    </Transitions>
+</DecorPanel>

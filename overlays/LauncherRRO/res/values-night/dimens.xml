@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark surfaces already separate from the map; a hairline is enough. -->
+    <dimen name="launcher_stroke_width">1dp</dimen>
+    <dimen name="launcher_widget_task_corner">15dp</dimen>
+    <dimen name="launcher_widget_left_in">-479dp</dimen>
+    <dimen name="launcher_widget_right_in">17dp</dimen>
+    <dimen name="launcher_widget_offscreen_left_in">37dp</dimen>
+    <dimen name="launcher_widget_offscreen_right_in">-499dp</dimen>
+    <dimen name="launcher_widget_climate_top_in">81dp</dimen>
+    <dimen name="launcher_widget_climate_bottom_in">363dp</dimen>
+    <dimen name="launcher_widget_media_top_in">377dp</dimen>
+    <dimen name="launcher_widget_media_bottom_in">659dp</dimen>
+    <dimen name="launcher_widget_stats_top_in">673dp</dimen>
+    <dimen name="launcher_widget_stats_bottom_in">955dp</dimen>
+    <dimen name="launcher_v2_above_top_in">-319dp</dimen>
+    <dimen name="launcher_v2_above_bottom_in">-37dp</dimen>
+    <dimen name="launcher_v2_below_top_in">1101dp</dimen>
+    <dimen name="launcher_v2_below_bottom_in">1383dp</dimen>
+    <dimen name="launcher_v3_widget_top_in">391dp</dimen>
+    <dimen name="launcher_v3_widget_bottom_in">673dp</dimen>
+    <dimen name="launcher_v3_w1_left_in">59dp</dimen>
+    <dimen name="launcher_v3_w1_right_in">577dp</dimen>
+    <dimen name="launcher_v3_w2_left_in">595dp</dimen>
+    <dimen name="launcher_v3_w2_right_in">1113dp</dimen>
+    <dimen name="launcher_v3_w3_left_in">1131dp</dimen>
+    <dimen name="launcher_v3_w3_right_in">1649dp</dimen>
+    <dimen name="launcher_port_widget_top_in">1376dp</dimen>
+    <dimen name="launcher_port_widget_bottom_in">1594dp</dimen>
+    <dimen name="launcher_port_w1_left_in">17dp</dimen>
+    <dimen name="launcher_port_w1_right_in">352dp</dimen>
+    <dimen name="launcher_port_w2_left_in">366dp</dimen>
+    <dimen name="launcher_port_w2_right_in">701dp</dimen>
+    <dimen name="launcher_port_w3_left_in">715dp</dimen>
+    <dimen name="launcher_port_w3_right_in">1050dp</dimen>
+    <dimen name="launcher_port_widget_off_top_in">1708dp</dimen>
+    <dimen name="launcher_port_widget_off_bottom_in">1926dp</dimen>
+</resources>

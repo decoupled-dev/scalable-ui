@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Map is the full-screen background (layer 2). Three decor pills sit
+         on top: connectivity and display, the clock, and the user profile.
+         Stock system bars stay off. The bottom dock replaces the nav bar.
+         The right inset clears the climate, media, and driving-stats cards.
+         The map bounds stay at 100%.
+         Layout variant 3 is T-Rex: wallpaper home, fullscreen map, fullscreen
+         Vehicle Info, and a 50/50 map plus Car Settings split. -->
+    <bool name="config_enableScalableUI">true</bool>
+    <bool name="config_enableTopSystemBar">false</bool>
+    <bool name="config_enableBottomSystemBar">false</bool>
+    <bool name="config_enableLeftSystemBar">false</bool>
+    <bool name="config_enableRightSystemBar">false</bool>
+
+    <array name="window_states" translatable="false">
+        <item>@xml/home_panel</item>
+        <item>@xml/map_panel</item>
+        <item>@xml/launcher_pill_left</item>
+        <item>@xml/launcher_pill_center</item>
+        <item>@xml/launcher_pill_right</item>
+        <item>@xml/launcher_dock</item>
+        <item>@xml/launcher_climate_left</item>
+        <item>@xml/launcher_climate_right</item>
+        <!-- Opaque plates under the three TaskPanels (layer 11) so the map
+             cannot show through climate / media / stats in light or dark. -->
+        <item>@xml/launcher_widget_climate_bg</item>
+        <item>@xml/launcher_widget_media_bg</item>
+        <item>@xml/launcher_widget_stats_bg</item>
+        <item>@xml/launcher_widget_climate</item>
+        <item>@xml/launcher_widget_media</item>
+        <item>@xml/launcher_widget_stats</item>
+        <item>@xml/launcher_w_ev_bg</item>
+        <item>@xml/launcher_w_lights_bg</item>
+        <item>@xml/launcher_w_phone_bg</item>
+        <item>@xml/launcher_w_seats_bg</item>
+        <item>@xml/launcher_w_user_bg</item>
+        <item>@xml/launcher_w_clock_bg</item>
+        <item>@xml/launcher_w_apps_bg</item>
+        <item>@xml/launcher_w_connections_bg</item>
+        <item>@xml/launcher_w_ev</item>
+        <item>@xml/launcher_w_lights</item>
+        <item>@xml/launcher_w_phone</item>
+        <item>@xml/launcher_w_seats</item>
+        <item>@xml/launcher_w_user</item>
+        <item>@xml/launcher_w_clock</item>
+        <item>@xml/launcher_w_apps</item>
+        <item>@xml/launcher_w_connections</item>
+        <item>@xml/panel_app_grid</item>
+        <item>@xml/launcher_app</item>
+        <item>@xml/launcher_climate_app</item>
+        <item>@xml/launcher_vehicle_app</item>
+        <item>@xml/launcher_settings_app</item>
+    </array>
+
+    <string-array name="config_default_activities" translatable="false">
+        <item>home_panel;com.android.car.stub.launcher/.StubHome</item>
+        <item>map_panel;com.google.android.apps.maps/com.google.android.maps.MapsActivity</item>
+        <item>launcher_climate;com.test.design/com.test.design.presentation.ivi.glanceables.ClimateHomePanelActivity</item>
+        <item>launcher_media;com.test.design/com.test.design.presentation.ivi.glanceables.MediaHomePanelActivity</item>
+        <item>launcher_stats;com.test.design/com.test.design.presentation.ivi.glanceables.VehicleHomePanelActivity</item>
+        <item>launcher_w_ev;com.scalableui.widgets.ev/com.scalableui.widgets.ev.WidgetActivity</item>
+        <item>launcher_w_lights;com.scalableui.widgets.lights/com.scalableui.widgets.lights.WidgetActivity</item>
+        <item>launcher_w_phone;com.scalableui.widgets.phone/com.scalableui.widgets.phone.WidgetActivity</item>
+        <item>launcher_w_seats;com.scalableui.widgets.seats/com.scalableui.widgets.seats.WidgetActivity</item>
+        <item>launcher_w_user;com.scalableui.widgets.user/com.scalableui.widgets.user.WidgetActivity</item>
+        <item>launcher_w_clock;com.scalableui.widgets.clock/com.scalableui.widgets.clock.WidgetActivity</item>
+        <item>launcher_w_apps;com.scalableui.widgets.apps/com.scalableui.widgets.apps.WidgetActivity</item>
+        <item>launcher_w_connections;com.scalableui.widgets.connections/com.scalableui.widgets.connections.WidgetActivity</item>
+    </string-array>
+</resources>

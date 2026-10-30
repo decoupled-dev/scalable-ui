@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Same names and formats as CarSystemUI so the overlaid status-bar layout
+  can set the stock button and quick-control attributes. Idmap rewrites
+  these to the SystemUI attribute ids.
+-->
+<resources>
+    <attr name="controller" format="string"/>
+    <attr name="icon" format="reference"/>
+    <attr name="highlightWhenSelected" format="boolean"/>
+    <attr name="longIntent" format="string"/>
+    <attr name="panelLayoutRes" format="reference"/>
+    <attr name="remoteQCProvider" format="string"/>
+    <attr name="localQCProvider" format="string"/>
+    <attr name="intent" format="string"/>
+    <attr name="disableWhileDriving" format="boolean"/>
+</resources>
